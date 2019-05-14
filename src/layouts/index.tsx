@@ -3,6 +3,7 @@ import styles from './index.css';
 import { Layout, Menu, Icon } from 'antd';
 import routesConfig from '@/pages/routes'
 import { Link } from 'react-router-dom'
+import withRouter from 'umi/withRouter';
 import { connect } from 'dva';
 
 const { Header, Sider, Content } = Layout;
@@ -10,7 +11,11 @@ const SubMenu = Menu.SubMenu;
 interface BasicLayoutProps {
   users: {
     total: number
-  }
+  },
+  g: {
+    collapsed: boolean
+  },
+  dispatch: any,
 }
 interface BasicLayoutState {
   collapsed: boolean,
@@ -27,12 +32,25 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
     this.fnMenuList = this.fnMenuList.bind(this)
   }
 
+  fnChangeCollapsed(collapsed: boolean): void {
+    this.props.dispatch({
+      type: 'g/sync_changeCollapsed',
+      payload: collapsed
+    })
+  }
+
   toggle(): void {
-    this.setState((state) => {
-      return {
-        collapsed: !state.collapsed,
-      }
-    });
+    console.log(this.props)
+    this.fnChangeCollapsed(!this.props.g.collapsed)
+    // this.setState((state) => {
+    //   return {
+    //     collapsed: !state.collapsed,
+    //   }
+    // });
+  }
+
+  componentDidMount(): void {
+    // console.log(this.props.dispatch)
   }
 
   fnMenuList(): JSX.Element {
@@ -103,7 +121,7 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
           <Sider
             trigger={null}
             collapsible
-            collapsed={this.state.collapsed}
+            collapsed={this.props.g.collapsed}
           >
             <div className="logo" />
             {
@@ -114,15 +132,15 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
             <Header style={{ background: '#fff', padding: 0 }}>
               <Icon
                 className="trigger"
-                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                type={this.props.g.collapsed ? 'menu-unfold' : 'menu-fold'}
                 onClick={this.toggle}
               />
             </Header>
             <Content style={{
               margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,
             }}
-            > 
-            {this.props.users.total}
+            >
+              {this.props.users.total}
               {this.props.children}
             </Content>
           </Layout>
@@ -132,4 +150,4 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 };
 
-export default connect((props: any, state: any): any => Object.assign({}, props, state))(BasicLayout);
+export default withRouter(connect((props: any, state: any): any => Object.assign({}, props, state))(BasicLayout));

@@ -1,7 +1,6 @@
 import * as usersService from '../services/users';
 
 export default {
-  namespace: 'users',
   state: {
     list: [],
     total: null,
