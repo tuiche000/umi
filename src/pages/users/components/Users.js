@@ -24,6 +24,10 @@ function Users({ dispatch, list: dataSource, loading, total, page: current }) {
     dispatch({
       type: 'users/patch',
       payload: { id, values },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 推荐设置页面构建
     });
   }
 
@@ -58,7 +62,11 @@ function Users({ dispatch, list: dataSource, loading, total, page: current }) {
       render: (text, record) => (
         <span className={styles.operation}>
           <UserModal record={record} onOk={editHandler.bind(null, record.id)}>
+<<<<<<< HEAD
             <a>Edit</a>
+=======
+            <a className={JSON.stringify(record)}>Edit</a>
+>>>>>>> 推荐设置页面构建
           </UserModal>
           <Popconfirm title="Confirm to delete?" onConfirm={deleteHandler.bind(null, record.id)}>
             <a href="">Delete</a>
