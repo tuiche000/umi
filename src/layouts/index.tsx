@@ -3,7 +3,7 @@ import styles from './index.css';
 import { Layout, Menu, Icon } from 'antd';
 import routesConfig from '@/pages/routes'
 import { Link } from 'react-router-dom'
-import withRouter from 'umi/withRouter';
+// import withRouter from 'umi/withRouter';
 import { connect } from 'dva';
 
 const { Header, Sider, Content } = Layout;
@@ -16,12 +16,16 @@ interface BasicLayoutProps {
     collapsed: boolean
   },
   dispatch: any,
+  location: any,
 }
 interface BasicLayoutState {
   collapsed: boolean,
   routesConfig: any[],
 }
-class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
+
+// @withRouter()
+@connect((props: any, state: any): any => Object.assign({}, props, state))
+export default class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   constructor(props: any) {
     super(props)
     this.state = {
@@ -29,7 +33,7 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
       routesConfig: routesConfig.routes
     };
     this.toggle = this.toggle.bind(this)
-    this.fnMenuList = this.fnMenuList.bind(this)
+    this.fnMenuList = this.fnMenuList.bind(this) 
   }
 
   fnChangeCollapsed(collapsed: boolean): void {
@@ -50,7 +54,7 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 
   componentDidMount(): void {
-    // console.log(this.props.dispatch)
+    // console.log()
   }
 
   fnMenuList(): JSX.Element {
@@ -114,7 +118,9 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 
   render() {
-    console.log(this.props)
+    if (this.props.location.pathname === '/login') {
+      return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', }}>{ this.props.children }</div>
+    }
     return (
       <div className={styles.normal}>
         <Layout style={{ "height": "100vh" }}>
@@ -140,7 +146,6 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
               margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,
             }}
             >
-              {this.props.users.total}
               {this.props.children}
             </Content>
           </Layout>
@@ -150,4 +155,4 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 };
 
-export default withRouter(connect((props: any, state: any): any => Object.assign({}, props, state))(BasicLayout));
+// export default withRouter(connect((props: any, state: any): any => Object.assign({}, props, state))());
