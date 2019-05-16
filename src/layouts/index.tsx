@@ -3,11 +3,7 @@ import styles from './index.css';
 import { Layout, Menu, Icon } from 'antd';
 import routesConfig from '@/pages/routes'
 import { Link } from 'react-router-dom'
-<<<<<<< HEAD
 // import withRouter from 'umi/withRouter';
-=======
-import withRouter from 'umi/withRouter';
->>>>>>> wk
 import { connect } from 'dva';
 
 const { Header, Sider, Content } = Layout;
@@ -20,23 +16,16 @@ interface BasicLayoutProps {
     collapsed: boolean
   },
   dispatch: any,
-<<<<<<< HEAD
   location: any,
-=======
->>>>>>> wk
 }
 interface BasicLayoutState {
   collapsed: boolean,
   routesConfig: any[],
 }
-<<<<<<< HEAD
 
 // @withRouter()
 @connect((props: any, state: any): any => Object.assign({}, props, state))
 export default class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
-=======
-class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
->>>>>>> wk
   constructor(props: any) {
     super(props)
     this.state = {
@@ -44,11 +33,7 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
       routesConfig: routesConfig.routes
     };
     this.toggle = this.toggle.bind(this)
-<<<<<<< HEAD
     this.fnMenuList = this.fnMenuList.bind(this) 
-=======
-    this.fnMenuList = this.fnMenuList.bind(this)
->>>>>>> wk
   }
 
   fnChangeCollapsed(collapsed: boolean): void {
@@ -69,11 +54,7 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 
   componentDidMount(): void {
-<<<<<<< HEAD
     // console.log()
-=======
-    // console.log(this.props.dispatch)
->>>>>>> wk
   }
 
   fnMenuList(): JSX.Element {
@@ -137,23 +118,15 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 
   render() {
-<<<<<<< HEAD
     if (this.props.location.pathname === '/login') {
       return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', }}>{ this.props.children }</div>
     }
-=======
-    console.log(this.props)
->>>>>>> wk
     return (
       <div className={styles.normal}>
         <Layout style={{ "height": "100vh" }}>
           <Sider
             trigger={null}
-<<<<<<< HEAD
             collapsible
-=======
-            collapsible={true}
->>>>>>> wk
             collapsed={this.props.g.collapsed}
           >
             <div className="logo" />
@@ -182,8 +155,4 @@ class BasicLayout extends React.Component<BasicLayoutProps, BasicLayoutState> {
   }
 };
 
-<<<<<<< HEAD
 // export default withRouter(connect((props: any, state: any): any => Object.assign({}, props, state))());
-=======
-export default withRouter(connect((props: any, state: any): any => Object.assign({}, props, state))(BasicLayout));
->>>>>>> wk

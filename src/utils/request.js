@@ -26,13 +26,9 @@ export default async function request(url, options) {
 
   const ret = {
     data,
-<<<<<<< HEAD
     headers: {
       "Authorization": `Bearer ${localStorage.getItem('access_token')}`
     },
-=======
-    headers: {},
->>>>>>> wk
   };
 
   if (response.headers.get('x-total-count')) {
