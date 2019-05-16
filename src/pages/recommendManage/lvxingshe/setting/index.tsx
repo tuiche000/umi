@@ -384,7 +384,7 @@ class SetupModel extends React.Component<UserFormProps> {
         <Form.Item label="奖励类型" hasFeedback={true}>
           {getFieldDecorator('RewardType', {
             rules: [{ required: true, message: '请选择奖励类型' }],
-            initialValue: record ? "proportion" : null,
+            initialValue: record ? "proportion" : "proportion",
           })(
             <Select placeholder="请选择奖励类型">
               <Option value="proportion">比例</Option>
