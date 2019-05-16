@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, message,Icon  } from 'antd';
 import './index.css'
 import { FormComponentProps } from 'antd/lib/form';
@@ -136,6 +137,159 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     this.state = {
       visible: false, //  控制模态框显示隐藏
       selectedRows:[], // 表格选择框选定的数据
+=======
+import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, message, Icon } from 'antd';
+import './index.css'
+import { FormComponentProps } from 'antd/lib/form';
+// import { func } from 'prop-types';
+// import { spawn } from 'child_process';
+
+
+const { Option } = Select;
+interface UserFormProps extends FormComponentProps {
+  record?: any,
+}
+interface BasicLayoutState {
+  setUpVisible: boolean,
+  EditVisible: boolean,
+  selectedRowKeys: any[],
+  tableData: any[],
+  tableColumns: any[],
+  record: any,
+}
+
+class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
+  constructor(props: UserFormProps) {
+    super(props)
+    this.state = {
+      setUpVisible: false, //  控制批量设置模态框显示隐藏
+      EditVisible: false, //  控制编辑模态框显示隐藏
+      selectedRowKeys: [], // 表格选择框选定的数据
+      record: {}, //编辑选中的数据
+      tableData: [
+        {
+          key: '1',
+          serial: 1,
+          productID: 12,
+          productName: '昆明5天3夜自由行包含机票住宿景点票',
+          productType: "自由行",
+          productManager: "admin",
+          RewardType: "比例",
+          Bonus: 21222,
+          PopularRecommendation: "是",
+          ProductSequencing: 1,
+          IntendedFor: "yu",
+        },
+        {
+          key: '2',
+          serial: 2,
+          productID: 42,
+          productName: '昆明5天3夜自由行包含机票住宿景点票',
+          productType: "自由行",
+          productManager: "admin",
+          RewardType: "比例",
+          Bonus: 21222,
+          PopularRecommendation: "是",
+          ProductSequencing: 1,
+          IntendedFor: "yu",
+        },
+        {
+          key: '3',
+          serial: 3,
+          productID: 32,
+          productName: '昆明5天3夜自由行包含机票住宿景点票',
+          productType: "自由行",
+          productManager: "admin",
+          RewardType: "比例",
+          Bonus: "2.5%",
+          PopularRecommendation: "是",
+          ProductSequencing: 1,
+          IntendedFor: "yu",
+        },
+      ], // 表格数据
+      tableColumns: [
+        
+        {
+          title: '序号',
+          dataIndex: 'serial',
+          key: 'serial',
+          align:"center",
+        },
+        {
+          title: '产品ID',
+          dataIndex: 'productID',
+          key: 'productID',
+          align:"center",
+        },
+        {
+          title: '产品名称',
+          dataIndex: 'productName',
+          key: 'productName',
+          width: 200,
+          align:"center",
+        },
+        {
+          title: '产品类型',
+          dataIndex: 'productType',
+          key: 'productType',
+          align:"center",
+        },
+        {
+          title: '产品经理',
+          dataIndex: 'productManager',
+          key: 'productManager',
+          align:"center",
+        },
+        {
+          title: '奖励类型',
+          dataIndex: 'RewardType',
+          key: 'RewardType',
+          align:"center",
+        },
+        {
+          title: '奖励金',
+          dataIndex: 'Bonus',
+          key: 'Bonus',
+          align:"center",
+        },
+        {
+          title: '热门推荐',
+          dataIndex: 'PopularRecommendation',
+          key: 'PopularRecommendation',
+          align:"center",
+        },
+        {
+          title: '产品排序',
+          dataIndex: 'ProductSequencing',
+          key: 'ProductSequencing',
+          align:"center",
+        },
+        {
+          title: '适用人群',
+          dataIndex: 'IntendedFor',
+          key: 'IntendedFor',
+          align:"center",
+        },
+        {
+          title: '操作',
+          key: 'action',
+          width: 120,
+          align:"center",
+          render: (text: any, record: any) => (
+            <span>
+              <a href="javascript:;" onClick={this.EditShowModal.bind(this, record)}>编辑</a>
+              <Divider type="vertical" />
+              <Popconfirm
+                title="Are you sure？"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+              >
+                <a href="javascript:;">停用</a>
+              </Popconfirm>
+            </span>
+          ),
+        },
+      ], // 表格表头
+>>>>>>> wk
     };
 
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
@@ -154,8 +308,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       cancelText: '取消',
       icon: null,
       centered: true,
+<<<<<<< HEAD
       onOk(){
         console.log(that.state.selectedRows,data)
+=======
+      onOk() {
+        console.log(that.state.selectedRowKeys)
+>>>>>>> wk
       }
     });
   }
@@ -171,14 +330,23 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   // 批量设置开启模态框回调
   setUpShowModal = () => {
     this.setState({
+<<<<<<< HEAD
       visible: true,
+=======
+      setUpVisible: true,
+      record: {},
+>>>>>>> wk
     });
   };
 
   //  批量设置点击确定回调
   setUpHandleOk = (e: any) => {
     this.setState({
+<<<<<<< HEAD
       visible: false,
+=======
+      setUpVisible: false,
+>>>>>>> wk
     });
   };
 
@@ -186,7 +354,35 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   //  批量设置点击取消回调
   setUpHandleCancel = (e: any) => {
     this.setState({
+<<<<<<< HEAD
       visible: false,
+=======
+      setUpVisible: false,
+    });
+  };
+
+
+  // 编辑开启模态框回调
+  EditShowModal = (record: any) => {
+    console.log(record)
+    this.setState({
+      EditVisible: true,
+      record,
+    });
+  };
+  //  编辑点击确定回调
+  EditHandleOk = (e: any) => {
+    this.setState({
+      EditVisible: false,
+    });
+  };
+
+
+  //  编辑点击取消回调
+  EditHandleCancel = (e: any) => {
+    this.setState({
+      EditVisible: false,
+>>>>>>> wk
     });
   };
 
@@ -201,7 +397,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     const rowSelection = {
       onChange: (selectedRowKeys: any, selectedRows: any) => {
         this.setState({
+<<<<<<< HEAD
           selectedRows,
+=======
+          selectedRowKeys,
+>>>>>>> wk
         })
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
@@ -212,7 +412,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           <Row gutter={24}>
             <Col span={12} >
               <Form.Item {...formItemLayout} label="产品ID">
+<<<<<<< HEAD
                 {getFieldDecorator('productId', {
+=======
+                {getFieldDecorator('productID', {
+>>>>>>> wk
                   rules: [
                     {
                       required: true,
@@ -279,23 +483,47 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
+<<<<<<< HEAD
         <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
 
         {/* 批量设置模态框 */}
         <Modal
           // okText="确定"
           visible={this.state.visible}
+=======
+        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.state.tableData} />
+
+        {/* 批量设置模态框 */}
+        <Modal
+          visible={this.state.setUpVisible}
+>>>>>>> wk
           onOk={this.setUpHandleOk}
           onCancel={this.setUpHandleCancel}
         >
           <SetUpFrom></SetUpFrom>
         </Modal>
+<<<<<<< HEAD
+=======
+
+        {/* 编辑模态框 */}
+        <Modal
+          visible={this.state.EditVisible}
+          onOk={this.EditHandleOk}
+          onCancel={this.EditHandleCancel}
+        >
+          <SetUpFrom record={this.state.record}></SetUpFrom>
+        </Modal>
+>>>>>>> wk
       </div>
     );
   }
 }
 
 class SetupModel extends React.Component<UserFormProps> {
+<<<<<<< HEAD
+=======
+
+>>>>>>> wk
   //  批量设置表单点击确定
   setUphandleSubmit = (e: any) => {
     e.preventDefault();
@@ -306,17 +534,51 @@ class SetupModel extends React.Component<UserFormProps> {
     })
   }
   render() {
+<<<<<<< HEAD
     const { getFieldDecorator } = this.props.form
 
+=======
+    console.log(this.props.record)
+    const { getFieldDecorator } = this.props.form
+
+    // 点击编辑从父组件中得到的数据
+    let record = this.props.record
+
+>>>>>>> wk
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     }
+<<<<<<< HEAD
     return (
       <Form {...formItemLayout} onSubmit={this.setUphandleSubmit}>
         <Form.Item label="奖励类型" hasFeedback={true}>
           {getFieldDecorator('RewardType', {
             rules: [{ required: true, message: '请选择奖励类型' }],
+=======
+
+    const RadioItemLayout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+    }
+
+    return (
+      <Form {...formItemLayout} onSubmit={this.setUphandleSubmit}>
+        <Form.Item {...formItemLayout} label="产品ID" style={record ? { display: "block" } : { display: "none" }}>
+          {getFieldDecorator('productID', {
+            // initialValue: record ? record.Bonus : null,
+          })(<span>{record ? record.productID : null}</span>)}
+        </Form.Item>
+        <Form.Item {...formItemLayout} label="产品名称" style={record ? { display: "block" } : { display: "none" }}>
+          {getFieldDecorator('productName', {
+            // initialValue: record ? record.Bonus : null,
+          })(<span>{record ? record.productName : null}</span>)}
+        </Form.Item>
+        <Form.Item label="奖励类型" hasFeedback={true}>
+          {getFieldDecorator('RewardType', {
+            rules: [{ required: true, message: '请选择奖励类型' }],
+            initialValue: record ? "proportion" : null,
+>>>>>>> wk
           })(
             <Select placeholder="请选择奖励类型">
               <Option value="proportion">比例</Option>
@@ -332,6 +594,10 @@ class SetupModel extends React.Component<UserFormProps> {
                 message: '请输入比例',
               },
             ],
+<<<<<<< HEAD
+=======
+            initialValue: record ? record.Bonus : null,
+>>>>>>> wk
           })(<Input placeholder="请输入比例" />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="是否热门推荐">
@@ -352,7 +618,11 @@ class SetupModel extends React.Component<UserFormProps> {
             ],
           })(<Input placeholder="请输入数字" />)}
         </Form.Item>
+<<<<<<< HEAD
         <Form.Item {...formItemLayout} label="适用人群">
+=======
+        <Form.Item {...RadioItemLayout} label="适用人群">
+>>>>>>> wk
           {getFieldDecorator('radio-group')(
             <Radio.Group>
               <Radio value="all">全部</Radio>
