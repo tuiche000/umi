@@ -1,10 +1,10 @@
 import React from 'react'
-import Detail from './components/detail';
+import Add from './components/add';
 
 export default () => {
   return (
     <div>
-      <Detail />
+      <Add />
     </div>
   )
 }

@@ -96,21 +96,21 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
           key: 'action',
           width: 120,
           align: "center",
-          render: (text: any, record: any) => (
-            <span>
-              <Popconfirm
-                title="Are you sure？"
-                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-              >
-                <a href="javascript:;">停用</a>
-              </Popconfirm>
-            </span>
-          ),
+          render: (text: any, record: any) => {
+            console.log(record)
+            return (
+              <span>
+                <a href="javascript:;" onClick={this.fnDetail.bind(this, record)}>查看详情</a>
+              </span>
+            )
+          },
         },
       ], // 表格表头
     };
 
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
+    this.fnAdd = this.fnAdd.bind(this)
+    // this.fnDetail = this.fnDetail.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
   }
 
@@ -119,6 +119,18 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
       type: 'bjlList/fetch',
       payload: ''
     })
+  }
+
+  // 详情
+  fnDetail(record: {
+    id: string
+  }) {
+    router.push(`./list/detail?id=${record.id}`)
+  }
+
+  // 新增
+  fnAdd() {
+    router.push('./list/add')
   }
 
   // 批量停用模态框
@@ -256,7 +268,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
             <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
               批量审核
             </Button>
-            <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse} style={{marginLeft: 10}}>
+            <Button type="primary" htmlType="submit" onClick={this.fnAdd} style={{ marginLeft: 10 }}>
               新增
             </Button>
           </Col>
