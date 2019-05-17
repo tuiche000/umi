@@ -1,10 +1,10 @@
 import React from 'react'
-import Lists from './components/';
+import Setting from './components/';
 
 export default () => {
   return (
     <div>
-      <Lists />
+      <Setting />
     </div>
   )
 }

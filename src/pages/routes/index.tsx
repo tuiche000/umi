@@ -24,9 +24,17 @@ export default {
           ]
         },
         {
+          path: '/recommendManage/fuyouhui',
+          name: '复游会',
+          routes: [
+            { path: '/recommendManage/fuyouhui/setting', component: './fuyouhui/setting', name: '推荐设置' },
+            { path: '/recommendManage/fuyouhui/list', component: './fuyouhui/list', name: '推荐列表' },
+          ]
+        },
+        {
           path: '/recommendManage/bujiangli/list',
           name: '补发奖励管理'
-        }
+        },
       ]
     }
   ],
