@@ -1,10 +1,10 @@
 import React from 'react'
-import Users from './components/Users.js';
+import List from './components/';
 
 export default () => {
   return (
     <div>
-      <Users />
+      <List />
     </div>
   )
 }

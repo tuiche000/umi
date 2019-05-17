@@ -22,6 +22,10 @@ export default {
             { path: '/recommendManage/lvxingshe/list', component: './recommendManage/list', name: '推荐列表' },
             { path: '/recommendManage/lvxingshe/dataOutput', component: './recommendManage/dataOutput', name: '数据导出' },
           ]
+        },
+        {
+          path: '/recommendManage/bujiangli/list',
+          name: '补发奖励管理'
         }
       ]
     }

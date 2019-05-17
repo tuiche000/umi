@@ -2,147 +2,93 @@ import React from 'react';
 import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, message, Icon, DatePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import router from "umi/router"
+import { connect } from 'dva';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-interface UserFormProps extends FormComponentProps {
+interface ComponentProps {
   record?: any,
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
   EditVisible: boolean,
   selectedRowKeys: any[],
-  tableData: any[],
+  tableData?: any[],
   tableColumns: any[],
   record: any,
 }
 
-class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
-  constructor(props: UserFormProps) {
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
+@Form.create<FormComponentProps>()
+export default class AdvancedSearchForm extends React.Component<ComponentProps, BasicLayoutState> {
+  constructor(props: ComponentProps) {
     super(props)
     this.state = {
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
       record: {}, //编辑选中的数据
-      tableData: [
-        {
-          key: '1',
-          Serial: 1,
-          RecommendID: 12,
-          Recommender: '刘德华',
-          RecommendedTime: "2019-01-22 09:09:09",
-          ProductName: "亚特兰蒂斯xxx豪华游",
-          PlatformType: "旅行社",
-          Recommendation: "是",
-          RecommendedPerson: "郭富城",
-          RecommendedWay: "二维码",
-          RewardStatus: "已发放",
-          AuditStatus: "审核通过",
-          orderType: "正常单",
-        },
-        {
-          key: '2',
-          Serial: 1,
-          RecommendID: 12,
-          Recommender: '刘德华',
-          RecommendedTime: "2019-01-22 09:09:09",
-          ProductName: "亚特兰蒂斯xxx豪华游",
-          PlatformType: "旅行社",
-          Recommendation: "是",
-          RecommendedPerson: "郭富城",
-          RecommendedWay: "二维码",
-          RewardStatus: "已发放",
-          AuditStatus: "审核通过",
-          orderType: "正常单",
-        },
-        {
-          key: '3',
-          Serial: 1,
-          RecommendID: 12,
-          Recommender: '刘德华',
-          RecommendedTime: "2019-01-22 09:09:09",
-          ProductName: "亚特兰蒂斯xxx豪华游",
-          PlatformType: "旅行社",
-          Recommendation: "是",
-          RecommendedPerson: "郭富城",
-          RecommendedWay: "二维码",
-          RewardStatus: "已发放",
-          AuditStatus: "审核通过",
-          orderType: "正常单",
-        },
-      ], // 表格数据
       tableColumns: [
         {
           title: '序号',
-          dataIndex: 'Serial',
-          key: 'Serial',
+          dataIndex: '0',
+          key: '0',
           align: "center",
         },
         {
-          title: '推荐ID',
-          dataIndex: 'RecommendID',
-          key: 'RecommendID',
+          title: '补发ID',
+          dataIndex: '1',
+          key: '1',
           align: "center",
         },
         {
-          title: '推荐人',
+          title: '操作人',
           dataIndex: 'Recommender',
           key: 'Recommender',
           align: "center",
         },
         {
-          title: '推荐时间',
+          title: '补发时间',
           dataIndex: 'RecommendedTime',
           key: 'RecommendedTime',
           align: "center",
         },
         {
-          title: '产品名称',
+          title: '所属平台',
           dataIndex: 'ProductName',
           key: 'ProductName',
           align: "center",
         },
         {
-          title: '平台类型',
+          title: '用户名',
           dataIndex: 'PlatformType',
           key: 'PlatformType',
           align: "center",
         },
         {
-          title: '是否推荐成功',
+          title: '用户手机号码',
           dataIndex: 'Recommendation',
           key: 'Recommendation',
           align: "center",
         },
         {
-          title: '被推荐人',
+          title: '奖励金额',
           dataIndex: 'RecommendedPerson',
           key: 'RecommendedPerson',
           align: "center",
         },
         {
-          title: '推荐方式',
+          title: '奖励状态',
           dataIndex: 'RecommendedWay',
           key: 'RecommendedWay',
-          align: "center",
-        },
-        {
-          title: '奖励状态',
-          dataIndex: 'RewardStatus',
-          key: 'RewardStatus',
           align: "center",
         },
         {
           title: '审核状态',
           dataIndex: 'AuditStatus',
           key: 'AuditStatus',
-          align: "center",
-        },
-        {
-          title: '订单类型',
-          dataIndex: 'orderType',
-          key: 'orderType',
           align: "center",
         },
         {
@@ -166,6 +112,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'bjlList/fetch',
+      payload: ''
+    })
   }
 
   // 批量停用模态框
@@ -213,78 +166,65 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch} >
           <Row gutter={24}>
             <Col span={8}>
-              <Form.Item {...formItemLayout} label="推荐人">
+              <Form.Item {...formItemLayout} label="操作人">
                 {getFieldDecorator('recommender', {
                   rules: [
                     {
                       required: true,
-                      message: '请输入推荐人',
+                      message: '请输入操作人',
                     },
                   ],
-                })(<Input placeholder="请输入推荐人" />)}
+                })(<Input placeholder="请输入操作人" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item {...formItemLayout} label="推荐时间">
+              <Form.Item {...formItemLayout} label="补发时间">
                 {getFieldDecorator('recommendedTime', {
                   rules: [
                     {
                       required: true,
-                      message: '请选择推荐时间',
+                      message: '请选择补发时间',
                     },
                   ],
                 })(<RangePicker />)}
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item {...formItemLayout} label="是否推荐成功" hasFeedback={true}>
+              <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
                 {getFieldDecorator('recommendation', {
                   rules: [{ required: true, message: '请选择' }],
                   initialValue: ['yes'],
                 })(
                   <Select placeholder="请选择">
-                    <Option value="yes">是</Option>
-                    <Option value="no">否</Option>
+                    <Option value="0">已发放</Option>
+                    <Option value="1">未发放</Option>
+                    <Option value="2">审核中</Option>
                   </Select>,
                 )}
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item {...formItemLayout} label="推荐产品">
+              <Form.Item {...formItemLayout} label="用户名">
                 {getFieldDecorator('recommendedProducts', {
                   rules: [
                     {
                       required: true,
-                      message: '请输入推荐产品',
+                      message: '请输入用户名',
                     },
                   ],
-                })(<Input placeholder="请输入推荐产品" />)}
+                })(<Input placeholder="请输入用户名" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item {...formItemLayout} label="被推荐人">
+              <Form.Item {...formItemLayout} label="用户手机号">
                 {getFieldDecorator('recommendedPerson', {
                   rules: [
                     {
                       required: true,
-                      message: '请输入被推荐人',
+                      message: '请输入用户手机号',
                     },
                   ],
-                })(<Input placeholder="请输入被推荐人" />)}
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
-                {getFieldDecorator('rewardStatus', {
-                  rules: [{ required: true, message: '请选择' }],
-                  initialValue: ['issued'],
-                })(
-                  <Select placeholder="请选择">
-                    <Option value="issued">已发放</Option>
-                    <Option value="unissued">未发放</Option>
-                    <Option value="audit">审核中</Option>
-                  </Select>,
-                )}
+                })(<Input placeholder="请输入用户手机号" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -316,15 +256,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
               批量审核
             </Button>
+            <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse} style={{marginLeft: 10}}>
+              新增
+            </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.state.tableData} />
+        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.bjlList.tableData} />
       </div>
     );
   }
 }
-
-
-const WrappedAdvancedSearchForm = Form.create<UserFormProps>()(AdvancedSearchForm);
-
-export default WrappedAdvancedSearchForm
