@@ -1,5 +1,9 @@
 import fetch from 'dva/fetch';
 
+function parseJSON(response) {
+  return response.json();
+}
+
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -10,6 +14,14 @@ function checkStatus(response) {
   throw error;
 }
 
+const parseQuery = (obj) => {
+  let str = ''
+  for (let key in obj) {
+    const value = typeof obj[key] !== 'string' ? JSON.stringify(obj[key]) : obj[key]
+    str += '&' + key + '=' + value
+  }
+  return str.substr(1)
+}
 /**
  * Requests a URL, returning a promise.
  *
@@ -17,23 +29,30 @@ function checkStatus(response) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default async function request(url, options) {
-  const response = await fetch(url, options);
-
-  checkStatus(response);
-
-  const data = await response.json();
-
-  const ret = {
-    data,
-    headers: {
-      "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+const request = (url, method = 'get', data) => {
+  const options = {
+    method: method,   // HTTP请求方法，默认为GET
+    headers: {        // HTTP的请求头，默认为{}
+      // 'Content-Type': 'application/json',
+      // 'Authorization': `Bearer ${localStorage.getItem('access_token')}`
     },
-  };
-
-  if (response.headers.get('x-total-count')) {
-    ret.headers['x-total-count'] = response.headers.get('x-total-count');
   }
-
-  return ret;
+  if (method === 'get') {
+    url += '?' + parseQuery(data)
+  } else {
+    options.body = JSON.stringify(data)
+  }
+  return fetch(url, options)
+    .then(checkStatus)
+    .then(parseJSON)
+    .then(data => ({ data }))
+    .catch(err => ({ err }));
+}
+export default {
+  get (url, data) {
+    return request(url, 'get', data)
+  },
+  post (url, data) {
+    return request(url, 'post', data)
+  }
 }

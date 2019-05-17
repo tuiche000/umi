@@ -23,7 +23,7 @@ const config: IConfig = {
   ],
   "proxy": {
     "/api": {
-      "target": "http://jsonplaceholder.typicode.com/",
+      "target": "http://101.132.27.104:7077/",
       "changeOrigin": true,
       "pathRewrite": { "^/api": "" }
     }

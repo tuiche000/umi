@@ -14,9 +14,9 @@ import router from 'umi/router';
 
 // 路由跳转运行时
 export function onRouteChange({ location, routes, action }: any) {
-  console.log(location)
-  console.log(routes)
-  console.log(router)
+  // console.log(location)
+  // console.log(routes)
+  // console.log(router)
   // 没登录
   if (!localStorage.getItem('access_token') && location.pathname != '/login') {
     console.log(router)
