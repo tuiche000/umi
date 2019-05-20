@@ -32,7 +32,7 @@ export default {
           ]
         },
         {
-          path: '/recommendManage/bujiangli/list',
+          path: '/recommendManage/bujiangli',
           name: '补发奖励管理'
         },
       ]

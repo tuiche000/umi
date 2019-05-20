@@ -21,6 +21,8 @@ interface BasicLayoutProps {
 interface BasicLayoutState {
   collapsed: boolean,
   routesConfig: any[],
+  defaultOpenKeys: string[], // subMenu 默认选择key
+  defaultSelectedKeys: string[], // menuItem 默认选择key
 }
 
 // @withRouter()
@@ -30,7 +32,9 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
     super(props)
     this.state = {
       collapsed: false,
-      routesConfig: routesConfig.routes
+      routesConfig: routesConfig.routes,
+      defaultOpenKeys: ['/recommendManage', '/recommendManage/lvxingshe'],
+      defaultSelectedKeys: ['/recommendManage/lvxingshe/setting'],
     };
     this.toggle = this.toggle.bind(this)
     this.fnMenuList = this.fnMenuList.bind(this) 
@@ -111,10 +115,27 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
       )
     })
     return (
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+      <Menu theme="dark" mode="inline" defaultOpenKeys={this.state.defaultOpenKeys} defaultSelectedKeys={this.state.defaultSelectedKeys}>
         {arr}
       </Menu>
     )
+  }
+
+  componentWillMount() {
+    let pathname: string = this.props.location.pathname
+    let pathSnippets: string[] = pathname.split('/').filter(item => item)
+    let defaultOpenKeys: string[] = [`/${pathSnippets[0]}`, `/${pathSnippets[0]}/${pathSnippets[1]}`]
+    this.setState((state: BasicLayoutState, props: BasicLayoutProps) => {
+      return {
+        defaultOpenKeys: defaultOpenKeys,
+        defaultSelectedKeys: [`${pathname}`]
+      }
+    })
+
+    /*
+    ["recommendManage", "lvxingshe", "list"]
+    ["recommendManage", "lvxingshe", "list", "detail"]
+    */
   }
 
   render() {

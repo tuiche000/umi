@@ -97,7 +97,6 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
           width: 120,
           align: "center",
           render: (text: any, record: any) => {
-            console.log(record)
             return (
               <span>
                 <a href="javascript:;" onClick={this.fnDetail.bind(this, record)}>查看详情</a>
@@ -119,6 +118,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
       type: 'bjlList/fetch',
       payload: ''
     })
+    console.log(this.props)
   }
 
   // 详情
@@ -273,7 +273,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
             </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.bjlList.tableData} />
+        <Table loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.bjlList.tableData} />
       </div>
     );
   }

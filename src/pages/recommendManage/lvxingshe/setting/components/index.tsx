@@ -32,72 +32,89 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       selectedRowKeys: [], // 表格选择框选定的数据
       record: {}, //编辑选中的数据
       tableColumns: [
-        {
-          title: '序号',
-          dataIndex: 'serial',
-          key: 'serial',
-          align:"center",
-        },
+        // {
+        //   title: '序号',
+        //   key: 'serial',
+        //   align: "center",
+        //   render: (text: object, record: {
+        //     id: string,
+        //     limitation: string,
+        //     prizeScale: string,
+        //     productId: string,
+        //     productName: string,
+        //     productPrize: string,
+        //     productType: string,
+        //     recommended: boolean,
+        //   }, index: number): JSX.Element => {
+        //     return (
+        //       <span>{index}</span>
+        //     )
+        //   }
+        // },
         {
           title: '产品ID',
           dataIndex: 'id',
           key: 'id',
-          align:"center",
+          align: "center",
         },
         {
           title: '产品名称',
           dataIndex: 'productName',
           key: 'productName',
           width: 200,
-          align:"center",
+          align: "center",
         },
         {
           title: '产品类型',
           dataIndex: 'productType',
           key: 'productType',
-          align:"center",
+          align: "center",
         },
         {
           title: '产品经理',
-          dataIndex: 'productManager',
-          key: 'productManager',
-          align:"center",
+          dataIndex: 'manager',
+          key: 'manager',
+          align: "center",
         },
         {
           title: '奖励类型',
           dataIndex: 'RewardType',
           key: 'RewardType',
-          align:"center",
+          align: "center",
         },
         {
           title: '奖励金',
-          dataIndex: 'Bonus',
-          key: 'Bonus',
-          align:"center",
+          dataIndex: 'productPrize',
+          key: 'productPrize',
+          align: "center",
         },
         {
           title: '热门推荐',
-          dataIndex: 'PopularRecommendation',
-          key: 'PopularRecommendation',
-          align:"center",
+          render: (text: {
+            recommended: boolean
+          }): JSX.Element => {
+            return <span>{text.recommended ? '是' : '否'}</span>
+          },
+          key: 'recommended',
+          align: "center",
         },
         {
           title: '产品排序',
           dataIndex: 'ProductSequencing',
           key: 'ProductSequencing',
-          align:"center",
+          align: "center",
         },
         {
           title: '适用人群',
           dataIndex: 'IntendedFor',
           key: 'IntendedFor',
-          align:"center",
+          align: "center",
         },
         {
           title: '操作',
           key: 'action',
           width: 120,
-          align:"center",
+          align: "center",
           render: (text: any, record: any) => (
             <span>
               <a href="javascript:;" onClick={this.EditShowModal.bind(this, record)}>编辑</a>
@@ -288,7 +305,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table rowKey={((record: object, index: number) => record.id )} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
+        <Table loading={this.props.loading.global} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
 
         {/* 批量设置模态框 */}
         <Modal
