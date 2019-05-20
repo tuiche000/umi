@@ -1,5 +1,5 @@
 import React from 'react'
-import List from './list/components';
+import List from './components';
 
 export default () => {
   return (
