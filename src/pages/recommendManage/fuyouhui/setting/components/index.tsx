@@ -2,8 +2,10 @@ import React from 'react';
 import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, Icon, DatePicker } from 'antd';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form';
+import router from "umi/router"
 
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 interface UserFormProps extends FormComponentProps {
   record?: any,
   dispatch: Function,
@@ -34,27 +36,27 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       record: {}, //编辑选中的数据       this.props.fyhSetting.tableData
       AtableData: [
         {
-          serial:'1',
+          serial: '1',
           id: '7382',
           activityName: "推荐奖励",
           validity: '2019/03/15~2020/03/15',
           IntendedFor: '累计奖励',
         },
         {
-          serial:'2',
+          serial: '2',
           id: '545',
           activityName: "推荐奖励",
           validity: '2019/03/15~2020/03/15',
           IntendedFor: '累计奖励',
         },
         {
-          serial:'3',
+          serial: '3',
           id: '466',
           activityName: "推荐奖励",
           validity: '2019/03/15~2020/03/15',
           IntendedFor: '累计奖励',
         },
-        
+
       ], // 表格数据
       tableColumns: [
         {
@@ -120,11 +122,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
-  // 新增
+  // 新增跳转
   fnNewlyAdded() {
-    alert("1")
+    router.push('./setting/add')
   }
-
+  
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
@@ -219,6 +221,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           visible={this.state.EditVisible}
           onOk={this.EditHandleOk}
           onCancel={this.EditHandleCancel}
+          width={600}
         >
           <SetUpFrom record={this.state.record}></SetUpFrom>
         </Modal>
@@ -267,37 +270,34 @@ class SetupModel extends React.Component<UserFormProps> {
           })(<span>{record ? record.activityName : null}</span>)}
         </Form.Item>
         <Form.Item label="有效期" hasFeedback={true}>
-          {getFieldDecorator('RewardType', {
-            rules: [{ required: true, message: '请选择奖励类型' }],
-            initialValue: record ? "proportion" : null,
-          })(
-            <Select placeholder="请选择奖励类型">
-              <Option value="proportion">比例</Option>
-              <Option value="fixedAmount">固定金额</Option>
-            </Select>,
-          )}
-        </Form.Item>
-        <Form.Item {...formItemLayout} label="奖励金">
-          {getFieldDecorator('Bonus', {
+          {getFieldDecorator('validity', {
             rules: [
               {
                 required: true,
-                message: '请输入比例',
+                message: '请选择推荐时间',
               },
             ],
-            initialValue: record ? record.Bonus : null,
-          })(<Input placeholder="请输入比例" />)}
+          })(<RangePicker />)}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="是否热门推荐">
-          {getFieldDecorator('radio-group')(
+        <Form.Item {...formItemLayout} label="奖励类型">
+          {getFieldDecorator('RewardType')(
             <Radio.Group>
-              <Radio value="true">是</Radio>
-              <Radio value="false">否</Radio>
+              <Radio value="1">单次奖励</Radio>
+              <Radio value="2">累计奖励</Radio>
             </Radio.Group>,
           )}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="产品排序">
-          {getFieldDecorator('ProductSequencing', {
+        <Form.Item {...formItemLayout} label="适用人群">
+          {getFieldDecorator('IntendedFor')(
+            <Radio.Group>
+              <Radio value="all">全部</Radio>
+              <Radio value="staff">复星员工</Radio>
+              <Radio value="isNotStaff">不包含复星员工</Radio>
+            </Radio.Group>,
+          )}
+        </Form.Item>
+        <Form.Item {...formItemLayout} label="阶段1">
+          {getFieldDecorator('stage_one', {
             rules: [
               {
                 required: true,
@@ -306,14 +306,15 @@ class SetupModel extends React.Component<UserFormProps> {
             ],
           })(<Input placeholder="请输入数字" />)}
         </Form.Item>
-        <Form.Item {...RadioItemLayout} label="适用人群">
-          {getFieldDecorator('radio-group')(
-            <Radio.Group>
-              <Radio value="all">全部</Radio>
-              <Radio value="staff">复星员工</Radio>
-              <Radio value="isNotStaff">不包含复星员工</Radio>
-            </Radio.Group>,
-          )}
+        <Form.Item {...formItemLayout} label="阶段2">
+          {getFieldDecorator('stage_two', {
+            rules: [
+              {
+                required: true,
+                message: '请输入数字',
+              },
+            ],
+          })(<Input placeholder="请输入数字" />)}
         </Form.Item>
         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
           <Button type="primary" htmlType="submit">
