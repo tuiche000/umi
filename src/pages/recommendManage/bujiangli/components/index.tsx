@@ -125,12 +125,12 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
   fnDetail(record: {
     id: string
   }) {
-    router.push(`./list/detail?id=${record.id}`)
+    router.push(`./bujiangli/detail?id=${record.id}`)
   }
 
   // 新增
   fnAdd() {
-    router.push('./list/add')
+    router.push('./bujiangli/add')
   }
 
   // 批量停用模态框
