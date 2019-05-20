@@ -39,6 +39,7 @@ export default {
           tableData: data.result
         },
       });
+      console.log(data)
     },
   },
   subscriptions: {
