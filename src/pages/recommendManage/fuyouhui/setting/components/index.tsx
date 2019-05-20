@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, Icon ,DatePicker} from 'antd';
+import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, Icon, DatePicker } from 'antd';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form';
 
@@ -18,6 +18,7 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
+  AtableData: any,
 }
 
 @connect(
@@ -30,44 +31,68 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
-      record: {}, //编辑选中的数据
+      record: {}, //编辑选中的数据       this.props.fyhSetting.tableData
+      AtableData: [
+        {
+          serial:'1',
+          id: '7382',
+          activityName: "推荐奖励",
+          validity: '2019/03/15~2020/03/15',
+          IntendedFor: '累计奖励',
+        },
+        {
+          serial:'2',
+          id: '545',
+          activityName: "推荐奖励",
+          validity: '2019/03/15~2020/03/15',
+          IntendedFor: '累计奖励',
+        },
+        {
+          serial:'3',
+          id: '466',
+          activityName: "推荐奖励",
+          validity: '2019/03/15~2020/03/15',
+          IntendedFor: '累计奖励',
+        },
+        
+      ], // 表格数据
       tableColumns: [
         {
           title: '序号',
           dataIndex: 'serial',
           key: 'serial',
-          align:"center",
+          align: "center",
         },
         {
           title: '活动ID',
           dataIndex: 'id',
           key: 'activityID',
-          align:"center",
+          align: "center",
         },
         {
           title: '活动名称',
           dataIndex: 'activityName',
           key: 'activityName',
           width: 200,
-          align:"center",
+          align: "center",
         },
         {
           title: '有效期',
           dataIndex: 'validity',
           key: 'validity',
-          align:"center",
+          align: "center",
         },
         {
           title: '适用人群',
           dataIndex: 'IntendedFor',
           key: 'IntendedFor',
-          align:"center",
+          align: "center",
         },
         {
           title: '操作',
           key: 'action',
           width: 120,
-          align:"center",
+          align: "center",
           render: (text: any, record: any) => (
             <span>
               <a href="javascript:;" onClick={this.EditShowModal.bind(this, record)}>编辑</a>
@@ -164,8 +189,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Col>
             <Col span={12} pull={6}>
               <Form.Item {...formItemLayout} label="活动时间">
-              {getFieldDecorator('date-picker', { 
-                rules: [{ type: 'object', required: true, message: '请选择活动时间' }],
+                {getFieldDecorator('date-picker', {
+                  rules: [{ type: 'object', required: true, message: '请选择活动时间' }],
                 })(<DatePicker />)}
               </Form.Item>
             </Col>
@@ -187,7 +212,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table rowKey={((record: object, index: number) => record.id )} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
+        <Table rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.state.AtableData} />
 
         {/* 编辑模态框 */}
         <Modal
@@ -231,17 +256,17 @@ class SetupModel extends React.Component<UserFormProps> {
 
     return (
       <Form {...formItemLayout} onSubmit={this.setUphandleSubmit}>
-        <Form.Item {...formItemLayout} label="产品ID" style={record ? { display: "block" } : { display: "none" }}>
-          {getFieldDecorator('productID', {
+        <Form.Item {...formItemLayout} label="活动ID" style={record ? { display: "block" } : { display: "none" }}>
+          {getFieldDecorator('activityID', {
             // initialValue: record ? record.Bonus : null,
-          })(<span>{record ? record.productID : null}</span>)}
+          })(<span>{record ? record.id : null}</span>)}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="产品名称" style={record ? { display: "block" } : { display: "none" }}>
-          {getFieldDecorator('productName', {
+        <Form.Item {...formItemLayout} label="活动名称" style={record ? { display: "block" } : { display: "none" }}>
+          {getFieldDecorator('activityName', {
             // initialValue: record ? record.Bonus : null,
-          })(<span>{record ? record.productName : null}</span>)}
+          })(<span>{record ? record.activityName : null}</span>)}
         </Form.Item>
-        <Form.Item label="奖励类型" hasFeedback={true}>
+        <Form.Item label="有效期" hasFeedback={true}>
           {getFieldDecorator('RewardType', {
             rules: [{ required: true, message: '请选择奖励类型' }],
             initialValue: record ? "proportion" : null,
