@@ -123,10 +123,11 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
     }
     return (
       <div className={styles.normal}>
-        <Layout style={{ "height": "100vh" }}>
+        <Layout>
           <Sider
             trigger={null}
             collapsible
+            style={{ "minHeight": "100vh" }}
             collapsed={this.props.g.collapsed}
           >
             <div className="logo" />
@@ -137,7 +138,7 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
           <Layout>
             <Header style={{ background: '#fff', padding: 0 }}>
               <Icon
-                className="trigger"
+                className={styles.trigger}
                 type={this.props.g.collapsed ? 'menu-unfold' : 'menu-fold'}
                 onClick={this.toggle}
               />

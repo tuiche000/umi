@@ -41,7 +41,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         {
           title: '产品ID',
           dataIndex: 'id',
-          key: 'productID',
+          key: 'id',
           align:"center",
         },
         {

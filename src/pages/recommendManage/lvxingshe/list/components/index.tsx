@@ -24,7 +24,7 @@ interface BasicLayoutState {
 
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
-  )
+)
 @Form.create<UserFormProps>()
 export default class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
   constructor(props: UserFormProps) {
@@ -43,8 +43,8 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         },
         {
           title: '推荐ID',
-          dataIndex: 'RecommendID',
-          key: 'RecommendID',
+          dataIndex: 'id',
+          key: 'id',
           align: "center",
         },
         {
@@ -123,8 +123,15 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
   }
+  componentDidMount(): void {
+    this.props.dispatch({
+      type: 'lxsList/fetch',
+      payload: {
+        
+      }
+    })
+  }
   goDetail(record: any) {
-    console.log("111", record)
     router.push("./list/detail")
   }
   // 批量停用模态框
@@ -141,7 +148,6 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
       }
     });
   }
-
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();

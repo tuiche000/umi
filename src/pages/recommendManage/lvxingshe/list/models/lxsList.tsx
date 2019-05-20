@@ -1,4 +1,4 @@
-// import * as Service from '../services';
+import * as Service from '../services';
 // import router from 'umi/router';
 
 interface interface_state {
@@ -17,49 +17,12 @@ export default {
     record: {}, //编辑选中的数据
     tableData: [
       {
-        key: '1',
-        Serial: 1,
-        RecommendID: 12,
-        Recommender: '刘德华',
-        RecommendedTime: "2019-01-22 09:09:09",
-        ProductName: "亚特兰蒂斯xxx豪华游",
-        PlatformType: "旅行社",
-        Recommendation: "是",
-        RecommendedPerson: "郭富城",
-        RecommendedWay: "二维码",
-        RewardStatus: "已发放",
-        AuditStatus: "审核通过",
-        orderType: "正常单",
-      },
-      {
-        key: '2',
-        Serial: 1,
-        RecommendID: 12,
-        Recommender: '刘德华',
-        RecommendedTime: "2019-01-22 09:09:09",
-        ProductName: "亚特兰蒂斯xxx豪华游",
-        PlatformType: "旅行社",
-        Recommendation: "是",
-        RecommendedPerson: "郭富城",
-        RecommendedWay: "二维码",
-        RewardStatus: "已发放",
-        AuditStatus: "审核通过",
-        orderType: "正常单",
-      },
-      {
-        key: '3',
-        Serial: 1,
-        RecommendID: 12,
-        Recommender: '刘德华',
-        RecommendedTime: "2019-01-22 09:09:09",
-        ProductName: "亚特兰蒂斯xxx豪华游",
-        PlatformType: "旅行社",
-        Recommendation: "是",
-        RecommendedPerson: "郭富城",
-        RecommendedWay: "二维码",
-        RewardStatus: "已发放",
-        AuditStatus: "审核通过",
-        orderType: "正常单",
+        id: "5AGIuJOBtY3uy2uf6j470q",
+        limitation: "ALL_MEMBER",
+        prizeScale: "NUMBER",
+        productPrize: "0.00",
+        productType: "自由行",
+        recommended: false,
       },
     ], // 表格数据
     tableColumns: []
@@ -73,19 +36,19 @@ export default {
     }
   },
   effects: {
-    // *fetch({ payload: { page = 1 } }, { call, put }: any) {
-    //   const result = yield call(Service.productlist, {
-    //     pageNo: 1,
-    //     pageSize: 10,
-    //   });
-    //   const { data } = result.data
-    //   yield put({
-    //     type: 'save',
-    //     payload: {
-    //       tableData: data.result
-    //     },
-    //   });
-    // },
+    *fetch({ payload: { } }, { call, put }: any) {
+      const result = yield call(Service.productTasklist, {
+        pageNo: 1,
+        pageSize: 10,
+      });
+      const { data } = result.data
+      yield put({
+        type: 'save',
+        payload: {
+          tableData: data.result
+        },
+      });
+    },
   },
   subscriptions: {
     // setup({ dispatch, history }: any, done: any) {
