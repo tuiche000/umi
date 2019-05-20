@@ -64,17 +64,13 @@ class Detail extends React.Component<interface_props, interface_state> {
         <Card bordered={false}>
           <div>
             <h3>
-              <b>推荐信息</b>
+              <b>基础信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>推荐ID：3410xxxx</Col>
-              <Col span={8}>推荐产品：昆明5天3夜自由行包含机票住宿景点票</Col>
-              <Col span={8}>推荐人：张学友</Col>
-              <Col span={8}>推荐时间：2019-01-22 09:09:09</Col>
-              <Col span={8}>被推荐人：吴亦凡</Col>
-              <Col span={8}>推荐方式：微信</Col>
-              <Col span={8}>推荐人手机号：139000000000</Col>
-              <Col span={8}>推荐链接：http://foliday.id838943.dfdf</Col>
+              <Col span={6}>用户ID：3410xxxx</Col>
+              <Col span={6}>用户名：昆明5天</Col>
+              <Col span={6}>手机号：188888888888</Col>
+              <Col span={6}>注册时间：2019/10/10</Col>
             </Row>
             <Row gutter={20}>
               <Col span={24} style={{ textAlign: 'right' }}>
