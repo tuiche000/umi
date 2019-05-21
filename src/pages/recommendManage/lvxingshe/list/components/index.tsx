@@ -282,7 +282,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lxsList.tableData} />
+        <Table rowSelection={rowSelection} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
       </div>
     );
   }

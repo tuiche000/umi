@@ -67,26 +67,26 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         },
         {
           title: '活动副标题',
-          dataIndex: 'PlatformType',
-          key: 'PlatformType',
+          dataIndex: 'ActivitySubtitle',
+          key: 'ActivitySubtitle',
           align: "center",
         },
         {
-          title: '是否推荐成功',
-          dataIndex: 'Recommendation',
-          key: 'Recommendation',
+          title: '活动说明',
+          dataIndex: 'ActivityDescription',
+          key: 'ActivityDescription',
           align: "center",
         },
         {
-          title: '被推荐人',
-          dataIndex: 'RecommendedPerson',
-          key: 'RecommendedPerson',
+          title: '活动类型',
+          dataIndex: 'ActivityType',
+          key: 'ActivityType',
           align: "center",
         },
         {
-          title: '推荐方式',
-          dataIndex: 'RecommendedWay',
-          key: 'RecommendedWay',
+          title: '目前阶段',
+          dataIndex: 'CurrentStage',
+          key: 'CurrentStage',
           align: "center",
         },
         {
@@ -264,7 +264,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} />
+        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );
   }
