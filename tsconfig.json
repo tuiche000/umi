@@ -7,7 +7,7 @@
     "jsx": "react",
     "esModuleInterop": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": ".",    
     "strict": true,
     "experimentalDecorators": true,
     "paths": {
