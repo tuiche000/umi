@@ -20,6 +20,11 @@ interface BasicLayoutState {
   record: any,
 }
 
+const limitation = {
+  ALL_MEMBER: '全体会员',
+  EXCLUDE_EMPLOYEE: '不包含复星员工',
+  ONLY_EMPLOYEE: '仅复星员工'
+}
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
@@ -100,13 +105,18 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         },
         {
           title: '产品排序',
-          dataIndex: 'ProductSequencing',
-          key: 'ProductSequencing',
+          dataIndex: 'displayOrder',
+          key: 'displayOrder',
           align: "center",
         },
         {
           title: '适用人群',
-          dataIndex: 'IntendedFor',
+          render: (text: {
+            limitation: 'ALL_MEMBER' | 'EXCLUDE_EMPLOYEE' | 'ONLY_EMPLOYEE'
+          }): JSX.Element => {
+            console.log()
+            return <span>{limitation[text.limitation]}</span>
+          },
           key: 'IntendedFor',
           align: "center",
         },

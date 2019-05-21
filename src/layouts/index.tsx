@@ -37,7 +37,7 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
       defaultSelectedKeys: ['/recommendManage/lvxingshe/setting'],
     };
     this.toggle = this.toggle.bind(this)
-    this.fnMenuList = this.fnMenuList.bind(this) 
+    this.fnMenuList = this.fnMenuList.bind(this)
   }
 
   fnChangeCollapsed(collapsed: boolean): void {
@@ -140,7 +140,7 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
 
   render() {
     if (this.props.location.pathname === '/login') {
-      return <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', }}>{ this.props.children }</div>
+      return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', }}>{this.props.children}</div>
     }
     return (
       <div className={styles.normal}>
@@ -163,6 +163,19 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
                 type={this.props.g.collapsed ? 'menu-unfold' : 'menu-fold'}
                 onClick={this.toggle}
               />
+              {/* <div className="antd-pro-components-global-header-index-right" style={{
+                float: 'right',
+                height: '100%',
+                overflow: 'hidden'
+              }}>
+                <span style={{
+                  display: 'inline-block',
+                  height: '100%',
+                  padding: '0 12px',
+                  cursor: 'pointer',
+                  transition: 'all .3s',
+                }}>right</span>
+              </div> */}
             </Header>
             <Content style={{
               margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,

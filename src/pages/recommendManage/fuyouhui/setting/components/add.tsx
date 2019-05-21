@@ -80,7 +80,7 @@ export default class RegistrationForm extends React.Component {
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 16 },
+        sm: { span: 8 },
       },
     };
     const tailFormItemLayout = {
