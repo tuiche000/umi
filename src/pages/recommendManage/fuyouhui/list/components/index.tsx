@@ -264,7 +264,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} />
+        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );
   }

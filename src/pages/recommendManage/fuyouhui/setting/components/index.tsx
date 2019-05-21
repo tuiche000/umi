@@ -214,7 +214,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.state.AtableData} />
+        <Table rowKey={((record: object, index: number) => record.id)} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.state.AtableData} />
 
         {/* 编辑模态框 */}
         <Modal
