@@ -46,9 +46,9 @@ export default {
       });
     },
 
-    *edit({ payload: { page = 1 } }, { call, put }: any) {
-      const result = yield call(Service.edit, {
-      });
+    *edit({ payload }, { call, put }: any) {
+      console.log(payload)
+      const result = yield call(Service.edit, payload);
       console.log(result)
     },
 

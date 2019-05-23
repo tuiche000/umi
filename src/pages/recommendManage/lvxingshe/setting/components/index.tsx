@@ -340,13 +340,16 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           onOk={this.EditHandleOk}
           onCancel={this.EditHandleCancel}
         >
-          <SetUpFrom record={this.state.record} dispatch={this.props.dispatch}></SetUpFrom>
+          <SetUpFrom record={this.state.record}></SetUpFrom>
         </Modal>
       </div>
     );
   }
 }
 
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
 class SetupModel extends React.Component<UserFormProps> {
   //  批量设置表单点击确定
   setUphandleSubmit = (e: any) => {
