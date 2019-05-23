@@ -358,6 +358,7 @@ class SetupModel extends React.Component<UserFormProps> {
       if (!err) {
         values.productId = this.props.record.productId
         values.productName = this.props.record.productName
+        values.id = this.props.record.id
         if(values.recommended == "true") {
           values.recommended = true
         }else {

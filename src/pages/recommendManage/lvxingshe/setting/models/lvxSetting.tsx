@@ -47,9 +47,18 @@ export default {
     },
 
     *edit({ payload }, { call, put }: any) {
-      console.log(payload)
+      // console.log(payload)
       const result = yield call(Service.edit, payload);
-      console.log(result)
+      yield put({
+        type: 'fetch',
+        payload: "",
+      });
+      // yield put({
+      //   type: 'save',
+      //   payload: {
+      //     tableData: result
+      //   },
+      // });
     },
 
   },
