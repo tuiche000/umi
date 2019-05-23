@@ -42,7 +42,9 @@ export default {
         pageSize: 10,
       });
       const { data } = result.data
-      console.log(data)
+      data.result.forEach((item: any, index: any) => {
+        item.serial = index + 1
+      })
       yield put({
         type: 'save',
         payload: {

@@ -36,8 +36,7 @@ export default {
 
       data.result.forEach((item:any,index:any) => {
         item.serial = index +1
-      })
-      
+      }) 
       yield put({
         type: 'save',
         payload: {
@@ -45,6 +44,16 @@ export default {
         },
       });
       console.log(data)
+    },
+    
+    *edit({ payload }, { call, put }: any) {
+      const result = yield call(Service.edit, payload);
+      if (result.data.code === "0") {
+        yield put({
+          type: 'fetch',
+          payload: "",
+        });
+      }
     },
   },
   subscriptions: {

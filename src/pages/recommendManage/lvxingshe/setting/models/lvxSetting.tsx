@@ -34,10 +34,10 @@ export default {
       });
       const { data } = result.data
 
-      data.result.forEach((item:any,index:any) => {
-        item.serial = index +1
+      data.result.forEach((item: any, index: any) => {
+        item.serial = index + 1
       })
-      
+
       yield put({
         type: 'save',
         payload: {
@@ -47,9 +47,13 @@ export default {
     },
 
     *edit({ payload }, { call, put }: any) {
-      console.log(payload)
       const result = yield call(Service.edit, payload);
-      console.log(result)
+      if (result.data.code === "0") {
+        yield put({
+          type: 'fetch',
+          payload: "",
+        });
+      }
     },
 
   },

@@ -8,6 +8,7 @@ interface interface_state {
   tableData: any[],
   tableColumns: any[],
   record: any,
+  detailData: {}, // 列表详情数据
 }
 export default {
   state: {
@@ -16,7 +17,8 @@ export default {
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
     tableData: [], // 表格数据
-    tableColumns: []
+    tableColumns: [],
+    detailData: {}, // 列表详情数据
   },
   reducers: {
     save(state: interface_state, action: {
@@ -33,17 +35,29 @@ export default {
         pageSize: 10,
       });
       const { data } = result.data
-      console.log(data.result)
-      data.result.forEach((item:any,index:any) => {
-        item.serial = index +1
-      })
       
+      data.result.forEach((item: any, index: any) => {
+        item.serial = index + 1
+      })
+
       yield put({
         type: 'save',
         payload: {
           tableData: data.result
         },
       });
+    },
+    *detail({ payload }, { call, put }: any) {
+      const result = yield call(Service.detail, payload);
+      const { data } = result.data
+      if (result.code === "0") {
+        yield put({
+          type: 'save',
+          payload: {
+            detailData: data
+          },
+        });
+      }
     },
   },
   subscriptions: {

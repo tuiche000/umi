@@ -47,20 +47,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           dataIndex: 'serial',
           key: 'serial',
           align: "center",
-          // render: (text: object, record: {
-          //   id: string,
-          //   limitation: string,
-          //   prizeScale: string,
-          //   productId: string,
-          //   productName: string,
-          //   productPrize: string,
-          //   productType: string,
-          //   recommended: boolean,
-          // }, index: number): JSX.Element => {
-          //   return (
-          //     <span>{index}</span>
-          //   )
-          // }
         },
         {
           title: '产品ID',
@@ -140,6 +126,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               <Divider type="vertical" />
               <Popconfirm
                 title="Are you sure？"
+                onConfirm={this.confirm.bind(this,record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
                 <a href="javascript:;">{text.enabled ? '启用' : "停用"}</a>
@@ -154,7 +141,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     this.handleSearch = this.handleSearch.bind(this)
     this.setUpShowModal = this.setUpShowModal.bind(this)
     this.setUpHandleOk = this.setUpHandleOk.bind(this)
-
   }
 
   componentDidMount() {
@@ -165,6 +151,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
+  confirm = (record:any) => {
+    record.enabled = !record.enabled
+    this.props.dispatch({
+      type: 'lvxSetting/edit',
+      payload: record
+    })
+  }
   // 批量停用模态框
   fnDiscontinueUse() {
     let that = this
@@ -358,16 +351,18 @@ class SetupModel extends React.Component<UserFormProps> {
       if (!err) {
         values.productId = this.props.record.productId
         values.productName = this.props.record.productName
-        if(values.recommended == "true") {
+        values.id = this.props.record.id
+        if (values.recommended == "true") {
           values.recommended = true
-        }else {
+        } else {
           values.recommended = false
         }
-        console.log(values);
+
         this.props.dispatch({
           type: 'lvxSetting/edit',
-          payload:values
+          payload: values
         })
+
       }
     })
   }
