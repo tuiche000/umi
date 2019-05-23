@@ -142,7 +142,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                 title="Are you sure？"
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
-                <a href="javascript:;">停用</a>
+                <a href="javascript:;">{text.enabled ? '启用' : "停用"}</a>
               </Popconfirm>
             </span>
           ),
@@ -158,8 +158,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   componentDidMount() {
-    // console.log()
-
+    console.log(this.props)
     this.props.dispatch({
       type: 'lvxSetting/fetch',
       payload: ''
@@ -341,7 +340,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           onOk={this.EditHandleOk}
           onCancel={this.EditHandleCancel}
         >
-          <SetUpFrom record={this.state.record}></SetUpFrom>
+          <SetUpFrom record={this.state.record} dispatch={this.props.dispatch}></SetUpFrom>
         </Modal>
       </div>
     );
@@ -354,7 +353,18 @@ class SetupModel extends React.Component<UserFormProps> {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        values.productId = this.props.record.productId
+        values.productName = this.props.record.productName
+        if(values.recommended == "true") {
+          values.recommended = true
+        }else {
+          values.recommended = false
+        }
+        console.log(values);
+        this.props.dispatch({
+          type: 'lvxSetting/edit',
+          payload:values
+        })
       }
     })
   }
@@ -378,7 +388,7 @@ class SetupModel extends React.Component<UserFormProps> {
     return (
       <Form {...formItemLayout} onSubmit={this.setUphandleSubmit}>
         <Form.Item {...formItemLayout} label="产品ID" style={record ? { display: "block" } : { display: "none" }}>
-          {getFieldDecorator('productID', {
+          {getFieldDecorator('productId', {
             // initialValue: record ? record.Bonus : null,
           })(<span>{record ? record.productId : null}</span>)}
         </Form.Item>
@@ -399,18 +409,18 @@ class SetupModel extends React.Component<UserFormProps> {
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="奖励金">
-          {getFieldDecorator('Bonus', {
+          {getFieldDecorator('productPrize', {
             rules: [
               {
                 required: true,
                 message: '请输入比例',
               },
             ],
-            initialValue:record.productPrize,
+            initialValue: record.productPrize,
           })(<Input placeholder="请输入比例" />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="是否热门推荐">
-          {getFieldDecorator('radio-group', {
+          {getFieldDecorator('recommended', {
             initialValue: record.recommended ? "true" : "false",
           })(
             <Radio.Group>
@@ -420,19 +430,19 @@ class SetupModel extends React.Component<UserFormProps> {
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="产品排序">
-          {getFieldDecorator('ProductSequencing', {
+          {getFieldDecorator('displayOrder', {
             rules: [
               {
                 required: true,
                 message: '请输入数字',
               },
             ],
-            initialValue:record.displayOrder,
+            initialValue: record.displayOrder,
           })(<Input placeholder="请输入数字" />)}
         </Form.Item>
         <Form.Item {...RadioItemLayout} label="适用人群">
-          {getFieldDecorator('radio-group',{
-            initialValue:record.limitation,
+          {getFieldDecorator('limitation', {
+            initialValue: record.limitation,
           })(
             <Radio.Group>
               <Radio value="ALL_MEMBER">全部</Radio>

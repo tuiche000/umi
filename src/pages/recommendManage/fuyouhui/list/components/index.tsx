@@ -7,6 +7,11 @@ import router from "umi/router"
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const reviewStatus = {
+  0: '待审核',
+  1: '审核成功',
+  2: '审核失败'
+}
 interface UserFormProps extends FormComponentProps {
   record?: any,
   fyhList: {
@@ -37,44 +42,44 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
       tableColumns: [
         {
           title: '序号',
-          dataIndex: 'Serial',
-          key: 'Serial',
+          dataIndex: 'serial',
+          key: 'serial',
           align: "center",
         },
         {
           title: '活动ID',
-          dataIndex: 'ActivityID',
-          key: 'ActivityID',
+          dataIndex: 'id',
+          key: 'id',
           align: "center",
         },
         {
           title: '推荐人',
-          dataIndex: 'Recommender',
-          key: 'Recommender',
+          dataIndex: 'recommender',
+          key: 'recommender',
           align: "center",
         },
         {
           title: '推荐时间',
-          dataIndex: 'RecommendedTime',
-          key: 'RecommendedTime',
+          dataIndex: 'recommendDate',
+          key: 'recommendDate',
           align: "center",
         },
         {
           title: '活动名称',
-          dataIndex: 'ActivityName',
-          key: 'ActivityName',
+          dataIndex: 'ActivitytSubTitle',
+          key: 'ActivitytSubTitle',
           align: "center",
         },
         {
           title: '活动副标题',
-          dataIndex: 'ActivitySubtitle',
-          key: 'ActivitySubtitle',
+          dataIndex: 'activitytSubTitle',
+          key: 'activitytSubTitle',
           align: "center",
         },
         {
           title: '活动说明',
-          dataIndex: 'ActivityDescription',
-          key: 'ActivityDescription',
+          dataIndex: 'activitytDestription',
+          key: 'activitytDestription',
           align: "center",
         },
         {
@@ -91,14 +96,22 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         },
         {
           title: '奖励状态',
-          dataIndex: 'RewardStatus',
-          key: 'RewardStatus',
+          render: (text: {
+            prizeStatus: Number
+          }): JSX.Element => {
+            return <span>{text.prizeStatus === 0 ? '未发放' : '已发放'}</span>
+          },
+          key: 'recommended',
           align: "center",
         },
         {
           title: '审核状态',
-          dataIndex: 'AuditStatus',
-          key: 'AuditStatus',
+          render: (text: {
+            reviewStatus: 0 | 1 | 2
+          }): JSX.Element => {
+            return <span>{reviewStatus[text.reviewStatus]}</span>
+          },
+          key: 'reviewStatus',
           align: "center",
         },
         {
@@ -142,6 +155,14 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     });
   }
 
+  componentDidMount(): void {
+    this.props.dispatch({
+      type: 'fyhList/fetch',
+      payload: {
+
+      }
+    })
+  }
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
@@ -184,7 +205,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐时间">
-                {getFieldDecorator('recommendedTime', {
+                {getFieldDecorator('recommendDate', {
                   rules: [
                     {
                       required: true,
@@ -196,7 +217,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
-                {getFieldDecorator('rewardStatus', {
+                {getFieldDecorator('prizeStatus', {
                   rules: [{ required: true, message: '请选择' }],
                   initialValue: ['issued'],
                 })(
@@ -210,7 +231,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="活动名称">
-                {getFieldDecorator('ActivityName', {
+                {getFieldDecorator('activitytSubTitle', {
                   rules: [
                     {
                       required: true,
@@ -264,7 +285,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
+        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );
   }

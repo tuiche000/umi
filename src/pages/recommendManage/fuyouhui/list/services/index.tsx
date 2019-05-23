@@ -9,3 +9,7 @@ export function tasklist(
 ) {
   return request.get(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/task/list`, params);
 }
+
+// export function detail(id:any) {
+//   return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/${id}/member/detail)
+// }

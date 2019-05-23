@@ -45,6 +45,13 @@ export default {
         },
       });
     },
+
+    *edit({ payload: { page = 1 } }, { call, put }: any) {
+      const result = yield call(Service.edit, {
+      });
+      console.log(result)
+    },
+
   },
   subscriptions: {
     // setup({ dispatch, history }: any, done: any) {

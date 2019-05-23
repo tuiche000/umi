@@ -15,53 +15,7 @@ export default {
     EditVisible: false, //  控制编辑模态框显示隐藏
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
-    tableData: [
-      {
-        key: '1',
-        Serial: 1,
-        ActivityID: 12,
-        Recommender: '刘德华',
-        RecommendedTime: "2019-01-22 09:09:09",
-        ActivityName: "亚特兰蒂斯xxx豪华游",
-        ActivitySubtitle: "旅行社",
-        Recommendation: "是",
-        RecommendedPerson: "郭富城",
-        RecommendedWay: "二维码",
-        RewardStatus: "已发放",
-        AuditStatus: "审核通过",
-        orderType: "正常单",
-      },
-      {
-        key: '2',
-        Serial: 1,
-        ActivityID: 121,
-        Recommender: '刘德华',
-        RecommendedTime: "2019-01-22 09:09:09",
-        ActivityName: "亚特兰蒂斯xxx豪华游",
-        ActivitySubtitle: "旅行社",
-        Recommendation: "是",
-        RecommendedPerson: "郭富城",
-        RecommendedWay: "二维码",
-        RewardStatus: "已发放",
-        AuditStatus: "审核通过",
-        orderType: "正常单",
-      },
-      {
-        key: '3',
-        Serial: 1,
-        ActivityID: 122,
-        Recommender: '刘德华',
-        RecommendedTime: "2019-01-22 09:09:09",
-        ActivityName: "亚特兰蒂斯xxx豪华游",
-        ActivitySubtitle: "旅行社",
-        Recommendation: "是",
-        RecommendedPerson: "郭富城",
-        RecommendedWay: "二维码",
-        RewardStatus: "已发放",
-        AuditStatus: "审核通过",
-        orderType: "正常单",
-      },
-    ], // 表格数据
+    tableData: [], // 表格数据
     tableColumns: []
   },
   reducers: {
@@ -79,7 +33,11 @@ export default {
         pageSize: 10,
       });
       const { data } = result.data
-      console.log(data)
+      console.log(data.result)
+      data.result.forEach((item:any,index:any) => {
+        item.serial = index +1
+      })
+      
       yield put({
         type: 'save',
         payload: {
