@@ -1,6 +1,6 @@
 import * as Service from '../services';
 // import router from 'umi/router';
-
+console.log()
 interface interface_state {
   setUpVisible: boolean,
   EditVisible: boolean,
@@ -33,6 +33,11 @@ export default {
         pageSize: 10,
       });
       const { data } = result.data
+
+      data.result.forEach((item:any,index:any) => {
+        item.serial = index +1
+      })
+      
       yield put({
         type: 'save',
         payload: {

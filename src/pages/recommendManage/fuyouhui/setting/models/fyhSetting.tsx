@@ -28,11 +28,16 @@ export default {
   },
   effects: {
     *fetch({ payload: { page = 1 } }, { call, put }: any) {
-      const result = yield call(Service.productlist, {
+      const result = yield call(Service.tasklist, {
         pageNo: 1,
         pageSize: 10,
       });
       const { data } = result.data
+
+      data.result.forEach((item:any,index:any) => {
+        item.serial = index +1
+      })
+      
       yield put({
         type: 'save',
         payload: {

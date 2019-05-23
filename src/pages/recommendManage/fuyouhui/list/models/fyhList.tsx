@@ -1,4 +1,4 @@
-// import * as Service from '../services';
+import * as Service from '../services';
 // import router from 'umi/router';
 
 interface interface_state {
@@ -73,19 +73,20 @@ export default {
     }
   },
   effects: {
-    // *fetch({ payload: { page = 1 } }, { call, put }: any) {
-    //   const result = yield call(Service.productlist, {
-    //     pageNo: 1,
-    //     pageSize: 10,
-    //   });
-    //   const { data } = result.data
-    //   yield put({
-    //     type: 'save',
-    //     payload: {
-    //       tableData: data.result
-    //     },
-    //   });
-    // },
+    *fetch({ payload: { page = 1 } }, { call, put }: any) {
+      const result = yield call(Service.tasklist, {
+        pageNo: 1,
+        pageSize: 10,
+      });
+      const { data } = result.data
+      console.log(data)
+      yield put({
+        type: 'save',
+        payload: {
+          tableData: data.result
+        },
+      });
+    },
   },
   subscriptions: {
     // setup({ dispatch, history }: any, done: any) {

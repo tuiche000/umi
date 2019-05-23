@@ -6,10 +6,19 @@ import router from "umi/router"
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const limitation = {
+  ALL_MEMBER: '全体会员',
+  EXCLUDE_EMPLOYEE: '不包含复星员工',
+  ONLY_EMPLOYEE: '仅复星员工'
+}
+const ruleType = {
+  SINGLE: '单次奖励',
+  ACCUMULATIVE : '累计奖励',
+}
 interface UserFormProps extends FormComponentProps {
   record?: any,
   dispatch: Function,
-  lvxSetting: {
+  fyhSetting: {
     tableData: object[]
   },
 }
@@ -34,30 +43,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
       record: {}, //编辑选中的数据       this.props.fyhSetting.tableData
-      AtableData: [
-        {
-          serial: '1',
-          id: '7382',
-          activityName: "推荐奖励",
-          validity: '2019/03/15~2020/03/15',
-          IntendedFor: '累计奖励',
-        },
-        {
-          serial: '2',
-          id: '545',
-          activityName: "推荐奖励",
-          validity: '2019/03/15~2020/03/15',
-          IntendedFor: '累计奖励',
-        },
-        {
-          serial: '3',
-          id: '466',
-          activityName: "推荐奖励",
-          validity: '2019/03/15~2020/03/15',
-          IntendedFor: '累计奖励',
-        },
-
-      ], // 表格数据
       tableColumns: [
         {
           title: '序号',
@@ -79,15 +64,29 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           align: "center",
         },
         {
+          title: '奖励类型',
+          render: (text: {
+            ruleType: 'SINGLE' | 'ACCUMULATIVE'
+          }): JSX.Element => {
+            return <span>{ruleType[text.ruleType]}</span>
+          },
+          key: 'ruleType',
+          align: "center",
+        },
+        {
           title: '有效期',
-          dataIndex: 'validity',
-          key: 'validity',
+          dataIndex: 'endDate',
+          key: 'endDate',
           align: "center",
         },
         {
           title: '适用人群',
-          dataIndex: 'IntendedFor',
-          key: 'IntendedFor',
+          render: (text: {
+            limitation: 'ALL_MEMBER' | 'EXCLUDE_EMPLOYEE' | 'ONLY_EMPLOYEE'
+          }): JSX.Element => {
+            return <span>{limitation[text.limitation]}</span>
+          },
+          key: 'limitation',
           align: "center",
         },
         {
@@ -126,7 +125,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   fnNewlyAdded() {
     router.push('./setting/add')
   }
-  
+
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
@@ -214,7 +213,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table rowKey={((record: object, index: number) => record.id)} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.state.AtableData} />
+        <Table rowKey={((record: object, index: number) => record.id)} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
 
         {/* 编辑模态框 */}
         <Modal
@@ -270,7 +269,7 @@ class SetupModel extends React.Component<UserFormProps> {
           })(<span>{record ? record.activityName : null}</span>)}
         </Form.Item>
         <Form.Item label="有效期" hasFeedback={true}>
-          {getFieldDecorator('validity', {
+          {getFieldDecorator('endDate', {
             rules: [
               {
                 required: true,

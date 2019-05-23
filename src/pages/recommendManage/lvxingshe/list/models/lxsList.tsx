@@ -42,6 +42,7 @@ export default {
         pageSize: 10,
       });
       const { data } = result.data
+      console.log(data)
       yield put({
         type: 'save',
         payload: {

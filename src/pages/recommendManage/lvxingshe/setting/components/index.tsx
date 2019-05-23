@@ -25,6 +25,11 @@ const limitation = {
   EXCLUDE_EMPLOYEE: '不包含复星员工',
   ONLY_EMPLOYEE: '仅复星员工'
 }
+const prizeScale = {
+  SCALE: '比例',
+  NUMBER: '累计金额',
+}
+
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
@@ -37,29 +42,30 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       selectedRowKeys: [], // 表格选择框选定的数据
       record: {}, //编辑选中的数据
       tableColumns: [
-        // {
-        //   title: '序号',
-        //   key: 'serial',
-        //   align: "center",
-        //   render: (text: object, record: {
-        //     id: string,
-        //     limitation: string,
-        //     prizeScale: string,
-        //     productId: string,
-        //     productName: string,
-        //     productPrize: string,
-        //     productType: string,
-        //     recommended: boolean,
-        //   }, index: number): JSX.Element => {
-        //     return (
-        //       <span>{index}</span>
-        //     )
-        //   }
-        // },
+        {
+          title: '序号',
+          dataIndex: 'serial',
+          key: 'serial',
+          align: "center",
+          // render: (text: object, record: {
+          //   id: string,
+          //   limitation: string,
+          //   prizeScale: string,
+          //   productId: string,
+          //   productName: string,
+          //   productPrize: string,
+          //   productType: string,
+          //   recommended: boolean,
+          // }, index: number): JSX.Element => {
+          //   return (
+          //     <span>{index}</span>
+          //   )
+          // }
+        },
         {
           title: '产品ID',
-          dataIndex: 'id',
-          key: 'id',
+          dataIndex: 'productId',
+          key: 'productId',
           align: "center",
         },
         {
@@ -83,8 +89,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         },
         {
           title: '奖励类型',
-          dataIndex: 'RewardType',
-          key: 'RewardType',
+          render: (text: {
+            prizeScale: 'SINGLE' | 'ACCUMULATIVE'
+          }): JSX.Element => {
+            return <span>{prizeScale[text.prizeScale]}</span>
+          },
+          key: 'prizeScale',
           align: "center",
         },
         {
@@ -114,10 +124,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           render: (text: {
             limitation: 'ALL_MEMBER' | 'EXCLUDE_EMPLOYEE' | 'ONLY_EMPLOYEE'
           }): JSX.Element => {
-            console.log()
             return <span>{limitation[text.limitation]}</span>
           },
-          key: 'IntendedFor',
+          key: 'limitation',
           align: "center",
         },
         {
@@ -212,13 +221,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       record,
     });
   };
+
   //  编辑点击确定回调
   EditHandleOk = (e: any) => {
     this.setState({
       EditVisible: false,
     });
   };
-
 
   //  编辑点击取消回调
   EditHandleCancel = (e: any) => {
@@ -350,7 +359,7 @@ class SetupModel extends React.Component<UserFormProps> {
     })
   }
   render() {
-    console.log(this.props.record)
+    // console.log(this.props.record)
     const { getFieldDecorator } = this.props.form
 
     // 点击编辑从父组件中得到的数据
@@ -371,7 +380,7 @@ class SetupModel extends React.Component<UserFormProps> {
         <Form.Item {...formItemLayout} label="产品ID" style={record ? { display: "block" } : { display: "none" }}>
           {getFieldDecorator('productID', {
             // initialValue: record ? record.Bonus : null,
-          })(<span>{record ? record.productID : null}</span>)}
+          })(<span>{record ? record.productId : null}</span>)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="产品名称" style={record ? { display: "block" } : { display: "none" }}>
           {getFieldDecorator('productName', {
@@ -379,13 +388,13 @@ class SetupModel extends React.Component<UserFormProps> {
           })(<span>{record ? record.productName : null}</span>)}
         </Form.Item>
         <Form.Item label="奖励类型" hasFeedback={true}>
-          {getFieldDecorator('RewardType', {
+          {getFieldDecorator('prizeScale', {
             rules: [{ required: true, message: '请选择奖励类型' }],
-            initialValue: record ? "proportion" : null,
+            initialValue: record.prizeScale,
           })(
             <Select placeholder="请选择奖励类型">
-              <Option value="proportion">比例</Option>
-              <Option value="fixedAmount">固定金额</Option>
+              <Option value="SCALE">比例</Option>
+              <Option value="NUMBER">固定金额</Option>
             </Select>,
           )}
         </Form.Item>
@@ -397,11 +406,13 @@ class SetupModel extends React.Component<UserFormProps> {
                 message: '请输入比例',
               },
             ],
-            initialValue: record ? record.Bonus : null,
+            initialValue:record.productPrize,
           })(<Input placeholder="请输入比例" />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="是否热门推荐">
-          {getFieldDecorator('radio-group')(
+          {getFieldDecorator('radio-group', {
+            initialValue: record.recommended ? "true" : "false",
+          })(
             <Radio.Group>
               <Radio value="true">是</Radio>
               <Radio value="false">否</Radio>
@@ -416,14 +427,17 @@ class SetupModel extends React.Component<UserFormProps> {
                 message: '请输入数字',
               },
             ],
+            initialValue:record.displayOrder,
           })(<Input placeholder="请输入数字" />)}
         </Form.Item>
         <Form.Item {...RadioItemLayout} label="适用人群">
-          {getFieldDecorator('radio-group')(
+          {getFieldDecorator('radio-group',{
+            initialValue:record.limitation,
+          })(
             <Radio.Group>
-              <Radio value="all">全部</Radio>
-              <Radio value="staff">复星员工</Radio>
-              <Radio value="isNotStaff">不包含复星员工</Radio>
+              <Radio value="ALL_MEMBER">全部</Radio>
+              <Radio value="ONLY_EMPLOYEE">复星员工</Radio>
+              <Radio value="EXCLUDE_EMPLOYEE">不包含复星员工</Radio>
             </Radio.Group>,
           )}
         </Form.Item>
