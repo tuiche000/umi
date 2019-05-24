@@ -7,7 +7,7 @@ export function productTasklist(
     product: {},
   }
 ) {
-  return request.get(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/product/list`, params);
+  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/product/list`, params);
 }
 
 export function examine(

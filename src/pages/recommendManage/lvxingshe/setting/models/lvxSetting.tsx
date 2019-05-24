@@ -27,16 +27,16 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload: { page = 1 } }, { call, put }: any) {
-      const result = yield call(Service.productlist, {
-        pageNo: 1,
-        pageSize: 10,
-      });
+    *fetch({ payload }, { call, put }: any) {
+      const result = yield call(Service.productlist, payload);
       const { data } = result.data
-
-      data.result.forEach((item: any, index: any) => {
-        item.serial = index + 1
-      })
+      if (data.result) {
+        data.result.forEach((item: any, index: any) => {
+          item.serial = index + 1
+        })
+      } else {
+        data.result = []
+      }
 
       yield put({
         type: 'save',

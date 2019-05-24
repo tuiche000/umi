@@ -9,6 +9,7 @@ interface UserFormProps extends FormComponentProps {
   dispatch: Function,
   lvxSetting: {
     tableData: object[]
+    EditVisible: boolean,
   },
 }
 interface BasicLayoutState {
@@ -129,14 +130,14 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                 onConfirm={this.confirm.bind(this, record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
-                <a href="javascript:;">{text.enabled ? '启用' : "停用"}</a>
+                <a href="javascript:;">{text.enabled ? '停用' : "启用"}</a>
               </Popconfirm>
             </span>
           ),
         },
       ], // 表格表头
     };
-    
+
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
     this.setUpShowModal = this.setUpShowModal.bind(this)
@@ -147,7 +148,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     console.log(this.props)
     this.props.dispatch({
       type: 'lvxSetting/fetch',
-      payload: ''
+      payload: {
+        pageNo: 1,
+        pageSize: 10,
+      }
     })
   }
 
@@ -178,6 +182,25 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       console.log('Received values of form: ', values);
+      if (!err) {
+        let obj = {
+          pageNo: 1,
+          pageSize: 10,
+          productId: values.productId,
+          productName: values.productName,
+        }
+        // 当对象key值无数据时删除该key
+        for (let key in obj) {
+          if(!obj[key]) {
+            delete obj[key]
+          }
+        }
+        console.log(obj)
+        this.props.dispatch({
+          type: 'lvxSetting/fetch',
+          payload: obj
+        })
+      }
     });
   };
 
@@ -207,9 +230,14 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   // 编辑开启模态框回调
   EditShowModal = (record: any) => {
-    console.log(record)
+    console.log(record, this.props.lvxSetting.EditVisible)
+    this.props.dispatch({
+      type: 'lvxSetting/save',
+      payload: {
+        EditVisible: true
+      }
+    })
     this.setState({
-      EditVisible: true,
       record,
     });
   };
@@ -217,9 +245,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   //  编辑点击取消回调
   EditHandleCancel = (e: any) => {
-    this.setState({
-      EditVisible: false,
-    });
+    this.props.dispatch({
+      type: 'lvxSetting/save',
+      payload: {
+        EditVisible: false
+      }
+    })
   };
 
 
@@ -243,29 +274,29 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           <Row gutter={24}>
             <Col span={12} >
               <Form.Item {...formItemLayout} label="产品ID">
-                {getFieldDecorator('productID', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入产品ID',
-                    },
-                  ],
+                {getFieldDecorator('productId', {
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入产品ID',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入产品ID" />)}
               </Form.Item>
             </Col>
             <Col span={12} pull={6}>
               <Form.Item {...formItemLayout} label="产品名称">
                 {getFieldDecorator('productName', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入产品名称',
-                    },
-                  ],
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入产品名称',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入产品名称" />)}
               </Form.Item>
             </Col>
-            <Col span={12} >
+            {/* <Col span={12} >
               <Form.Item {...formItemLayout} label="产品类型">
                 {getFieldDecorator('productType', {
                   rules: [
@@ -277,7 +308,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                 })(<Input placeholder="请输入产品类型" />)}
               </Form.Item>
             </Col>
-            <Col span={12} pull={6} >
+            <Col span={12} pull={6}>
               <Form.Item {...formItemLayout} label="产品经理">
                 {getFieldDecorator('productManager', {
                   rules: [
@@ -288,9 +319,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                   ],
                 })(<Input placeholder="请输入产品经理" />)}
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
-
           <Row>
             <Col span={24} style={{ textAlign: 'center' }}>
               <Button type="primary" htmlType="submit">
@@ -323,7 +353,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
         {/* 编辑模态框 */}
         <Modal
-          visible={this.state.EditVisible}
+          visible={this.props.lvxSetting.EditVisible}
           // onOk={this.EditHandleOk}
           onCancel={this.EditHandleCancel}
           footer={null}
@@ -356,7 +386,13 @@ class SetupModel extends React.Component<UserFormProps> {
           type: 'lvxSetting/edit',
           payload: values
         })
-
+        // 关闭模态框
+        this.props.dispatch({
+          type: 'lvxSetting/save',
+          payload: {
+            EditVisible: false
+          }
+        })
       }
     })
   }

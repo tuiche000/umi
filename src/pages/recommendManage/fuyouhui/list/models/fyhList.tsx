@@ -1,5 +1,6 @@
 import * as Service from '../services';
 // import router from 'umi/router';
+import { message } from 'antd';
 
 interface interface_state {
   setUpVisible: boolean,
@@ -29,13 +30,10 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload: { page = 1 } }, { call, put }: any) {
-      const result = yield call(Service.tasklist, {
-        pageNo: 1,
-        pageSize: 10,
-      });
+    *fetch({ payload}, { call, put }: any) {
+      const result = yield call(Service.tasklist, payload);
       const { data } = result.data
-      
+
       data.result.forEach((item: any, index: any) => {
         item.serial = index + 1
       })
@@ -50,13 +48,19 @@ export default {
     *detail({ payload }, { call, put }: any) {
       const result = yield call(Service.detail, payload);
       const { data } = result.data
-      if (result.code === "0") {
+      if (result.data.code === "0") {
         yield put({
           type: 'save',
           payload: {
             detailData: data
           },
         });
+      }
+    },
+    *review({ payload }, { call, put }: any) {
+      const result = yield call(Service.review, payload);
+      if (result.data.code != "0") {
+        message.error(result.data.message);
       }
     },
   },

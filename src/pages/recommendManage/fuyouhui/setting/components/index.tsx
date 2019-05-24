@@ -51,12 +51,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           key: 'serial',
           align: "center",
         },
-        {
-          title: '活动ID',
-          dataIndex: 'id',
-          key: 'activityID',
-          align: "center",
-        },
+        // {
+        //   title: '活动ID',
+        //   dataIndex: 'id',
+        //   key: 'activityID',
+        //   align: "center",
+        // },
         {
           title: '活动名称',
           dataIndex: 'activityName',
@@ -104,7 +104,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                 onConfirm={this.confirm.bind(this,record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
-                <a href="javascript:;">{text.enabled ? '启用' : "停用"}</a>
+                <a href="javascript:;">{text.enabled ? '停用' : "启用"}</a>
               </Popconfirm>
             </span>
           ),

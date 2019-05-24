@@ -4,10 +4,11 @@ export function productlist(
   params: {
     pageNo: 1,
     pageSize: 10,
-    product: {},
+    productId: string,
+    productName: string,
   }
 ) {
-  return request.get(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/productlist`, params);
+  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/productlist`, params);
 }
 
 export function edit(

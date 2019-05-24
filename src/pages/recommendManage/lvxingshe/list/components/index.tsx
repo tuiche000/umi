@@ -48,12 +48,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           key: 'serial',
           align: "center",
         },
-        {
-          title: '推荐ID',
-          dataIndex: 'id',
-          key: 'id',
-          align: "center",
-        },
+        // {
+        //   title: '推荐ID',
+        //   dataIndex: 'id',
+        //   key: 'id',
+        //   align: "center",
+        // },
         {
           title: '推荐人',
           dataIndex: 'recommender',
@@ -108,13 +108,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         },
         {
           title: '审核状态',
+          key: 'reviewStatus',
+          align: "center",
           render: (text: {
             reviewStatus: 0 | 1 | 2
           }): JSX.Element => {
             return <span>{reviewStatus[text.reviewStatus]}</span>
           },
-          key: 'reviewStatus',
-          align: "center",
         },
         {
           title: '操作',
@@ -122,16 +122,16 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           width: 180,
           align: "center",
           render: (text: any, record: any) => (
-            <span>
+            <span style={record.reviewStatus === 1 ? { display: "none" } : { display: "inline-block" }}>
               <Popconfirm
                 title="Are you sure？"
                 onConfirm={this.confirm.bind(this, record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
-                <a href="javascript:;">审核通过</a>
+                <a href="javascript:;">审核成功</a>
               </Popconfirm>
               <Divider type="vertical" />
-              <a href="javascript:;" onClick={this.auditFailed.bind(this, record)}>审核未通过</a>
+              <a href="javascript:;" onClick={this.auditFailed.bind(this, record)} >审核失败</a>
               {/* <a href="javascript:;" onClick={this.auditFailed}>审核未通过</a> */}
             </span>
           ),
@@ -146,12 +146,15 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   componentDidMount(): void {
     this.props.dispatch({
       type: 'lxsList/fetch',
-      payload: { }
+      payload: {
+        pageNo: 1,
+        pageSize: 10,
+      }
     })
   }
 
   confirm = (record: any) => {
-    console.log(record.id,this.props)
+    console.log(record.id, this.props)
     this.props.dispatch({
       type: 'lxsList/examine',
       payload: {
@@ -161,7 +164,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
-  // 审核未通过模态框显示
+  // 审核失败模态框显示
   auditFailed(record: any) {
     this.setState({
       auditFailedVisible: true,
@@ -195,6 +198,25 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       console.log('Received values of form: ', values);
+      let obj = {
+        pageNo: 1,
+        pageSize: 10,
+        productName: values.productName,
+        recommendDate: values.recommendDate,
+        recommender: values.recommender,
+        reviewStatus: values.reviewStatus,
+        rewardStatus: values.rewardStatus,
+      }
+      // 当对象key值无数据时删除该key
+      for (let key in obj) {
+        if (!obj[key]) {
+          delete obj[key]
+        }
+      }
+      this.props.dispatch({
+        type: 'lxsList/fetch',
+        payload: obj
+      })
     });
   };
 
@@ -221,29 +243,29 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐人">
                 {getFieldDecorator('recommender', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入推荐人',
-                    },
-                  ],
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入推荐人',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入推荐人" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐时间">
                 {getFieldDecorator('recommendDate', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请选择推荐时间',
-                    },
-                  ],
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请选择推荐时间',
+                  //   },
+                  // ],
                 })(<RangePicker />)}
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item {...formItemLayout} label="是否推荐成功" hasFeedback={true}>
+              {/* <Form.Item {...formItemLayout} label="是否推荐成功" hasFeedback={true}>
                 {getFieldDecorator('recommendation', {
                   rules: [{ required: true, message: '请选择' }],
                   initialValue: ['yes'],
@@ -253,21 +275,21 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                     <Option value="no">否</Option>
                   </Select>,
                 )}
-              </Form.Item>
+              </Form.Item> */}
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐产品">
-                {getFieldDecorator('recommendedProducts', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入推荐产品',
-                    },
-                  ],
+                {getFieldDecorator('productName', {
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入推荐产品',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入推荐产品" />)}
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item {...formItemLayout} label="被推荐人">
                 {getFieldDecorator('recommended', {
                   rules: [
@@ -278,31 +300,30 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                   ],
                 })(<Input placeholder="请输入被推荐人" />)}
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
                 {getFieldDecorator('rewardStatus', {
-                  rules: [{ required: true, message: '请选择' }],
-                  initialValue: ['issued'],
+                  // rules: [{ required: true, message: '请选择' }],
+                  // initialValue:[1],
                 })(
                   <Select placeholder="请选择">
-                    <Option value="issued">已发放</Option>
-                    <Option value="unissued">未发放</Option>
-                    <Option value="audit">审核中</Option>
+                    <Option value={1}>已发放</Option>
+                    <Option value={0}>未发放</Option>
                   </Select>,
                 )}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="审核状态" hasFeedback={true}>
-                {getFieldDecorator('auditStatus', {
-                  rules: [{ required: true, message: '请选择' }],
-                  initialValue: ['pass'],
+                {getFieldDecorator('reviewStatus', {
+                  // rules: [{ required: true, message: '请选择' }],
+                  // initialValue: [1],
                 })(
                   <Select placeholder="请选择">
-                    <Option value="pass">审核通过</Option>
-                    <Option value="notPass">审核未通过</Option>
-                    <Option value="wait">待审核</Option>
+                    <Option value={1}>审核通过</Option>
+                    <Option value={2}>审核未通过</Option>
+                    <Option value={0}>待审核</Option>
                   </Select>,
                 )}
               </Form.Item>
