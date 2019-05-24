@@ -126,7 +126,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               <Divider type="vertical" />
               <Popconfirm
                 title="Are you sure？"
-                onConfirm={this.confirm.bind(this,record)}
+                onConfirm={this.confirm.bind(this, record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
                 <a href="javascript:;">{text.enabled ? '启用' : "停用"}</a>
@@ -136,7 +136,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         },
       ], // 表格表头
     };
-
+    
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
     this.setUpShowModal = this.setUpShowModal.bind(this)
@@ -151,7 +151,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
-  confirm = (record:any) => {
+  confirm = (record: any) => {
     record.enabled = !record.enabled
     this.props.dispatch({
       type: 'lvxSetting/edit',
@@ -214,12 +214,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     });
   };
 
-  //  编辑点击确定回调
-  EditHandleOk = (e: any) => {
-    this.setState({
-      EditVisible: false,
-    });
-  };
 
   //  编辑点击取消回调
   EditHandleCancel = (e: any) => {
@@ -330,8 +324,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         {/* 编辑模态框 */}
         <Modal
           visible={this.state.EditVisible}
-          onOk={this.EditHandleOk}
+          // onOk={this.EditHandleOk}
           onCancel={this.EditHandleCancel}
+          footer={null}
         >
           <SetUpFrom record={this.state.record}></SetUpFrom>
         </Modal>
@@ -357,7 +352,6 @@ class SetupModel extends React.Component<UserFormProps> {
         } else {
           values.recommended = false
         }
-
         this.props.dispatch({
           type: 'lvxSetting/edit',
           payload: values

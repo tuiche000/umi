@@ -32,7 +32,7 @@ interface BasicLayoutState {
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
 @Form.create<UserFormProps>()
-export default class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
+class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
   constructor(props: UserFormProps) {
     super(props)
     this.state = {
@@ -146,40 +146,26 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   componentDidMount(): void {
     this.props.dispatch({
       type: 'lxsList/fetch',
-      payload: {
+      payload: { }
+    })
+  }
 
+  confirm = (record: any) => {
+    console.log(record.id,this.props)
+    this.props.dispatch({
+      type: 'lxsList/examine',
+      payload: {
+        id: record.id,
+        status: "SUCCESSFUL",
       }
     })
   }
 
-  // goDetail(record: any) {
-  //   router.push("./list/detail")
-  // }
-
-  confirm = (record: any) => {
-    alert("1")
-  }
-
-  //  审核未通过模态框点击确定回调
-  auditFailedHandleOk = (e: any) => {
-
-    // 表单验证
-    e.preventDefault();
-    this.props.form.validateFields((err: any, values: any) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.setState({
-          auditFailedVisible: false,
-        });
-      }
-    });
-  };
-
   // 审核未通过模态框显示
-  auditFailed(e: any) {
-    console.log(e)
+  auditFailed(record: any) {
     this.setState({
       auditFailedVisible: true,
+      record,
     });
   }
 
@@ -343,37 +329,70 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         {/* 审核未通过 */}
         <Modal
           visible={this.state.auditFailedVisible}
-          onOk={this.auditFailedHandleOk}
           onCancel={this.auditFailedleCancel}
+          footer={null}
         >
           <h4><b>请填写失败原因（请谨慎填写，用户将会看到失败原因）</b></h4>
-          <Form onSubmit={this.auditFailedHandleOk}>
-            <Form.Item>
-              {getFieldDecorator('reason', {
-                rules: [{ required: true, message: '请输入原因' }],
-              })(
-                <Input
-                  placeholder="请输入原因"
-                />,
-              )}
-            </Form.Item>
-            <Form.Item>
-              {getFieldDecorator('remarks', {
-                // rules: [{ required: true, message: '请输入备注' }],
-              })(
-                <Input
-                  placeholder="请输入备注"
-                />,
-              )}
-            </Form.Item>
-          </Form>
+          <SetUpFrom record={this.state.record}></SetUpFrom>
         </Modal>
       </div>
     );
   }
 }
 
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
+class SetupModel extends React.Component<UserFormProps> {
+  //  批量设置表单点击确定
+  auditFailedHandleOk = (e: any) => {
+    // 表单验证
+    e.preventDefault();
+    this.props.form.validateFields((err: any, values: any) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.setState({
+          auditFailedVisible: false,
+        });
+        console.log(this.props.record)
+      }
+    });
+  };
 
-// const WrappedAdvancedSearchForm = Form.create<UserFormProps>()(AdvancedSearchForm);
+  render() {
+    const { getFieldDecorator } = this.props.form
 
-// export default WrappedAdvancedSearchForm
+    return (
+      <Form onSubmit={this.auditFailedHandleOk}>
+        <Form.Item>
+          {getFieldDecorator('reason', {
+            rules: [{ required: true, message: '请输入原因' }],
+          })(
+            <Input
+              placeholder="请输入原因"
+            />,
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('remarks', {
+            // rules: [{ required: true, message: '请输入备注' }],
+          })(
+            <Input
+              placeholder="请输入备注"
+            />,
+          )}
+        </Form.Item>
+        <Form.Item wrapperCol={{ span: 12, offset: 10 }}>
+          <Button type="primary" htmlType="submit">
+            确定
+          </Button>
+        </Form.Item>
+      </Form>
+    )
+  }
+}
+
+const WrappedAdvancedSearchForm = Form.create<UserFormProps>()(AdvancedSearchForm);
+const SetUpFrom = Form.create<UserFormProps>()(SetupModel);
+
+export default WrappedAdvancedSearchForm

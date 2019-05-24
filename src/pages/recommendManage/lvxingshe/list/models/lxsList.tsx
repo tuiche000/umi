@@ -52,6 +52,12 @@ export default {
         },
       });
     },
+
+    *examine({ payload }, { call, put }: any) {
+      const result = yield call(Service.examine, payload);
+      // const { data } = result.data
+      console.log(result)
+    },
   },
   subscriptions: {
     // setup({ dispatch, history }: any, done: any) {
