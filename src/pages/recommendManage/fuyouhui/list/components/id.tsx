@@ -2,21 +2,30 @@ import React from 'react';
 import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input, Table } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
+import router from "umi/router"
 
 const { TextArea } = Input;
 
 interface UserFormProps extends FormComponentProps {
-
+  fyhList: {
+    detailData: object[]
+  },
 }
 interface interface_state {
   auditFailedVisible: boolean,
   tableColumns: any[],
   selectedRowKeys: any[],
   tableData: any[],
-  resetFields:any,
+  resetFields: any,
 }
 interface interface_props extends UserFormProps {
-
+  routing: {
+    location: {
+      query: {
+        id: string
+      }
+    }
+  }
 }
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
@@ -25,7 +34,7 @@ class Detail extends React.Component<interface_props, interface_state> {
   constructor(props: any) {
     super(props)
     this.state = {
-      resetFields:null,
+      resetFields: null,
       auditFailedVisible: false, // 审核未通过显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
       tableData: [
@@ -95,10 +104,21 @@ class Detail extends React.Component<interface_props, interface_state> {
         },
       ], // 表格表头
     }
+   
     this.auditFailed = this.auditFailed.bind(this)
     this.auditPassConfirm = this.auditPassConfirm.bind(this)
   };
 
+  componentDidMount() {
+
+    this.props.dispatch({
+      type: 'fyhList/detail',
+      payload: {
+        id: this.props.routing.location.query.id
+      }
+    })
+    console.log(this.props.fyhList.detailData)
+  }
   // 审核通过确定回调函数
   auditPassConfirm() {
     console.log("11")
@@ -131,7 +151,7 @@ class Detail extends React.Component<interface_props, interface_state> {
   };
 
   render() {
-    const { getFieldDecorator , resetFields } = this.props.form;
+    const { getFieldDecorator, resetFields } = this.props.form;
     // 表格被选择时的回调函数
     const rowSelection = {
       onChange: (selectedRowKeys: any, selectedRows: any) => {
@@ -147,7 +167,7 @@ class Detail extends React.Component<interface_props, interface_state> {
         <Card bordered={false}>
           <div>
             <h3>
-              <b>基础信息</b>
+              <b>基础信息{this.props.fyhList.detailData.id}</b>
             </h3>
             <Row gutter={32}>
               <Col span={6}>用户ID：3410xxxx</Col>
@@ -207,7 +227,7 @@ class Detail extends React.Component<interface_props, interface_state> {
           onOk={this.auditFailedHandleOk}
           onCancel={this.auditFailedleCancel}
         >
-  
+
           <Form onSubmit={this.auditFailedHandleOk}>
             <Form.Item label="失败原因">
               {getFieldDecorator('reason', {

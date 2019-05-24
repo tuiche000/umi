@@ -3,6 +3,7 @@ import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Po
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form';
 import router from "umi/router"
+import moment from 'moment';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -100,9 +101,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               <Divider type="vertical" />
               <Popconfirm
                 title="Are you sure？"
+                onConfirm={this.confirm.bind(this,record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
-                <a href="javascript:;">停用</a>
+                <a href="javascript:;">{text.enabled ? '启用' : "停用"}</a>
               </Popconfirm>
             </span>
           ),
@@ -121,6 +123,14 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
+  confirm = (record:any) => {
+    record.enabled = !record.enabled
+    this.props.dispatch({
+      type: 'fyhSetting/edit',
+      payload: record
+    })
+  }
+  
   // 新增跳转
   fnNewlyAdded() {
     router.push('./setting/add')
@@ -251,21 +261,15 @@ class SetupModel extends React.Component<UserFormProps> {
       wrapperCol: { span: 14 },
     }
 
-    const RadioItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 16 },
-    }
-
+    const dateFormat = 'YYYY-MM-DD';
     return (
       <Form {...formItemLayout} onSubmit={this.setUphandleSubmit}>
         <Form.Item {...formItemLayout} label="活动ID" style={record ? { display: "block" } : { display: "none" }}>
           {getFieldDecorator('activityID', {
-            // initialValue: record ? record.Bonus : null,
           })(<span>{record ? record.id : null}</span>)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="活动名称" style={record ? { display: "block" } : { display: "none" }}>
           {getFieldDecorator('activityName', {
-            // initialValue: record ? record.Bonus : null,
           })(<span>{record ? record.activityName : null}</span>)}
         </Form.Item>
         <Form.Item label="有效期" hasFeedback={true}>
@@ -276,22 +280,27 @@ class SetupModel extends React.Component<UserFormProps> {
                 message: '请选择推荐时间',
               },
             ],
+            initialValue: [moment(record.beginDate.split(" ")[0], dateFormat), moment(record.endDate.split(" ")[0], dateFormat)],
           })(<RangePicker />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="奖励类型">
-          {getFieldDecorator('RewardType')(
+          {getFieldDecorator('ruleType',{
+            initialValue: record.ruleType,
+          })(
             <Radio.Group>
-              <Radio value="1">单次奖励</Radio>
-              <Radio value="2">累计奖励</Radio>
+              <Radio value="SINGLE">单次奖励</Radio>
+              <Radio value="ACCUMULATIVE">累计奖励</Radio>
             </Radio.Group>,
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="适用人群">
-          {getFieldDecorator('IntendedFor')(
+          {getFieldDecorator('limitation',{
+            initialValue: record.limitation,
+          })(
             <Radio.Group>
-              <Radio value="all">全部</Radio>
-              <Radio value="staff">复星员工</Radio>
-              <Radio value="isNotStaff">不包含复星员工</Radio>
+              <Radio value="ALL_MEMBER">全部</Radio>
+              <Radio value="EXCLUDE_EMPLOYEE">复星员工</Radio>
+              <Radio value="ONLY_EMPLOYEE">不包含复星员工</Radio>
             </Radio.Group>,
           )}
         </Form.Item>

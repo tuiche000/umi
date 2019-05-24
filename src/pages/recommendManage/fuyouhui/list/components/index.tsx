@@ -101,7 +101,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           }): JSX.Element => {
             return <span>{text.prizeStatus === 0 ? '未发放' : '已发放'}</span>
           },
-          key: 'recommended',
+          key: 'prizeStatus',
           align: "center",
         },
         {
@@ -136,9 +136,9 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
   }
+
   goDetail(record: any) {
-    console.log("111", record)
-    router.push("./list/detail")
+    router.push("./list/detail?id=" + record.id)
   }
   // 批量停用模态框
   fnDiscontinueUse() {

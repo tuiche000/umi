@@ -7,6 +7,11 @@ import router from "umi/router"
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const reviewStatus = {
+  0: '待审核',
+  1: '审核成功',
+  2: '审核失败'
+}
 interface UserFormProps extends FormComponentProps {
   record?: any,
   lxsList: {
@@ -20,16 +25,18 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
+  auditFailedVisible: boolean,
 }
 
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
 @Form.create<UserFormProps>()
-export default class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
+class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
   constructor(props: UserFormProps) {
     super(props)
     this.state = {
+      auditFailedVisible: false, // 审核未通过显示隐藏
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
@@ -37,8 +44,8 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
       tableColumns: [
         {
           title: '序号',
-          dataIndex: 'Serial',
-          key: 'Serial',
+          dataIndex: 'serial',
+          key: 'serial',
           align: "center",
         },
         {
@@ -49,71 +56,83 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         },
         {
           title: '推荐人',
-          dataIndex: 'Recommender',
-          key: 'Recommender',
+          dataIndex: 'recommender',
+          key: 'recommender',
           align: "center",
         },
         {
           title: '推荐时间',
-          dataIndex: 'RecommendedTime',
-          key: 'RecommendedTime',
+          dataIndex: 'recommendDate',
+          key: 'recommendDate',
           align: "center",
         },
         {
           title: '产品名称',
-          dataIndex: 'ProductName',
-          key: 'ProductName',
+          dataIndex: 'productName',
+          key: 'productName',
           align: "center",
         },
-        {
-          title: '平台类型',
-          dataIndex: 'PlatformType',
-          key: 'PlatformType',
-          align: "center",
-        },
-        {
-          title: '是否推荐成功',
-          dataIndex: 'Recommendation',
-          key: 'Recommendation',
-          align: "center",
-        },
+        // {
+        //   title: '平台类型',
+        //   dataIndex: 'PlatformType',
+        //   key: 'PlatformType',
+        //   align: "center",
+        // },
+        // {
+        //   title: '是否推荐成功',
+        //   dataIndex: 'Recommendation',
+        //   key: 'Recommendation',
+        //   align: "center",
+        // },
         {
           title: '被推荐人',
-          dataIndex: 'RecommendedPerson',
-          key: 'RecommendedPerson',
+          dataIndex: 'recommended',
+          key: 'recommended',
           align: "center",
         },
-        {
-          title: '推荐方式',
-          dataIndex: 'RecommendedWay',
-          key: 'RecommendedWay',
-          align: "center",
-        },
+        // {
+        //   title: '推荐方式',
+        //   dataIndex: 'RecommendedWay',
+        //   key: 'RecommendedWay',
+        //   align: "center",
+        // },
         {
           title: '奖励状态',
-          dataIndex: 'RewardStatus',
-          key: 'RewardStatus',
+          render: (text: {
+            prizeStatus: Number
+          }): JSX.Element => {
+            return <span>{text.prizeStatus === 0 ? '未发放' : '已发放'}</span>
+          },
+          key: 'prizeStatus',
           align: "center",
         },
         {
           title: '审核状态',
-          dataIndex: 'AuditStatus',
-          key: 'AuditStatus',
-          align: "center",
-        },
-        {
-          title: '订单类型',
-          dataIndex: 'orderType',
-          key: 'orderType',
+          render: (text: {
+            reviewStatus: 0 | 1 | 2
+          }): JSX.Element => {
+            return <span>{reviewStatus[text.reviewStatus]}</span>
+          },
+          key: 'reviewStatus',
           align: "center",
         },
         {
           title: '操作',
           key: 'action',
+          width: 180,
           align: "center",
           render: (text: any, record: any) => (
             <span>
-              <a href="javascript:;" onClick={this.goDetail.bind(this, record)}>查看详情</a>
+              <Popconfirm
+                title="Are you sure？"
+                onConfirm={this.confirm.bind(this, record)}
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+              >
+                <a href="javascript:;">审核通过</a>
+              </Popconfirm>
+              <Divider type="vertical" />
+              <a href="javascript:;" onClick={this.auditFailed.bind(this, record)}>审核未通过</a>
+              {/* <a href="javascript:;" onClick={this.auditFailed}>审核未通过</a> */}
             </span>
           ),
         },
@@ -122,18 +141,41 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
 
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
+    this.auditFailed = this.auditFailed.bind(this)
   }
   componentDidMount(): void {
     this.props.dispatch({
       type: 'lxsList/fetch',
+      payload: { }
+    })
+  }
+
+  confirm = (record: any) => {
+    console.log(record.id,this.props)
+    this.props.dispatch({
+      type: 'lxsList/examine',
       payload: {
-        
+        id: record.id,
+        status: "SUCCESSFUL",
       }
     })
   }
-  goDetail(record: any) {
-    router.push("./list/detail")
+
+  // 审核未通过模态框显示
+  auditFailed(record: any) {
+    this.setState({
+      auditFailedVisible: true,
+      record,
+    });
   }
+
+  //  审核未通过模态框点击取消回调
+  auditFailedleCancel = (e: any) => {
+    this.setState({
+      auditFailedVisible: false,
+    });
+  };
+
   // 批量停用模态框
   fnDiscontinueUse() {
     let that = this
@@ -190,7 +232,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐时间">
-                {getFieldDecorator('recommendedTime', {
+                {getFieldDecorator('recommendDate', {
                   rules: [
                     {
                       required: true,
@@ -227,7 +269,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="被推荐人">
-                {getFieldDecorator('recommendedPerson', {
+                {getFieldDecorator('recommended', {
                   rules: [
                     {
                       required: true,
@@ -275,20 +317,82 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           </Row>
         </Form>
         <br />
-        <Row gutter={20}>
+        {/* <Row gutter={20}>
           <Col span={24} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
               批量审核
             </Button>
           </Col>
-        </Row>
-        <Table rowSelection={rowSelection} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
+        </Row> */}
+        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
+
+        {/* 审核未通过 */}
+        <Modal
+          visible={this.state.auditFailedVisible}
+          onCancel={this.auditFailedleCancel}
+          footer={null}
+        >
+          <h4><b>请填写失败原因（请谨慎填写，用户将会看到失败原因）</b></h4>
+          <SetUpFrom record={this.state.record}></SetUpFrom>
+        </Modal>
       </div>
     );
   }
 }
 
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
+class SetupModel extends React.Component<UserFormProps> {
+  //  批量设置表单点击确定
+  auditFailedHandleOk = (e: any) => {
+    // 表单验证
+    e.preventDefault();
+    this.props.form.validateFields((err: any, values: any) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.setState({
+          auditFailedVisible: false,
+        });
+        console.log(this.props.record)
+      }
+    });
+  };
 
-// const WrappedAdvancedSearchForm = Form.create<UserFormProps>()(AdvancedSearchForm);
+  render() {
+    const { getFieldDecorator } = this.props.form
 
-// export default WrappedAdvancedSearchForm
+    return (
+      <Form onSubmit={this.auditFailedHandleOk}>
+        <Form.Item>
+          {getFieldDecorator('reason', {
+            rules: [{ required: true, message: '请输入原因' }],
+          })(
+            <Input
+              placeholder="请输入原因"
+            />,
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('remarks', {
+            // rules: [{ required: true, message: '请输入备注' }],
+          })(
+            <Input
+              placeholder="请输入备注"
+            />,
+          )}
+        </Form.Item>
+        <Form.Item wrapperCol={{ span: 12, offset: 10 }}>
+          <Button type="primary" htmlType="submit">
+            确定
+          </Button>
+        </Form.Item>
+      </Form>
+    )
+  }
+}
+
+const WrappedAdvancedSearchForm = Form.create<UserFormProps>()(AdvancedSearchForm);
+const SetUpFrom = Form.create<UserFormProps>()(SetupModel);
+
+export default WrappedAdvancedSearchForm
