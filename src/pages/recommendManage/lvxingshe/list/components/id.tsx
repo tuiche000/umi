@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input, Checkbox } from 'antd';
+import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
 interface UserFormProps extends FormComponentProps {

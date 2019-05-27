@@ -2,12 +2,13 @@ import request from '@/utils/request';
 
 export function productTasklist(
   params: {
+  },
+  query: {
     pageNo: 1,
     pageSize: 10,
-    product: {},
   }
 ) {
-  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/product/list`, params);
+  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/product/list`, params,query);
 }
 
 export function examine(

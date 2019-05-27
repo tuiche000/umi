@@ -1,10 +1,9 @@
 import React from 'react';
-import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, message, Icon, DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Popconfirm, Icon, DatePicker, Popover } from 'antd';
 // import './index.css'
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
-import router from "umi/router"
-import moment from 'moment';
+
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -13,10 +12,12 @@ const reviewStatus = {
   1: '审核成功',
   2: '审核失败'
 }
+
 interface UserFormProps extends FormComponentProps {
   record?: any,
   lxsList: {
-    tableData: object[]
+    tableData: object[],
+    auditFailedVisible: boolean,
   },
 }
 interface BasicLayoutState {
@@ -37,7 +38,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   constructor(props: UserFormProps) {
     super(props)
     this.state = {
-      auditFailedVisible: false, // 审核未通过显示隐藏
+      auditFailedVisible: false,  // 控制审核失败模态框显示隐藏
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
@@ -113,8 +114,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           align: "center",
           render: (text: {
             reviewStatus: 0 | 1 | 2
-          }): JSX.Element => {
-            return <span>{reviewStatus[text.reviewStatus]}</span>
+          }, record: any): JSX.Element => {
+            return (
+              <span>
+                {text.reviewStatus !== 2 && <span>{reviewStatus[text.reviewStatus]}</span>}
+                {text.reviewStatus === 2 && <Popover content={<span>{record.reason}</span>}><span>{reviewStatus[text.reviewStatus]}</span></Popover>}
+              </span>
+            )
           },
         },
         {
@@ -123,7 +129,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           width: 180,
           align: "center",
           render: (text: any, record: any) => (
-            <span style={record.reviewStatus === 1 ? { display: "none" } : { display: "inline-block" }}>
+            <span style={record.reviewStatus === 0 ? { display: "inline-block" } : { display: "none" }}>
               <Popconfirm
                 title="Are you sure？"
                 onConfirm={this.confirm.bind(this, record)}
@@ -144,10 +150,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     this.handleSearch = this.handleSearch.bind(this)
     this.auditFailed = this.auditFailed.bind(this)
   }
+
   componentDidMount(): void {
     this.props.dispatch({
       type: 'lxsList/fetch',
-      payload: {
+      query: {
         pageNo: 1,
         pageSize: 10,
       }
@@ -166,17 +173,25 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   // 审核失败模态框显示
   auditFailed(record: any) {
+    this.props.dispatch({
+      type: 'lxsList/save',
+      payload: {
+        auditFailedVisible: true
+      }
+    })
     this.setState({
-      auditFailedVisible: true,
       record,
     });
   }
 
   //  审核未通过模态框点击取消回调
   auditFailedleCancel = (e: any) => {
-    this.setState({
-      auditFailedVisible: false,
-    });
+    this.props.dispatch({
+      type: 'lxsList/save',
+      payload: {
+        auditFailedVisible: false
+      }
+    })
   };
 
   // 批量停用模态框
@@ -189,7 +204,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       icon: null,
       centered: true,
       onOk() {
-        console.log(that.state.selectedRowKeys)
+        // console.log(that.state.selectedRowKeys)
       }
     });
   }
@@ -202,7 +217,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       var d = date.getDate();
       d = d < 10 ? ('0' + d) : d;
       return y + '-' + m + '-' + d;
-    }else {
+    } else {
       return undefined
     }
   }
@@ -211,15 +226,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-
       let obj = {
-        pageNo: 1,
-        pageSize: 10,
         productName: values.productName,
-        recommendDate: this.formatDate(values.recommendDate? values.recommendDate[0]._d : undefined),
+        recommendBeginDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[0]._d : undefined),
+        recommendEndDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[1]._d : undefined),
         recommender: values.recommender,
         reviewStatus: values.reviewStatus,
-        rewardStatus: values.rewardStatus,
+        prizeStatus: values.prizeStatus,
       }
       // 当对象key值无数据时删除该key
       for (let key in obj) {
@@ -229,16 +242,19 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       }
       this.props.dispatch({
         type: 'lxsList/fetch',
-        payload: obj
+        payload: obj,
+        query: {
+          pageNo: 1,
+          pageSize: 10,
+        }
       })
     });
   };
 
   onChangePagesize = (page: any) => {
-    console.log(page)
     this.props.dispatch({
       type: 'lxsList/fetch',
-      payload: {
+      query: {
         pageNo: page,
         pageSize: 10,
       }
@@ -327,11 +343,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
-                {getFieldDecorator('rewardStatus', {
+                {getFieldDecorator('prizeStatus', {
                   // rules: [{ required: true, message: '请选择' }],
                   // initialValue:[1],
                 })(
-                  <Select placeholder="请选择">
+                  <Select placeholder="请选择" allowClear={true}>
                     <Option value={1}>已发放</Option>
                     <Option value={0}>未发放</Option>
                   </Select>,
@@ -344,7 +360,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                   // rules: [{ required: true, message: '请选择' }],
                   // initialValue: [1],
                 })(
-                  <Select placeholder="请选择">
+                  <Select placeholder="请选择" allowClear={true}>
                     <Option value={1}>审核通过</Option>
                     <Option value={2}>审核未通过</Option>
                     <Option value={0}>待审核</Option>
@@ -373,7 +389,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
         {/* 审核未通过 */}
         <Modal
-          visible={this.state.auditFailedVisible}
+          visible={this.props.lxsList.auditFailedVisible}
           onCancel={this.auditFailedleCancel}
           footer={null}
         >
@@ -395,11 +411,30 @@ class SetupModel extends React.Component<UserFormProps> {
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        this.setState({
-          auditFailedVisible: false,
-        });
-        console.log(this.props.record)
+        let obj = {
+          id: this.props.record.id,
+          status: "FAILED",
+          reason: values.reason,
+          remark: values.remark,
+        }
+        // 当对象key值无数据时删除该key
+        for (let key in obj) {
+          if (!obj[key]) {
+            delete obj[key]
+          }
+        }
+        this.props.dispatch({
+          type: 'lxsList/examine',
+          payload: obj
+        })
+        this.props.dispatch({
+          type: 'lxsList/save',
+          payload: {
+            auditFailedVisible: false
+          }
+        })
+        //  清空表单
+        this.props.form.resetFields()
       }
     });
   };
@@ -419,7 +454,7 @@ class SetupModel extends React.Component<UserFormProps> {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('remarks', {
+          {getFieldDecorator('remark', {
             // rules: [{ required: true, message: '请输入备注' }],
           })(
             <Input

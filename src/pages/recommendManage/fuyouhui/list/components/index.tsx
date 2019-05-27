@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, message, Icon, DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, Table, Modal, Select, DatePicker, Popover } from 'antd';
 // import './index.css'
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
@@ -106,13 +106,18 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         },
         {
           title: '审核状态',
-          render: (text: {
-            reviewStatus: 0 | 1 | 2
-          }): JSX.Element => {
-            return <span>{reviewStatus[text.reviewStatus]}</span>
-          },
           key: 'reviewStatus',
           align: "center",
+          render: (text: {
+            reviewStatus: 0 | 1 | 2
+          }, record: any): JSX.Element => {
+            return (
+              <span>
+                {text.reviewStatus !== 2 && <span>{reviewStatus[text.reviewStatus]}</span>}
+                {text.reviewStatus === 2 && <Popover content={<span>{record.reason}</span>}><span>{reviewStatus[text.reviewStatus]}</span></Popover>}
+              </span>
+            )
+          },
         },
         {
           title: '订单类型',
@@ -158,19 +163,67 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   componentDidMount(): void {
     this.props.dispatch({
       type: 'fyhList/fetch',
-      payload: {
+      query: {
         pageNo: 1,
         pageSize: 10,
       }
     })
   }
+
+  // 将获取到的标准时间转换格式
+  formatDate(date: any) {
+    if (date) {
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? '0' + m : m;
+      var d = date.getDate();
+      d = d < 10 ? ('0' + d) : d;
+      return y + '-' + m + '-' + d;
+    } else {
+      return undefined
+    }
+  }
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log('Received values of form: ', values);
+      console.log(values)
+      if (!err) {
+        let obj = {
+          activitytSubTitle: values.activitytSubTitle,
+          recommender: values.recommender,
+          // recommendDate: this.formatDate(values.beginDate ? values.beginDate[0]._d : undefined),
+          recommendBeginDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[0]._d : undefined),
+          recommendEndDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[1]._d : undefined),
+        }
+        // 当对象key值无数据时删除该key
+        for (let key in obj) {
+          if (!obj[key]) {
+            delete obj[key]
+          }
+        }
+        console.log(obj)
+        this.props.dispatch({
+          type: 'fyhList/fetch',
+          payload: obj,
+          query: {
+            pageNo: 1,
+            pageSize: 10,
+          }
+        })
+      }
     });
   };
+
+  onChangePagesize = (page: any) => {
+    this.props.dispatch({
+      type: 'fyhList/fetch',
+      query: {
+        pageNo: page,
+        pageSize: 10,
+      }
+    })
+  }
 
   render() {
     const formItemLayout = {
@@ -195,28 +248,28 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐人">
                 {getFieldDecorator('recommender', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入推荐人',
-                    },
-                  ],
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入推荐人',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入推荐人" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="推荐时间">
                 {getFieldDecorator('recommendDate', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请选择推荐时间',
-                    },
-                  ],
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请选择推荐时间',
+                  //   },
+                  // ],
                 })(<RangePicker />)}
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
                 {getFieldDecorator('prizeStatus', {
                   rules: [{ required: true, message: '请选择' }],
@@ -229,16 +282,16 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                   </Select>,
                 )}
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="活动名称">
                 {getFieldDecorator('activitytSubTitle', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入活动名称',
-                    },
-                  ],
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入活动名称',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入推荐产品" />)}
               </Form.Item>
             </Col>
@@ -255,7 +308,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                 )}
               </Form.Item>
             </Col> */}
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item {...formItemLayout} label="审核状态" hasFeedback={true}>
                 {getFieldDecorator('auditStatus', {
                   rules: [{ required: true, message: '请选择' }],
@@ -268,7 +321,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                   </Select>,
                 )}
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col span={24} style={{ textAlign: 'center' }}>
@@ -286,7 +339,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Button>
           </Col>
         </Row>
-        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
+        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );
   }

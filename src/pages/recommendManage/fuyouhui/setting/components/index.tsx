@@ -14,7 +14,7 @@ const limitation = {
 }
 const ruleType = {
   SINGLE: '单次奖励',
-  ACCUMULATIVE : '累计奖励',
+  ACCUMULATIVE: '累计奖励',
 }
 interface UserFormProps extends FormComponentProps {
   record?: any,
@@ -101,7 +101,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               <Divider type="vertical" />
               <Popconfirm
                 title="Are you sure？"
-                onConfirm={this.confirm.bind(this,record)}
+                onConfirm={this.confirm.bind(this, record)}
                 icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
               >
                 <a href="javascript:;">{text.enabled ? '停用' : "启用"}</a>
@@ -112,35 +112,71 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       ], // 表格表头
     };
 
-    this.fnNewlyAdded = this.fnNewlyAdded.bind(this)
+    this.goNewlyAdded = this.goNewlyAdded.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
   }
 
   componentDidMount() {
     this.props.dispatch({
       type: 'fyhSetting/fetch',
-      payload: ''
+      query: {
+        pageNo: 1,
+        pageSize: 10,
+      }
     })
   }
 
-  confirm = (record:any) => {
+  confirm = (record: any) => {
     record.enabled = !record.enabled
     this.props.dispatch({
       type: 'fyhSetting/edit',
       payload: record
     })
   }
-  
+
   // 新增跳转
-  fnNewlyAdded() {
+  goNewlyAdded() {
     router.push('./setting/add')
+  }
+
+  // 将获取到的标准时间转换格式
+  formatDate(date: any) {
+    if (date) {
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? '0' + m : m;
+      var d = date.getDate();
+      d = d < 10 ? ('0' + d) : d;
+      return y + '-' + m + '-' + d;
+    } else {
+      return undefined
+    }
   }
 
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log('Received values of form: ', values);
+      if (!err) {
+        let obj = {
+          activityName: values.activityName,
+          activityDate: this.formatDate(values.activityDate ? values.activityDate._d : undefined),
+        }
+        // 当对象key值无数据时删除该key
+        for (let key in obj) {
+          if (!obj[key]) {
+            delete obj[key]
+          }
+        }
+        this.props.dispatch({
+          type: 'fyhSetting/fetch',
+          payload: obj,
+          query: {
+            pageNo: 1,
+            pageSize: 10,
+          }
+        })
+      }
     });
   };
 
@@ -167,6 +203,15 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     });
   };
 
+  onChangePagesize = (page: any) => {
+    this.props.dispatch({
+      type: 'fyhSetting/fetch',
+      query: {
+        pageNo: page,
+        pageSize: 10,
+      }
+    })
+  }
 
   render() {
     const formItemLayout = {
@@ -188,20 +233,20 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           <Row gutter={24}>
             <Col span={12} >
               <Form.Item {...formItemLayout} label="活动名">
-                {getFieldDecorator('ActivityName', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入活动名',
-                    },
-                  ],
+                {getFieldDecorator('activityName', {
+                  // rules: [
+                  //   {
+                  //     required: true,
+                  //     message: '请输入活动名',
+                  //   },
+                  // ],
                 })(<Input placeholder="请输入活动名" />)}
               </Form.Item>
             </Col>
             <Col span={12} pull={6}>
               <Form.Item {...formItemLayout} label="活动时间">
-                {getFieldDecorator('date-picker', {
-                  rules: [{ type: 'object', required: true, message: '请选择活动时间' }],
+                {getFieldDecorator('activityDate', {
+                  // rules: [{ type: 'object', required: true, message: '请选择活动时间' }],
                 })(<DatePicker />)}
               </Form.Item>
             </Col>
@@ -218,12 +263,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         <br />
         <Row gutter={20}>
           <Col span={24} style={{ textAlign: 'right' }}>
-            <Button type="primary" htmlType="submit" onClick={this.fnNewlyAdded}>
+            <Button type="primary" htmlType="submit" onClick={this.goNewlyAdded}>
               新增
             </Button>
           </Col>
         </Row>
-        <Table rowKey={((record: object, index: number) => record.id)} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
+        <Table rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhSetting.totalResults, onChange: this.onChangePagesize }} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
 
         {/* 编辑模态框 */}
         <Modal
@@ -284,7 +329,7 @@ class SetupModel extends React.Component<UserFormProps> {
           })(<RangePicker />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="奖励类型">
-          {getFieldDecorator('ruleType',{
+          {getFieldDecorator('ruleType', {
             initialValue: record.ruleType,
           })(
             <Radio.Group>
@@ -294,7 +339,7 @@ class SetupModel extends React.Component<UserFormProps> {
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="适用人群">
-          {getFieldDecorator('limitation',{
+          {getFieldDecorator('limitation', {
             initialValue: record.limitation,
           })(
             <Radio.Group>

@@ -5,16 +5,18 @@ import { message } from 'antd';
 interface interface_state {
   setUpVisible: boolean,
   EditVisible: boolean,
+  auditFailedVisible: boolean,
   selectedRowKeys: any[],
   tableData: any[],
   tableColumns: any[],
   record: any,
-  totalResults:number,
+  totalResults: number,
 }
 export default {
   state: {
     setUpVisible: false, //  控制批量设置模态框显示隐藏
     EditVisible: false, //  控制编辑模态框显示隐藏
+    auditFailedVisible: false, // 控制审核失败模态框
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
     totalResults: Number,
@@ -39,8 +41,8 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload }, { call, put }: any) {
-      const result = yield call(Service.productTasklist,payload );
+    *fetch({ payload, query }, { call, put }: any) {
+      const result = yield call(Service.productTasklist, payload, query);
       const { data } = result.data
       const { totalResults } = data
       if (data.result) {
