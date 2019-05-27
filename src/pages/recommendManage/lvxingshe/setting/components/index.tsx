@@ -145,7 +145,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   componentDidMount() {
-    console.log(this.props)
     this.props.dispatch({
       type: 'lvxSetting/fetch',
       payload: {
@@ -252,9 +251,18 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       }
     })
   };
-
+  onChangePagesize = (page:any) => {
+    this.props.dispatch({
+      type: 'lvxSetting/fetch',
+      payload: {
+        pageNo: page,
+        pageSize: 10,
+      }
+    })
+  }
 
   render() {
+    console.log(this.props)
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 8 },
@@ -340,7 +348,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table loading={this.props.loading.global} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
+        <Table loading={this.props.loading.global} pagination={{total:this.props.lvxSetting.totalResults,onChange:this.onChangePagesize}} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
 
         {/* 批量设置模态框 */}
         <Modal

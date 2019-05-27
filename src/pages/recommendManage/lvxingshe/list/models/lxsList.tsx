@@ -9,6 +9,7 @@ interface interface_state {
   tableData: any[],
   tableColumns: any[],
   record: any,
+  totalResults:number,
 }
 export default {
   state: {
@@ -16,6 +17,7 @@ export default {
     EditVisible: false, //  控制编辑模态框显示隐藏
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
+    totalResults: Number,
     tableData: [
       {
         id: "5AGIuJOBtY3uy2uf6j470q",
@@ -40,6 +42,7 @@ export default {
     *fetch({ payload }, { call, put }: any) {
       const result = yield call(Service.productTasklist,payload );
       const { data } = result.data
+      const { totalResults } = data
       if (data.result) {
         data.result.forEach((item: any, index: any) => {
           item.serial = index + 1
@@ -50,10 +53,12 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          tableData: data.result
+          tableData: data.result,
+          totalResults
         },
       });
     },
+
 
     *examine({ payload }, { call, put }: any) {
       const result = yield call(Service.examine, payload);

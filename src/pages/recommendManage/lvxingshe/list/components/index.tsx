@@ -4,6 +4,7 @@ import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Po
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import router from "umi/router"
+import moment from 'moment';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -154,7 +155,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   confirm = (record: any) => {
-    console.log(record.id, this.props)
     this.props.dispatch({
       type: 'lxsList/examine',
       payload: {
@@ -193,16 +193,30 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       }
     });
   }
+  // 将获取到的标准时间转换格式
+  formatDate(date: any) {
+    if (date) {
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? '0' + m : m;
+      var d = date.getDate();
+      d = d < 10 ? ('0' + d) : d;
+      return y + '-' + m + '-' + d;
+    }else {
+      return undefined
+    }
+  }
+
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log('Received values of form: ', values);
+
       let obj = {
         pageNo: 1,
         pageSize: 10,
         productName: values.productName,
-        recommendDate: values.recommendDate,
+        recommendDate: this.formatDate(values.recommendDate? values.recommendDate[0]._d : undefined),
         recommender: values.recommender,
         reviewStatus: values.reviewStatus,
         rewardStatus: values.rewardStatus,
@@ -220,6 +234,16 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     });
   };
 
+  onChangePagesize = (page: any) => {
+    console.log(page)
+    this.props.dispatch({
+      type: 'lxsList/fetch',
+      payload: {
+        pageNo: page,
+        pageSize: 10,
+      }
+    })
+  }
   render() {
     const formItemLayout = {
       labelCol: { span: 8 },
@@ -261,7 +285,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                   //     message: '请选择推荐时间',
                   //   },
                   // ],
-                })(<RangePicker />)}
+                })(<RangePicker format="YYYY-MM-DD" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -345,7 +369,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row> */}
-        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
+        <Table rowSelection={rowSelection} pagination={{ total: this.props.lxsList.totalResults, onChange: this.onChangePagesize }} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
 
         {/* 审核未通过 */}
         <Modal
