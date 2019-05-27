@@ -1,5 +1,6 @@
 import React from 'react'
-
+import Stage from './stage'
+import router from "umi/router"
 import {
   Form,
   Input,
@@ -14,12 +15,14 @@ import {
   AutoComplete,
   DatePicker,
   Radio,
+  Descriptions
 } from 'antd';
 
 const { Option } = Select;
 const { TextArea } = Input;
 const AutoCompleteOption = AutoComplete.Option;
 const { RangePicker } = DatePicker;
+const DescriptionsItem = Descriptions.Item;
 
 @Form.create({ name: 'register' })
 export default class RegistrationForm extends React.Component {
@@ -37,7 +40,7 @@ export default class RegistrationForm extends React.Component {
     });
   };
 
-  handleConfirmBlur = (e:any) => {
+  handleConfirmBlur = (e: any) => {
     const value = e.target.value;
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
   };
@@ -186,22 +189,32 @@ export default class RegistrationForm extends React.Component {
               </Radio.Group>,
             )}
           </Form.Item>
-          <Form.Item
-            label={
-              <span>
-                阶段1
-            </span>
-            }
-          >
-            {getFieldDecorator('stage_one', {
-              // rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-            })(<Input />)}
+
+          <Form.Item label="阶段" {...tailFormItemLayout}>
+            <Descriptions bordered>
+              <DescriptionsItem label="开始时间">Cloud Database</DescriptionsItem>
+              <DescriptionsItem label="结束时间">Prepaid</DescriptionsItem>
+              <DescriptionsItem label="活动名称">YES</DescriptionsItem>
+              <DescriptionsItem label="阶段1活动副标题" span={3}>2018-04-24 18:00:00</DescriptionsItem>
+              <DescriptionsItem label="活动说明" span={3}>
+              活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明
+              活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明
+              活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明
+              </DescriptionsItem>
+            </Descriptions>
           </Form.Item>
+          <Form.Item {...tailFormItemLayout}>
+            <Stage />
+          </Form.Item>
+
 
 
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Register
+              保存
+          </Button>
+            <Button style={{ marginLeft: 20 }} type="primary" htmlType="submit" onClick={() => router.goBack()}>
+              返回
           </Button>
           </Form.Item>
         </Form>
