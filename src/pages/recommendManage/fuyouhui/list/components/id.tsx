@@ -8,15 +8,17 @@ const { TextArea } = Input;
 
 interface UserFormProps extends FormComponentProps {
   fyhList: {
-    detailData: object[]
+    detailData: {
+      memberRecommendPrize: any[],
+    }
   },
 }
 interface interface_state {
   auditFailedVisible: boolean,
   tableColumns: any[],
   selectedRowKeys: any[],
-  tableData: any[],
   resetFields: any,
+  recode: any,
 }
 interface interface_props extends UserFormProps {
   routing: {
@@ -35,30 +37,9 @@ class Detail extends React.Component<interface_props, interface_state> {
     super(props)
     this.state = {
       resetFields: null,
-      auditFailedVisible: false, // 审核未通过显示隐藏
+      auditFailedVisible: false, // 审核失败显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
-      tableData: [
-        {
-          key: "1",
-          Serial: 1,
-          RecommendID: 445,
-          ActivityName: "按国家规范",
-          ActivityType: "dsf",
-          RecommendedTime: "2019/01/01",
-          RecommendedPerson: "hsadu",
-          RegistrationTime: "2019/10/10"
-        },
-        {
-          key: "2",
-          Serial: 2,
-          RecommendID: 445,
-          ActivityName: "按国家规范",
-          ActivityType: "dsf",
-          RecommendedTime: "2019/01/01",
-          RecommendedPerson: "hsadu",
-          RegistrationTime: "2019/10/10"
-        },
-      ], // 表格数据
+      recode: {}, // 审查失败数据
       tableColumns: [
         {
           title: '序号',
@@ -68,32 +49,20 @@ class Detail extends React.Component<interface_props, interface_state> {
         },
         {
           title: '推荐ID',
-          dataIndex: 'RecommendID',
-          key: 'RecommendID',
-          align: "center",
-        },
-        {
-          title: '活动名称',
-          dataIndex: 'ActivityName',
-          key: 'ActivityName',
-          align: "center",
-        },
-        {
-          title: '活动类型',
-          dataIndex: 'ActivityType',
-          key: 'ActivityType',
+          dataIndex: 'id',
+          key: 'id',
           align: "center",
         },
         {
           title: '推荐时间',
-          dataIndex: 'RecommendedTime',
-          key: 'RecommendedTime',
+          dataIndex: 'recommendDate',
+          key: 'recommendDate',
           align: "center",
         },
         {
           title: '被推荐人',
-          dataIndex: 'RecommendedPerson',
-          key: 'RecommendedPerson',
+          dataIndex: 'recommended',
+          key: 'recommended',
           align: "center",
         },
         {
@@ -104,46 +73,59 @@ class Detail extends React.Component<interface_props, interface_state> {
         },
       ], // 表格表头
     }
-   
+
     this.auditFailed = this.auditFailed.bind(this)
     this.auditPassConfirm = this.auditPassConfirm.bind(this)
   };
 
   componentDidMount() {
-
     this.props.dispatch({
       type: 'fyhList/detail',
       payload: {
         id: this.props.routing.location.query.id
       }
     })
-    console.log(this.props.fyhList.detailData)
   }
-  // 审核通过确定回调函数
-  auditPassConfirm() {
-    console.log("11")
+  // 审核成功确定回调函数
+  auditPassConfirm(item: any) {
+    this.props.dispatch({
+      type: 'fyhList/review',
+      payload: {
+        id: item.id,
+        status: "SUCCESSFUL",
+      }
+    })
   }
-  // 审核未通过模态框显示
-  auditFailed() {
+  // 审核失败 模态框显示
+  auditFailed(recode: any) {
     this.setState({
       auditFailedVisible: true,
+      recode,
     });
   }
-  //  审核未通过模态框点击确定回调
+
+  //  审核失败模态框点击确定回调
   auditFailedHandleOk = (e: any) => {
     // 表单验证
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         this.setState({
           auditFailedVisible: false,
         });
+        this.props.dispatch({
+          type: 'fyhList/review',
+          payload: {
+            id: this.state.recode.id,
+            status: "FAILED",
+            reason: values.reason,
+          }
+        })
       }
     });
   };
 
-  //  审核未通过模态框点击取消回调
+  //  审核失败模态框点击取消回调
   auditFailedleCancel = (e: any) => {
     this.setState({
       auditFailedVisible: false,
@@ -167,29 +149,13 @@ class Detail extends React.Component<interface_props, interface_state> {
         <Card bordered={false}>
           <div>
             <h3>
-              <b>基础信息{this.props.fyhList.detailData.id}</b>
+              <b>基础信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={6}>用户ID：3410xxxx</Col>
-              <Col span={6}>用户名：昆明5天</Col>
-              <Col span={6}>手机号：188888888888</Col>
-              <Col span={6}>注册时间：2019/10/10</Col>
-            </Row>
-            <Row gutter={20}>
-              <Col span={24} style={{ textAlign: 'right' }}>
-                <Popconfirm
-                  title="Are you sure？"
-                  onConfirm={this.auditPassConfirm}
-                  icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-                >
-                  <Button type="primary">
-                    审核通过
-                    </Button>
-                </Popconfirm>
-                <Button type="primary" style={{ marginLeft: 10 }} onClick={this.auditFailed}>
-                  审核未通过
-              </Button>
-              </Col>
+              <Col span={6}>用户ID：{this.props.fyhList.detailData.id}</Col>
+              <Col span={6}>用户名：{this.props.fyhList.detailData.recommender}</Col>
+              <Col span={6}>手机号：</Col>
+              <Col span={6}>注册时间：{this.props.fyhList.detailData.recommendDate}</Col>
             </Row>
           </div>
           <Divider />
@@ -197,28 +163,41 @@ class Detail extends React.Component<interface_props, interface_state> {
             <h3>
               <b>拉新奖励</b>
             </h3>
-            <Row gutter={32}>
-              <Col span={4}>阶段二</Col>
-              <Col span={4}>是否发放奖励：否</Col>
-              <Col span={4}>奖励金：50元</Col>
-              <Col span={4}>是否通过审核：是</Col>
-              <Col span={4}>审核人：公司</Col>
-              <Col span={4}>审核时间：2019/10/10</Col>
-            </Row>
-            <Table rowSelection={rowSelection} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.state.tableData} pagination={false} />
           </div>
-          <Divider />
-          <div>
-            <Row gutter={32}>
-              <Col span={4}>阶段一</Col>
-              <Col span={4}>是否发放奖励：否</Col>
-              <Col span={4}>奖励金：50元</Col>
-              <Col span={4}>是否通过审核：是</Col>
-              <Col span={4}>审核人：公司</Col>
-              <Col span={4}>审核时间：2019/10/10</Col>
-            </Row>
-            <Table rowSelection={rowSelection} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.state.tableData} pagination={false} />
-          </div>
+          {
+            this.props.fyhList.detailData.memberRecommendPrize && this.props.fyhList.detailData.memberRecommendPrize.map((item: any, index: any) => {
+              return (
+                <div key={index} style={item.recommends ? { display: 'block' } : { display: "none" }}>
+                  <Row gutter={32}>
+                    <Col span={4}>阶段{item.stage + 1}</Col>
+                    <Col span={4}>是否发放奖励：{item.status === "SUCCESSFUL" ? "是" : "否"}</Col>
+                    <Col span={4}>奖励金：{item.prize}元</Col>
+                    <Col span={4}>是否成功审核：{item.recommendReviews && item.recommendReviews[0].status === "SUCCESSFUL" ? "是" : "否"}</Col>
+                    <Col span={4}>审核人：{item.recommendReviews && item.recommendReviews[0].reviewer}</Col>
+                    <Col span={4}>审核时间：{item.recommendReviews && item.recommendReviews[0].reviewDate}</Col>
+                  </Row>
+                  <Row gutter={20} style={item.recommendReviews ? { display: "none" } : { display: "block" }}>
+                    <Col span={24} style={{ textAlign: 'right' }}>
+                      <Popconfirm
+                        title="Are you sure？"
+                        onConfirm={this.auditPassConfirm.bind(this, item)}
+                        icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                      >
+                        <Button type="primary">
+                          审核成功
+                        </Button>
+                      </Popconfirm>
+                      <Button type="primary" style={{ marginLeft: 10 }} onClick={this.auditFailed.bind(this, item)}>
+                        审核失败
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Table rowSelection={rowSelection} rowKey={((item: object, index: number) => item.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={item.recommends && item.recommends} pagination={false} />
+                  <Divider />
+                </div>
+              )
+            })
+          }
         </Card>
 
         {/* 批量设置模态框 */}
@@ -231,7 +210,7 @@ class Detail extends React.Component<interface_props, interface_state> {
           <Form onSubmit={this.auditFailedHandleOk}>
             <Form.Item label="失败原因">
               {getFieldDecorator('reason', {
-                // rules: [{ required: true, message: '请输入失败原因' }],
+                rules: [{ required: true, message: '请输入失败原因' }],
               })(
                 <TextArea
                   placeholder="请输入失败原因"

@@ -1,4 +1,5 @@
 import * as Service from '../services';
+import { number } from 'prop-types';
 // import router from 'umi/router';
 console.log()
 interface interface_state {
@@ -8,6 +9,7 @@ interface interface_state {
   tableData: any[],
   tableColumns: any[],
   record: any,
+  totalResults: number
 }
 export default {
   state: {
@@ -16,7 +18,8 @@ export default {
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
     tableData: [], // 表格数据
-    tableColumns: []
+    tableColumns: [],
+    totalResults:Number,
   },
   reducers: {
     save(state: interface_state, action: {
@@ -27,21 +30,24 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload: { page = 1 } }, { call, put }: any) {
-      const result = yield call(Service.productlist, {
-        pageNo: 1,
-        pageSize: 10,
-      });
+    *fetch({ payload }, { call, put }: any) {
+      const result = yield call(Service.productlist, payload);
       const { data } = result.data
-
-      data.result.forEach((item: any, index: any) => {
-        item.serial = index + 1
-      })
+      const { totalResults } = data
+      console.log(totalResults)
+      if (data.result) {
+        data.result.forEach((item: any, index: any) => {
+          item.serial = index + 1
+        })
+      } else {
+        data.result = []
+      }
 
       yield put({
         type: 'save',
         payload: {
-          tableData: data.result
+          tableData: data.result,
+          totalResults,
         },
       });
     },

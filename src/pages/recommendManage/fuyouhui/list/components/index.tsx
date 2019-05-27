@@ -46,12 +46,12 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           key: 'serial',
           align: "center",
         },
-        {
-          title: '活动ID',
-          dataIndex: 'id',
-          key: 'id',
-          align: "center",
-        },
+        // {
+        //   title: '活动ID',
+        //   dataIndex: 'id',
+        //   key: 'id',
+        //   align: "center",
+        // },
         {
           title: '推荐人',
           dataIndex: 'recommender',
@@ -159,7 +159,8 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     this.props.dispatch({
       type: 'fyhList/fetch',
       payload: {
-
+        pageNo: 1,
+        pageSize: 10,
       }
     })
   }
@@ -241,7 +242,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                 })(<Input placeholder="请输入推荐产品" />)}
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item {...formItemLayout} label="订单类型" hasFeedback={true}>
                 {getFieldDecorator('OrderType', {
                   rules: [{ required: true, message: '请选择' }],
@@ -253,7 +254,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                   </Select>,
                 )}
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="审核状态" hasFeedback={true}>
                 {getFieldDecorator('auditStatus', {

@@ -1,5 +1,6 @@
 import * as Service from '../services';
 // import router from 'umi/router';
+import { message } from 'antd';
 
 interface interface_state {
   setUpVisible: boolean,
@@ -8,6 +9,7 @@ interface interface_state {
   tableData: any[],
   tableColumns: any[],
   record: any,
+  totalResults:number,
 }
 export default {
   state: {
@@ -15,6 +17,7 @@ export default {
     EditVisible: false, //  控制编辑模态框显示隐藏
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
+    totalResults: Number,
     tableData: [
       {
         id: "5AGIuJOBtY3uy2uf6j470q",
@@ -36,27 +39,32 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload: { } }, { call, put }: any) {
-      const result = yield call(Service.productTasklist, {
-        pageNo: 1,
-        pageSize: 10,
-      });
+    *fetch({ payload }, { call, put }: any) {
+      const result = yield call(Service.productTasklist,payload );
       const { data } = result.data
-      data.result.forEach((item: any, index: any) => {
-        item.serial = index + 1
-      })
+      const { totalResults } = data
+      if (data.result) {
+        data.result.forEach((item: any, index: any) => {
+          item.serial = index + 1
+        })
+      } else {
+        data.result = []
+      }
       yield put({
         type: 'save',
         payload: {
-          tableData: data.result
+          tableData: data.result,
+          totalResults
         },
       });
     },
 
+
     *examine({ payload }, { call, put }: any) {
       const result = yield call(Service.examine, payload);
-      // const { data } = result.data
-      console.log(result)
+      if (result.data.code != "0") {
+        message.error(result.data.message);
+      }
     },
   },
   subscriptions: {
