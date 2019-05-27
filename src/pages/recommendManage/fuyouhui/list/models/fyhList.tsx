@@ -10,6 +10,7 @@ interface interface_state {
   tableColumns: any[],
   record: any,
   detailData: {}, // 列表详情数据
+  totalResults: number
 }
 export default {
   state: {
@@ -20,6 +21,7 @@ export default {
     tableData: [], // 表格数据
     tableColumns: [],
     detailData: {}, // 列表详情数据
+    totalResults:Number,
   },
   reducers: {
     save(state: interface_state, action: {
@@ -34,15 +36,19 @@ export default {
     *fetch({ payload}, { call, put }: any) {
       const result = yield call(Service.tasklist, payload);
       const { data } = result.data
-
-      data.result.forEach((item: any, index: any) => {
-        item.serial = index + 1
-      })
-
+      const { totalResults } = data
+      if (data.result) {
+        data.result.forEach((item: any, index: any) => {
+          item.serial = index + 1
+        })
+      } else {
+        data.result = []
+      }
       yield put({
         type: 'save',
         payload: {
-          tableData: data.result
+          tableData: data.result,
+          totalResults,
         },
       });
     },

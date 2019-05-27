@@ -27,23 +27,22 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload: { page = 1 } }, { call, put }: any) {
-      const result = yield call(Service.tasklist, {
-        pageNo: 1,
-        pageSize: 10,
-      });
+    *fetch({ payload, query }, { call, put }: any) {
+      const result = yield call(Service.tasklist,payload, query );
       const { data } = result.data
-
-      data.result.forEach((item:any,index:any) => {
-        item.serial = index +1
-      }) 
+      if (data.result) {
+        data.result.forEach((item: any, index: any) => {
+          item.serial = index + 1
+        })
+      } else {
+        data.result = []
+      }
       yield put({
         type: 'save',
         payload: {
           tableData: data.result
         },
       });
-      console.log(data)
     },
     
     *edit({ payload }, { call, put }: any) {

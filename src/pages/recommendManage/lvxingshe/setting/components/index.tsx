@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, message, Icon } from 'antd';
+import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Popconfirm, Icon } from 'antd';
 import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form';
 
@@ -148,7 +148,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       payload: {
       },
       query: {
-        pageNo: 3,
+        pageNo: 1,
         pageSize: 10,
       }
     })
@@ -180,24 +180,24 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log('Received values of form: ', values);
       if (!err) {
         let obj = {
-          pageNo: 1,
-          pageSize: 10,
           productId: values.productId,
           productName: values.productName,
         }
         // 当对象key值无数据时删除该key
         for (let key in obj) {
-          if(!obj[key]) {
+          if (!obj[key]) {
             delete obj[key]
           }
         }
-        console.log(obj)
         this.props.dispatch({
           type: 'lvxSetting/fetch',
-          payload: obj
+          payload: obj,
+          query: {
+            pageNo: 1,
+            pageSize: 10,
+          }
         })
       }
     });
@@ -209,6 +209,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       setUpVisible: true,
       record: {},
     });
+
   };
 
   //  批量设置点击确定回调
@@ -241,7 +242,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     });
   };
 
-
   //  编辑点击取消回调
   EditHandleCancel = (e: any) => {
     this.props.dispatch({
@@ -251,10 +251,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       }
     })
   };
-  onChangePagesize = (page:any) => {
+
+  onChangePagesize = (page: any) => {
     this.props.dispatch({
       type: 'lvxSetting/fetch',
-      payload: {
+      query: {
         pageNo: page,
         pageSize: 10,
       }
@@ -262,7 +263,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   render() {
-    console.log(this.props)
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 8 },
@@ -348,7 +348,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table loading={this.props.loading.global} pagination={{total:this.props.lvxSetting.totalResults,onChange:this.onChangePagesize}} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
+        <Table loading={this.props.loading.global} pagination={{ total: this.props.lvxSetting.totalResults, onChange: this.onChangePagesize }} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
 
         {/* 批量设置模态框 */}
         <Modal
@@ -438,7 +438,7 @@ class SetupModel extends React.Component<UserFormProps> {
             rules: [{ required: true, message: '请选择奖励类型' }],
             initialValue: record.prizeScale,
           })(
-            <Select placeholder="请选择奖励类型">
+            <Select placeholder="请选择奖励类型" allowClear={true}>
               <Option value="SCALE">比例</Option>
               <Option value="NUMBER">固定金额</Option>
             </Select>,

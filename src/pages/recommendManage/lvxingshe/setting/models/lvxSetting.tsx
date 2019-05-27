@@ -34,7 +34,6 @@ export default {
       const result = yield call(Service.productlist, payload, query);
       const { data } = result.data
       const { totalResults } = data
-      console.log(totalResults)
       if (data.result) {
         data.result.forEach((item: any, index: any) => {
           item.serial = index + 1
@@ -42,7 +41,6 @@ export default {
       } else {
         data.result = []
       }
-
       yield put({
         type: 'save',
         payload: {

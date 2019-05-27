@@ -36,6 +36,7 @@ export default class RegistrationForm extends React.Component {
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        
       }
     });
   };
