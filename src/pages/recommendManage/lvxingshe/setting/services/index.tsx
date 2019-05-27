@@ -2,13 +2,15 @@ import request from '@/utils/request';
 
 export function productlist(
   params: {
-    pageNo: 1,
-    pageSize: 10,
     productId: string,
     productName: string,
+  },
+  query: {
+    pageNo: 1,
+    pageSize: 10,
   }
 ) {
-  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/productlist`, params);
+  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/productlist`, params, query);
 }
 
 export function edit(

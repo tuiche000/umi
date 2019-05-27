@@ -30,8 +30,8 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload }, { call, put }: any) {
-      const result = yield call(Service.productlist, payload);
+    *fetch({ payload, query }, { call, put }: any) {
+      const result = yield call(Service.productlist, payload, query);
       const { data } = result.data
       const { totalResults } = data
       console.log(totalResults)

@@ -146,7 +146,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     this.props.dispatch({
       type: 'lvxSetting/fetch',
       payload: {
-        pageNo: 1,
+      },
+      query: {
+        pageNo: 3,
         pageSize: 10,
       }
     })

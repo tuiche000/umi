@@ -15,21 +15,21 @@ function checkStatus(response) {
 }
 
 const parseQuery = (obj) => {
-        let str = ''
-        for (let key in obj) {
-            const value = typeof obj[key] !== 'string' ? JSON.stringify(obj[key]) : obj[key]
-            str += '&' + key + '=' + value
-        }
-        return str.substr(1)
+    let str = ''
+    for (let key in obj) {
+        const value = typeof obj[key] !== 'string' ? JSON.stringify(obj[key]) : obj[key]
+        str += '&' + key + '=' + value
     }
-    /**
-     * Requests a URL, returning a promise.
-     *
-     * @param  {string} url       The URL we want to request
-     * @param  {object} [options] The options we want to pass to "fetch"
-     * @return {object}           An object containing either "data" or "err"
-     */
-const request = (url, method = 'get', data) => {
+    return str.substr(1)
+}
+/**
+ * Requests a URL, returning a promise.
+ *
+ * @param  {string} url       The URL we want to request
+ * @param  {object} [options] The options we want to pass to "fetch"
+ * @return {object}           An object containing either "data" or "err"
+ */
+const request = (url, method = 'get', data, query) => {
     let contentType = method !== 'get' ? 'application/json' : ''
 
     const options = {
@@ -42,6 +42,7 @@ const request = (url, method = 'get', data) => {
     if (method === 'get') {
         url += '?' + parseQuery(data)
     } else {
+        if (query) url += '?' + parseQuery(query)
         options.body = JSON.stringify(data)
     }
     return fetch(url, options)
@@ -54,7 +55,7 @@ export default {
     get(url, data) {
         return request(url, 'get', data)
     },
-    post(url, data) {
-        return request(url, 'post', data)
+    post(url, data, query) {
+        return request(url, 'post', data, query)
     }
 }
