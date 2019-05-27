@@ -49,10 +49,6 @@ export default {
     *detail({ payload }, { call, put }: any) {
       const result = yield call(Service.detail, payload);
       const { data } = result.data
-<<<<<<< HEAD
-      console.log(result)
-=======
->>>>>>> 56432d9aca35e48381f691006f5a2ca80e6718bb
       if (result.data.code === "0") {
         yield put({
           type: 'save',
