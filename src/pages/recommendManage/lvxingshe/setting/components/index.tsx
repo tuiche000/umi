@@ -8,12 +8,12 @@ interface UserFormProps extends FormComponentProps {
   record?: any,
   dispatch: Function,
   lvxSetting: {
-    tableData: object[]
+    tableData: object[],
+    EditVisible: boolean,
   },
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
-  EditVisible: boolean,
   selectedRowKeys: any[],
   tableData?: any[],
   tableColumns: any[],
@@ -38,7 +38,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     super(props)
     this.state = {
       setUpVisible: false, //  控制批量设置模态框显示隐藏
-      EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
       record: {}, //编辑选中的数据
       tableColumns: [
@@ -207,19 +206,23 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   // 编辑开启模态框回调
   EditShowModal = (record: any) => {
-    console.log(record)
-    this.setState({
-      EditVisible: true,
-      record,
-    });
+    this.props.dispatch({
+      type: 'lvxSetting/save',
+      payload: {
+        EditVisible: true,
+      }
+    })
   };
 
 
   //  编辑点击取消回调
   EditHandleCancel = (e: any) => {
-    this.setState({
-      EditVisible: false,
-    });
+    this.props.dispatch({
+      type: 'lvxSetting/save',
+      payload: {
+        EditVisible: false,
+      }
+    })
   };
 
 
@@ -323,7 +326,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
         {/* 编辑模态框 */}
         <Modal
-          visible={this.state.EditVisible}
+          visible={this.props.lvxSetting.EditVisible}
           // onOk={this.EditHandleOk}
           onCancel={this.EditHandleCancel}
           footer={null}

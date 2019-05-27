@@ -12,7 +12,7 @@ export function tasklist(
 
 export function detail(
   params: {
-    id: String
+    id: String,
   }
 ) {
   return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/${params.id}/member/detail`);

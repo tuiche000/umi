@@ -25,6 +25,7 @@ export default {
       type: string,
       payload: {}
     }) {
+      console.log(action.payload)
       return { ...state, ...action.payload }
     }
   },
@@ -50,7 +51,8 @@ export default {
     *detail({ payload }, { call, put }: any) {
       const result = yield call(Service.detail, payload);
       const { data } = result.data
-      if (result.code === "0") {
+      console.log(result)
+      if (result.data.code === "0") {
         yield put({
           type: 'save',
           payload: {
