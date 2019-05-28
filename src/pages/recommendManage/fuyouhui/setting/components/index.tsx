@@ -159,7 +159,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     this.props.form.validateFields((err, values) => {
       if (!err) {
         let obj = {
-          activityName: values.activityName,
+          activityName: values.activityName && values.activityName.trim(),
           activityDate: this.formatDate(values.activityDate ? values.activityDate._d : undefined),
         }
         // 当对象key值无数据时删除该key
@@ -206,6 +206,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   onChangePagesize = (page: any) => {
     this.props.dispatch({
       type: 'fyhSetting/fetch',
+      paload:this.props.form.getFieldsValue(),
       query: {
         pageNo: page,
         pageSize: 10,

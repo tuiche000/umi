@@ -1,7 +1,7 @@
 import * as Service from '../services';
 import { number } from 'prop-types';
 // import router from 'umi/router';
-console.log()
+
 interface interface_state {
   setUpVisible: boolean,
   EditVisible: boolean,
@@ -9,17 +9,21 @@ interface interface_state {
   tableData: any[],
   tableColumns: any[],
   record: any,
-  totalResults: number
+  totalResults: number,
+  pageNo: number,
+  seachData: any,
 }
 export default {
   state: {
+    seachData: {}, // 获取搜索数据
+    pageNo: 1,  // 分页
     setUpVisible: false, //  控制批量设置模态框显示隐藏
     EditVisible: false, //  控制编辑模态框显示隐藏
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
     tableData: [], // 表格数据
     tableColumns: [],
-    totalResults:Number,
+    totalResults: Number,
   },
   reducers: {
     save(state: interface_state, action: {
@@ -55,7 +59,9 @@ export default {
       if (result.data.code === "0") {
         yield put({
           type: 'fetch',
-          payload: "",
+          query: {
+
+          },
         });
       }
     },

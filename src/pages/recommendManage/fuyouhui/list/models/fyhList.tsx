@@ -32,8 +32,8 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload}, { call, put }: any) {
-      const result = yield call(Service.tasklist, payload);
+    *fetch({ payload ,query}, { call, put }: any) {
+      const result = yield call(Service.tasklist, payload ,query);
       const { data } = result.data
       const { totalResults } = data
       if (data.result) {

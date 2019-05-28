@@ -60,8 +60,6 @@ export default {
         },
       });
     },
-
-
     *examine({ payload }, { call, put }: any) {
       const result = yield call(Service.examine, payload);
       if (result.data.code != "0") {
