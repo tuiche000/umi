@@ -338,7 +338,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           </Row>
         </Form>
         <br />
-        <Row gutter={20}>
+
+        {/* <Row gutter={20}>
           <Col span={24} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
               批量停用
@@ -347,7 +348,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               批量设置
             </Button>
           </Col>
-        </Row>
+        </Row> */}
+        
         <Table loading={this.props.loading.global} pagination={{ total: this.props.lvxSetting.totalResults, onChange: this.onChangePagesize }} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
 
         {/* 批量设置模态框 */}

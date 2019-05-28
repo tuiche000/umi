@@ -28,7 +28,6 @@ export default {
       type: string,
       payload: {}
     }) {
-      console.log(action.payload)
       return { ...state, ...action.payload }
     }
   },

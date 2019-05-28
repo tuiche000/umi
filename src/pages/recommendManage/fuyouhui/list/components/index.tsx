@@ -202,7 +202,6 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             delete obj[key]
           }
         }
-        console.log(obj)
         this.props.dispatch({
           type: 'fyhList/fetch',
           payload: obj,
@@ -332,13 +331,15 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           </Row>
         </Form>
         <br />
-        <Row gutter={20}>
+
+        {/* <Row gutter={20}>
           <Col span={24} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
               批量审核
             </Button>
           </Col>
-        </Row>
+        </Row> */}
+        
         <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );

@@ -226,6 +226,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
+      console.log(values)
       let obj = {
         productName: values.productName,
         recommendBeginDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[0]._d : undefined),
@@ -236,10 +237,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       }
       // 当对象key值无数据时删除该key
       for (let key in obj) {
-        if (!obj[key]) {
+        if (!obj[key] && obj[key] !== 0) {
           delete obj[key]
         }
       }
+      console.log(obj) 
       this.props.dispatch({
         type: 'lxsList/fetch',
         payload: obj,
@@ -440,6 +442,11 @@ class SetupModel extends React.Component<UserFormProps> {
   };
 
   render() {
+
+    // if(!this.props.lxsList.auditFailedVisible) {
+    //   this.props.form.resetFields()
+    // }
+
     const { getFieldDecorator } = this.props.form
 
     return (
