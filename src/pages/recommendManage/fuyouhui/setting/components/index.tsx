@@ -136,6 +136,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   // 新增跳转
   goNewlyAdded() {
+    this.props.dispatch({
+      type: 'fyhSetting/clear',
+      payload: ''
+    })
     router.push('./setting/add')
   }
 
@@ -182,11 +186,14 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   // 编辑开启模态框回调
   EditShowModal = (record: any) => {
-    console.log(record)
-    this.setState({
-      EditVisible: true,
-      record,
-    });
+    router.push({
+      pathname: './setting/add',
+      state: record
+    })
+    // this.setState({
+    //   EditVisible: true,
+    //   record,
+    // });
   };
   //  编辑点击确定回调
   EditHandleOk = (e: any) => {

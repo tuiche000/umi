@@ -1,5 +1,7 @@
 import * as Service from '../services';
 // import router from 'umi/router';
+import { message } from 'antd';
+import router from "umi/router"
 
 interface interface_state {
   setUpVisible: boolean,
@@ -9,11 +11,15 @@ interface interface_state {
   tableColumns: any[],
   record: any,
   stages: {
-    "startTime": string,
-    "endTime": string,
-    "name"?: string,
-    "subtitle"?: string,
-    "description"?: string
+    "stage": number,
+    "name": string,
+    "subTitle": string,
+    "description": string,
+    "image": string,
+    "timesBegin": number,
+    "timesEnd": number,
+    "prizeScale": string,
+    "value": number
   }[],
 }
 export default {
@@ -25,20 +31,6 @@ export default {
     tableData: [], // 表格数据
     tableColumns: [],
     stages: [ // 阶段列表
-      {
-        "startTime": '2018-04-24 18:00:00',
-        "endTime": '2018-04-24 18:00:00',
-        "name": '活动名称',
-        "subtitle": '活动副标题',
-        "description": '活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明'
-      },
-      {
-        "startTime": '2018-04-24 18:00:00',
-        "endTime": '2018-04-24 18:00:00',
-        "name": '活动名称2',
-        "subtitle": '活动副标题2',
-        "description": '活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明2'
-      },
     ]
   },
   reducers: {
@@ -54,7 +46,15 @@ export default {
     }) {
       let obj = Object.assign({}, state)
       state.stages.splice(action.payload, 1)
-      console.log({...obj.stages})
+      console.log({ ...obj.stages })
+      return state
+    },
+    clear(state: interface_state, action: {
+      type: string,
+      payload: string
+    }) {
+      let obj = Object.assign({}, state)
+      state.stages = []
       return state
     },
   },
@@ -84,6 +84,15 @@ export default {
           type: 'fetch',
           payload: "",
         });
+      }
+    },
+
+    *add({ payload }, { call, put }: any) {
+      const result = yield call(Service.add, payload);
+      console.log(result.data.code)
+      if (result.data.code === "0") {
+        message.success('添加成功');
+        router.goBack()
       }
     },
   },

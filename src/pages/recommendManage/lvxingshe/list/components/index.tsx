@@ -236,11 +236,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         prizeStatus: values.prizeStatus,
       }
       // 当对象key值无数据时删除该key
-      for (let key in obj) {
-        if (!obj[key] && obj[key] !== 0) {
-          delete obj[key]
-        }
-      }
+      // for (let key in obj) {
+      //   if (!obj[key] && obj[key] !== 0) {
+      //     delete obj[key]
+      //   }
+      // }
       console.log(obj) 
       this.props.dispatch({
         type: 'lxsList/fetch',
@@ -256,6 +256,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   onChangePagesize = (page: any) => {
     this.props.dispatch({
       type: 'lxsList/fetch',
+      payload: this.props.form.getFieldsValue(),
       query: {
         pageNo: page,
         pageSize: 10,

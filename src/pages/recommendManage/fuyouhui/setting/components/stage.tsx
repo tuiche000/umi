@@ -38,6 +38,7 @@ export default class Stage extends React.Component<Props, State> {
       if (err) {
         return;
       }
+      values.prizeScale = "NUMBER"
       let stages = [...this.props.fyhSetting.stages, values]
       this.props.dispatch({
         type: 'fyhSetting/save',
@@ -101,20 +102,25 @@ class Form_stage extends React.Component {
       >
         <Form layout="vertical" {...formItemLayout}>
           <Form.Item label="开始次数">
-            {getFieldDecorator('startTime', {
+            {getFieldDecorator('timesBegin', {
               rules: [{ required: true, message: 'Please input the title of collection!' }],
             })(<InputNumber />)}
           </Form.Item>
           <Form.Item label="结束次数">
-            {getFieldDecorator('endTime', {
+            {getFieldDecorator('timesEnd', {
               rules: [{ required: true, message: 'Please input the title of collection!' }],
+            })(<InputNumber />)}
+          </Form.Item>
+          <Form.Item label="金额">
+            {getFieldDecorator('value', {
+              rules: [{ required: true, message: 'Please input the value of collection!' }],
             })(<InputNumber />)}
           </Form.Item>
           <Form.Item label="活动名称">
             {getFieldDecorator('name')(<Input type="textarea" />)}
           </Form.Item>
           <Form.Item label="活动副标题">
-            {getFieldDecorator('subtitle')(<Input type="textarea" />)}
+            {getFieldDecorator('subTitle')(<Input type="textarea" />)}
           </Form.Item>
           <Form.Item label="活动说明">
             {getFieldDecorator('description')(<TextArea rows={3} />)}

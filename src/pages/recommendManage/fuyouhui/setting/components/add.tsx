@@ -28,18 +28,40 @@ const { RangePicker } = DatePicker;
 const DescriptionsItem = Descriptions.Item;
 
 interface intStage {
-  startTime: string,
-  endTime: string,
-  name?: string,
-  subtitle?: string,
-  description?: string
+  "stage": number,
+  "name": string,
+  "subTitle": string,
+  "description": string,
+  "image": string,
+  "timesBegin": number,
+  "timesEnd": number,
+  "prizeScale": string,
+  "value": number
+}
+
+interface IntProp {
+  routing: {
+    location: {
+      state?: {
+        id: string,
+        activityName: string,
+        beginDate: Date,
+        enabled: boolean,
+        endDate: Date,
+        limitation: string,
+        ruleType: string,
+        serial: number,
+        stages: any[],
+      }
+    }
+  }
 }
 
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
 @Form.create({ name: 'register' })
-export default class RegistrationForm extends React.Component {
+export default class RegistrationForm extends React.Component<IntProp, any> {
   state = {
     confirmDirty: false,
     autoCompleteResult: [],
@@ -49,8 +71,15 @@ export default class RegistrationForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
+        values.beginTime = values.validity[0]
+        values.endTime = values.validity[1]
+        values.stages = this.props.fyhSetting.stages
         console.log('Received values of form: ', values);
 
+        this.props.dispatch({
+          type: 'fyhSetting/add',
+          payload: values
+        })
       }
     });
   };
@@ -78,7 +107,7 @@ export default class RegistrationForm extends React.Component {
   };
 
   handleWebsiteChange = (value: any) => {
-    let autoCompleteResult;
+    let autoCompleteResult: any;
     if (!value) {
       autoCompleteResult = [];
     } else {
@@ -88,12 +117,14 @@ export default class RegistrationForm extends React.Component {
   };
 
   onConfirm = (record: intStage, index: number) => {
-    // console.log(record)
-    // console.log(index)
     this.props.dispatch({
       type: 'fyhSetting/del',
       payload: index
     })
+  }
+
+  componentDidMount() {
+    // if (this.props.routing.location.state) {}
   }
 
   render() {
@@ -146,7 +177,7 @@ export default class RegistrationForm extends React.Component {
             </span>
             }
           >
-            {getFieldDecorator('ActivityName', {
+            {getFieldDecorator('activityName', {
               rules: [{ required: true, message: '请输入活动名称', whitespace: true }],
             })(<Input />)}
           </Form.Item>
@@ -157,7 +188,7 @@ export default class RegistrationForm extends React.Component {
             </span>
             }
           >
-            {getFieldDecorator('ActivitySubtitle', {
+            {getFieldDecorator('activitySubtitle', {
               // rules: [{ required: true, message: '请输入活动名称', whitespace: true }],
             })(<Input />)}
           </Form.Item>
@@ -168,7 +199,7 @@ export default class RegistrationForm extends React.Component {
             </span>
             }
           >
-            {getFieldDecorator('ActivityDescription', {
+            {getFieldDecorator('activityDescription', {
               // rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
             })(<Input />)}
           </Form.Item>
@@ -183,7 +214,7 @@ export default class RegistrationForm extends React.Component {
             })(<RangePicker />)}
           </Form.Item>
           <Form.Item {...formItemLayout} label="奖励类型">
-            {getFieldDecorator('RewardType', {
+            {getFieldDecorator('ruleType', {
               rules: [
                 {
                   required: true,
@@ -192,13 +223,13 @@ export default class RegistrationForm extends React.Component {
               ],
             })(
               <Radio.Group>
-                <Radio value="1">单次奖励</Radio>
-                <Radio value="2">累计奖励</Radio>
+                <Radio value="SINGLE">单次奖励</Radio>
+                <Radio value="ACCUMULATIVE">累计奖励</Radio>
               </Radio.Group>,
             )}
           </Form.Item>
           <Form.Item {...formItemLayout} label="适用人群">
-            {getFieldDecorator('IntendedFor', {
+            {getFieldDecorator('limitation', {
               rules: [
                 {
                   required: true,
@@ -207,9 +238,9 @@ export default class RegistrationForm extends React.Component {
               ],
             })(
               <Radio.Group>
-                <Radio value="all">全部</Radio>
-                <Radio value="staff">复星员工</Radio>
-                <Radio value="isNotStaff">不包含复星员工</Radio>
+                <Radio value="ALL_MEMBER">全部</Radio>
+                <Radio value="EXCLUDE_EMPLOYEE">复星员工</Radio>
+                <Radio value="ONLY_EMPLOYEE">不包含复星员工</Radio>
               </Radio.Group>,
             )}
           </Form.Item>
@@ -222,12 +253,13 @@ export default class RegistrationForm extends React.Component {
                 }
                 } key={item.name} >
                   <Descriptions bordered >
-                    <DescriptionsItem label="开始时间">
-                      <span>{item.startTime}</span>
+                    <DescriptionsItem label="开始次数">
+                      <span>{item.timesBegin}</span>
                     </DescriptionsItem>
-                    <DescriptionsItem label="结束时间"><span>{item.endTime}</span></DescriptionsItem>
+                    <DescriptionsItem label="结束次数"><span>{item.timesEnd}</span></DescriptionsItem>
                     <DescriptionsItem label="活动名称"><span>{item.name}</span></DescriptionsItem>
-                    <DescriptionsItem label="活动副标题" span={3}><span>{item.subtitle}</span></DescriptionsItem>
+                    <DescriptionsItem label="奖励金额" ><span>{item.value}</span></DescriptionsItem>
+                    <DescriptionsItem label="活动副标题" span={2}><span>{item.subTitle}</span></DescriptionsItem>
                     <DescriptionsItem label="活动说明" span={3}>
                       <span>{item.description}</span>
                     </DescriptionsItem>
