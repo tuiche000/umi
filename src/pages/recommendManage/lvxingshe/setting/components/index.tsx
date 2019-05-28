@@ -10,6 +10,8 @@ interface UserFormProps extends FormComponentProps {
   lvxSetting: {
     tableData: object[]
     EditVisible: boolean,
+    pageNo: number,
+    seachData: any,
   },
 }
 interface BasicLayoutState {
@@ -189,6 +191,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         for (let key in obj) {
           if (!obj[key]) {
             delete obj[key]
+          } else {
+            obj[key] = obj[key].trim()
           }
         }
         this.props.dispatch({
@@ -252,9 +256,19 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   };
 
+
+  // 点击分页回调
   onChangePagesize = (page: any) => {
+    // 设置全局分页
+    this.props.dispatch({
+      type: 'lvxSetting/save',
+      payload: {
+        pageNo: page
+      }
+    })
     this.props.dispatch({
       type: 'lvxSetting/fetch',
+      paload: this.props.form.getFieldsValue(),
       query: {
         pageNo: page,
         pageSize: 10,
@@ -349,7 +363,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row> */}
-        
+
         <Table loading={this.props.loading.global} pagination={{ total: this.props.lvxSetting.totalResults, onChange: this.onChangePagesize }} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
 
         {/* 批量设置模态框 */}
@@ -379,7 +393,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
 class SetupModel extends React.Component<UserFormProps> {
-  //  批量设置表单点击确定
+  //  编辑以及批量设置表单点击确定
   setUphandleSubmit = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -396,6 +410,7 @@ class SetupModel extends React.Component<UserFormProps> {
           type: 'lvxSetting/edit',
           payload: values
         })
+        console.log(this.props.form.getFieldsValue(), values)
         // 关闭模态框
         this.props.dispatch({
           type: 'lvxSetting/save',
@@ -407,12 +422,11 @@ class SetupModel extends React.Component<UserFormProps> {
     })
   }
   render() {
-    // console.log(this.props.record)
     const { getFieldDecorator } = this.props.form
 
     // 点击编辑从父组件中得到的数据
     let record = this.props.record
-
+    console.log(record.productPrize)
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },

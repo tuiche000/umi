@@ -71,6 +71,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         {
           title: '产品名称',
           dataIndex: 'productName',
+          width: 200,
           key: 'productName',
           align: "center",
         },
@@ -226,22 +227,20 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log(values)
       let obj = {
-        productName: values.productName,
+        productName: values.productName && values.productName.trim(),
         recommendBeginDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[0]._d : undefined),
         recommendEndDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[1]._d : undefined),
-        recommender: values.recommender,
+        recommender: values.recommender && values.recommender.trim(),
         reviewStatus: values.reviewStatus,
         prizeStatus: values.prizeStatus,
       }
       // 当对象key值无数据时删除该key
-      // for (let key in obj) {
-      //   if (!obj[key] && obj[key] !== 0) {
-      //     delete obj[key]
-      //   }
-      // }
-      console.log(obj) 
+      for (let key in obj) {
+        if (!obj[key] && obj[key] !== 0) {
+          delete obj[key]
+        }
+      }
       this.props.dispatch({
         type: 'lxsList/fetch',
         payload: obj,
@@ -256,7 +255,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   onChangePagesize = (page: any) => {
     this.props.dispatch({
       type: 'lxsList/fetch',
-      payload: this.props.form.getFieldsValue(),
+      paload:this.props.form.getFieldsValue(),
       query: {
         pageNo: page,
         pageSize: 10,
@@ -430,6 +429,8 @@ class SetupModel extends React.Component<UserFormProps> {
           type: 'lxsList/examine',
           payload: obj
         })
+        console.log(obj)
+        
         this.props.dispatch({
           type: 'lxsList/save',
           payload: {

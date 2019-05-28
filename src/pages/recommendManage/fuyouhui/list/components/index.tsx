@@ -66,8 +66,8 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         },
         {
           title: '活动名称',
-          dataIndex: 'ActivitytSubTitle',
-          key: 'ActivitytSubTitle',
+          dataIndex: 'activitytName',
+          key: 'activitytName',
           align: "center",
         },
         {
@@ -142,6 +142,15 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     this.handleSearch = this.handleSearch.bind(this)
   }
 
+  componentDidMount(): void {
+    this.props.dispatch({
+      type: 'fyhList/fetch',
+      query: {
+        pageNo: 1,
+        pageSize: 10,
+      }
+    })
+  }
   goDetail(record: any) {
     router.push("./list/detail?id=" + record.id)
   }
@@ -158,16 +167,6 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         console.log(that.state.selectedRowKeys)
       }
     });
-  }
-
-  componentDidMount(): void {
-    this.props.dispatch({
-      type: 'fyhList/fetch',
-      query: {
-        pageNo: 1,
-        pageSize: 10,
-      }
-    })
   }
 
   // 将获取到的标准时间转换格式
@@ -190,9 +189,9 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
       console.log(values)
       if (!err) {
         let obj = {
-          activitytSubTitle: values.activitytSubTitle,
-          recommender: values.recommender,
-          // recommendDate: this.formatDate(values.beginDate ? values.beginDate[0]._d : undefined),
+          activitytSubTitle: values.activitytSubTitle && values.activitytSubTitle.trim(),
+          recommender: values.recommender && values.recommender.trim(),
+          activitytName: values.activitytName && values.activitytName.trim(),
           recommendBeginDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[0]._d : undefined),
           recommendEndDate: this.formatDate(values.recommendDate && values.recommendDate.length != 0 ? values.recommendDate[1]._d : undefined),
         }
@@ -217,6 +216,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   onChangePagesize = (page: any) => {
     this.props.dispatch({
       type: 'fyhList/fetch',
+      paload:this.props.form.getFieldsValue(),
       query: {
         pageNo: page,
         pageSize: 10,
@@ -284,7 +284,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="活动名称">
-                {getFieldDecorator('activitytSubTitle', {
+                {getFieldDecorator('activitytName', {
                   // rules: [
                   //   {
                   //     required: true,
