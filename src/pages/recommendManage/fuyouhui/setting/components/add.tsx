@@ -1,5 +1,6 @@
 import React from 'react'
 import Stage from './stage'
+import { connect } from 'dva';
 import router from "umi/router"
 import {
   Form,
@@ -15,7 +16,9 @@ import {
   AutoComplete,
   DatePicker,
   Radio,
-  Descriptions
+  Descriptions,
+  Popconfirm,
+  message
 } from 'antd';
 
 const { Option } = Select;
@@ -24,6 +27,17 @@ const AutoCompleteOption = AutoComplete.Option;
 const { RangePicker } = DatePicker;
 const DescriptionsItem = Descriptions.Item;
 
+interface intStage {
+  startTime: string,
+  endTime: string,
+  name?: string,
+  subtitle?: string,
+  description?: string
+}
+
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
 @Form.create({ name: 'register' })
 export default class RegistrationForm extends React.Component {
   state = {
@@ -36,7 +50,7 @@ export default class RegistrationForm extends React.Component {
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        
+
       }
     });
   };
@@ -72,6 +86,15 @@ export default class RegistrationForm extends React.Component {
     }
     this.setState({ autoCompleteResult });
   };
+
+  onConfirm = (record: intStage, index: number) => {
+    // console.log(record)
+    // console.log(index)
+    this.props.dispatch({
+      type: 'fyhSetting/del',
+      payload: index
+    })
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -190,20 +213,41 @@ export default class RegistrationForm extends React.Component {
               </Radio.Group>,
             )}
           </Form.Item>
-
-          <Form.Item label="阶段" {...tailFormItemLayout}>
-            <Descriptions bordered>
-              <DescriptionsItem label="开始时间">Cloud Database</DescriptionsItem>
-              <DescriptionsItem label="结束时间">Prepaid</DescriptionsItem>
-              <DescriptionsItem label="活动名称">YES</DescriptionsItem>
-              <DescriptionsItem label="阶段1活动副标题" span={3}>2018-04-24 18:00:00</DescriptionsItem>
-              <DescriptionsItem label="活动说明" span={3}>
-              活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明
-              活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明
-              活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明
-              </DescriptionsItem>
-            </Descriptions>
-          </Form.Item>
+          {
+            this.props.fyhSetting.stages.map((item: intStage, index: number) => {
+              return (
+                <Form.Item label={`阶段${index + 1}`} wrapperCol={{
+                  xs: { span: 24 },
+                  sm: { span: 16 },
+                }
+                } key={item.name} >
+                  <Descriptions bordered >
+                    <DescriptionsItem label="开始时间">
+                      <span>{item.startTime}</span>
+                    </DescriptionsItem>
+                    <DescriptionsItem label="结束时间"><span>{item.endTime}</span></DescriptionsItem>
+                    <DescriptionsItem label="活动名称"><span>{item.name}</span></DescriptionsItem>
+                    <DescriptionsItem label="活动副标题" span={3}><span>{item.subtitle}</span></DescriptionsItem>
+                    <DescriptionsItem label="活动说明" span={3}>
+                      <span>{item.description}</span>
+                    </DescriptionsItem>
+                  </Descriptions>
+                  <Popconfirm
+                    title="Are you sure delete this task?"
+                    onConfirm={this.onConfirm.bind(this, item, index)}
+                    onCancel={(e) => {
+                      console.log(e);
+                      message.error('Click on No');
+                    }}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type="danger">删除</Button>
+                  </Popconfirm>
+                </Form.Item>
+              )
+            })
+          }
           <Form.Item {...tailFormItemLayout}>
             <Stage />
           </Form.Item>

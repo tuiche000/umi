@@ -2,6 +2,7 @@ import React from 'react'
 import {
   Button, Icon, Modal, Form, Input, InputNumber,
 } from 'antd';
+import { connect } from 'dva';
 
 const { TextArea } = Input
 
@@ -12,6 +13,9 @@ interface State {
   visible: boolean
 }
 
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
 export default class Stage extends React.Component<Props, State> {
   constructor(props: object) {
     super(props)
@@ -34,7 +38,13 @@ export default class Stage extends React.Component<Props, State> {
       if (err) {
         return;
       }
-
+      let stages = [...this.props.fyhSetting.stages, values]
+      this.props.dispatch({
+        type: 'fyhSetting/save',
+        payload: {
+          stages
+        }
+      })
       console.log('Received values of form: ', values);
       form.resetFields();
       this.setState({ visible: false });
@@ -58,7 +68,7 @@ export default class Stage extends React.Component<Props, State> {
           </Button>
         <div className="stage_list">
           <section>
-        
+
           </section>
         </div>
       </div>
@@ -91,12 +101,12 @@ class Form_stage extends React.Component {
       >
         <Form layout="vertical" {...formItemLayout}>
           <Form.Item label="开始次数">
-            {getFieldDecorator('start', {
+            {getFieldDecorator('startTime', {
               rules: [{ required: true, message: 'Please input the title of collection!' }],
             })(<InputNumber />)}
           </Form.Item>
           <Form.Item label="结束次数">
-            {getFieldDecorator('end', {
+            {getFieldDecorator('endTime', {
               rules: [{ required: true, message: 'Please input the title of collection!' }],
             })(<InputNumber />)}
           </Form.Item>

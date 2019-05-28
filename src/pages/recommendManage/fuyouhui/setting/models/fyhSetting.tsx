@@ -8,6 +8,13 @@ interface interface_state {
   tableData: any[],
   tableColumns: any[],
   record: any,
+  stages: {
+    "startTime": string,
+    "endTime": string,
+    "name"?: string,
+    "subtitle"?: string,
+    "description"?: string
+  }[],
 }
 export default {
   state: {
@@ -16,7 +23,23 @@ export default {
     selectedRowKeys: [], // 表格选择框选定的数据
     record: {}, //编辑选中的数据
     tableData: [], // 表格数据
-    tableColumns: []
+    tableColumns: [],
+    stages: [ // 阶段列表
+      {
+        "startTime": '2018-04-24 18:00:00',
+        "endTime": '2018-04-24 18:00:00',
+        "name": '活动名称',
+        "subtitle": '活动副标题',
+        "description": '活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明'
+      },
+      {
+        "startTime": '2018-04-24 18:00:00',
+        "endTime": '2018-04-24 18:00:00',
+        "name": '活动名称2',
+        "subtitle": '活动副标题2',
+        "description": '活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明2'
+      },
+    ]
   },
   reducers: {
     save(state: interface_state, action: {
@@ -24,11 +47,20 @@ export default {
       payload: {}
     }) {
       return { ...state, ...action.payload }
-    }
+    },
+    del(state: interface_state, action: {
+      type: string,
+      payload: number
+    }) {
+      let obj = Object.assign({}, state)
+      state.stages.splice(action.payload, 1)
+      console.log({...obj.stages})
+      return state
+    },
   },
   effects: {
     *fetch({ payload, query }, { call, put }: any) {
-      const result = yield call(Service.tasklist,payload, query );
+      const result = yield call(Service.tasklist, payload, query);
       const { data } = result.data
       if (data.result) {
         data.result.forEach((item: any, index: any) => {
@@ -44,7 +76,7 @@ export default {
         },
       });
     },
-    
+
     *edit({ payload }, { call, put }: any) {
       const result = yield call(Service.edit, payload);
       if (result.data.code === "0") {
