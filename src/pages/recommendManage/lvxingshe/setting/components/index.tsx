@@ -12,6 +12,7 @@ interface UserFormProps extends FormComponentProps {
     EditVisible: boolean,
     pageNo: number,
     seachData: any,
+    totalResults: any,
   },
 }
 interface BasicLayoutState {
@@ -160,7 +161,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     record.enabled = !record.enabled
     this.props.dispatch({
       type: 'lvxSetting/edit',
-      payload: record
+      payload: record,
+      query: this.props.lvxSetting.pageNo,
+      fetchPayload: this.props.lvxSetting.seachData
     })
   }
   // 批量停用模态框
@@ -195,6 +198,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             obj[key] = obj[key].trim()
           }
         }
+        // 将搜索条件给到全局
+        this.props.dispatch({
+          type: 'lvxSetting/save',
+          payload: {
+            seachData: obj
+          }
+        })
         this.props.dispatch({
           type: 'lvxSetting/fetch',
           payload: obj,
@@ -252,7 +262,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       type: 'lvxSetting/save',
       payload: {
         EditVisible: false
-      }
+      },
+      // query:{}
     })
   };
 
@@ -268,7 +279,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
     this.props.dispatch({
       type: 'lvxSetting/fetch',
-      paload: this.props.form.getFieldsValue(),
+      payload: this.props.lvxSetting.seachData,
       query: {
         pageNo: page,
         pageSize: 10,
@@ -297,24 +308,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             <Col span={12} >
               <Form.Item {...formItemLayout} label="产品ID">
                 {getFieldDecorator('productId', {
-                  // rules: [
-                  //   {
-                  //     required: true,
-                  //     message: '请输入产品ID',
-                  //   },
-                  // ],
                 })(<Input placeholder="请输入产品ID" />)}
               </Form.Item>
             </Col>
             <Col span={12} pull={6}>
               <Form.Item {...formItemLayout} label="产品名称">
                 {getFieldDecorator('productName', {
-                  // rules: [
-                  //   {
-                  //     required: true,
-                  //     message: '请输入产品名称',
-                  //   },
-                  // ],
                 })(<Input placeholder="请输入产品名称" />)}
               </Form.Item>
             </Col>
@@ -408,9 +407,12 @@ class SetupModel extends React.Component<UserFormProps> {
         }
         this.props.dispatch({
           type: 'lvxSetting/edit',
-          payload: values
+          payload: values,
+          query: this.props.lvxSetting.pageNo,
+          fetchPayload: this.props.lvxSetting.seachData
         })
-        console.log(this.props.form.getFieldsValue(), values)
+        // 清空表单
+        this.props.form.resetFields()
         // 关闭模态框
         this.props.dispatch({
           type: 'lvxSetting/save',
@@ -426,7 +428,7 @@ class SetupModel extends React.Component<UserFormProps> {
 
     // 点击编辑从父组件中得到的数据
     let record = this.props.record
-    console.log(record.productPrize)
+
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -436,23 +438,20 @@ class SetupModel extends React.Component<UserFormProps> {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 },
     }
-
     return (
       <Form {...formItemLayout} onSubmit={this.setUphandleSubmit}>
         <Form.Item {...formItemLayout} label="产品ID" style={record ? { display: "block" } : { display: "none" }}>
           {getFieldDecorator('productId', {
-            // initialValue: record ? record.Bonus : null,
           })(<span>{record ? record.productId : null}</span>)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="产品名称" style={record ? { display: "block" } : { display: "none" }}>
           {getFieldDecorator('productName', {
-            // initialValue: record ? record.Bonus : null,
           })(<span>{record ? record.productName : null}</span>)}
         </Form.Item>
         <Form.Item label="奖励类型" hasFeedback={true}>
           {getFieldDecorator('prizeScale', {
             rules: [{ required: true, message: '请选择奖励类型' }],
-            initialValue: record.prizeScale,
+            initialValue: record ? record.prizeScale : null,
           })(
             <Select placeholder="请选择奖励类型" allowClear={true}>
               <Option value="SCALE">比例</Option>
@@ -468,7 +467,7 @@ class SetupModel extends React.Component<UserFormProps> {
                 message: '请输入比例',
               },
             ],
-            initialValue: record.productPrize,
+            initialValue: record ? record.productPrize : null,
           })(<Input placeholder="请输入比例" />)}
         </Form.Item>
         <Form.Item {...formItemLayout} label="是否热门推荐">

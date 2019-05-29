@@ -21,9 +21,13 @@ interface interface_state {
     "prizeScale": string,
     "value": number
   }[],
+  pageNo: number,
+  seachData: any,
 }
 export default {
   state: {
+    pageNo: 1, // 分页
+    seachData: {}, // 搜索数据
     setUpVisible: false, //  控制批量设置模态框显示隐藏
     EditVisible: false, //  控制编辑模态框显示隐藏
     selectedRowKeys: [], // 表格选择框选定的数据
@@ -77,12 +81,15 @@ export default {
       });
     },
 
-    *edit({ payload }, { call, put }: any) {
+    *edit({ payload, query, fetchPayload }, { call, put }: any) {
       const result = yield call(Service.edit, payload);
       if (result.data.code === "0") {
         yield put({
           type: 'fetch',
-          payload: "",
+          payload: fetchPayload,
+          query: {
+            pageNo: query,
+          }
         });
       }
     },

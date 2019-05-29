@@ -54,14 +54,15 @@ export default {
       });
     },
 
-    *edit({ payload }, { call, put }: any) {
+    *edit({ payload, query, fetchPayload }, { call, put }: any) {
       const result = yield call(Service.edit, payload);
       if (result.data.code === "0") {
         yield put({
           type: 'fetch',
           query: {
-
+            pageNo: query,
           },
+          payload: fetchPayload,
         });
       }
     },
