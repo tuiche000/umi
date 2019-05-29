@@ -29,6 +29,7 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
+  current: number,
 }
 
 @connect(
@@ -39,6 +40,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   constructor(props: UserFormProps) {
     super(props)
     this.state = {
+      current: 1, // 手动设置分页
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
@@ -98,31 +100,31 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         //   key: 'CurrentStage',
         //   align: "center",
         // },
-        {
-          title: '奖励状态',
-          render: (text: {
-            prizeStatus: Number
-          }): JSX.Element => {
-            return <span>{text.prizeStatus === 0 ? '未发放' : '已发放'}</span>
-          },
-          key: 'prizeStatus',
-          align: "center",
-        },
-        {
-          title: '审核状态',
-          key: 'reviewStatus',
-          align: "center",
-          render: (text: {
-            reviewStatus: 0 | 1 | 2
-          }, record: any): JSX.Element => {
-            return (
-              <span>
-                {text.reviewStatus !== 2 && <span>{reviewStatus[text.reviewStatus]}</span>}
-                {text.reviewStatus === 2 && <Popover content={<span>{record.reason}</span>}><span>{reviewStatus[text.reviewStatus]}</span></Popover>}
-              </span>
-            )
-          },
-        },
+        // {
+        //   title: '奖励状态',
+        //   render: (text: {
+        //     prizeStatus: Number
+        //   }): JSX.Element => {
+        //     return <span>{text.prizeStatus === 0 ? '未发放' : '已发放'}</span>
+        //   },
+        //   key: 'prizeStatus',
+        //   align: "center",
+        // },
+        // {
+        //   title: '审核状态',
+        //   key: 'reviewStatus',
+        //   align: "center",
+        //   render: (text: {
+        //     reviewStatus: 0 | 1 | 2
+        //   }, record: any): JSX.Element => {
+        //     return (
+        //       <span>
+        //         {text.reviewStatus !== 2 && <span>{reviewStatus[text.reviewStatus]}</span>}
+        //         {text.reviewStatus === 2 && <Popover content={<span>{record.reason}</span>}><span>{reviewStatus[text.reviewStatus]}</span></Popover>}
+        //       </span>
+        //     )
+        //   },
+        // },
         // {
         //   title: '订单类型',
         //   dataIndex: 'orderType',
@@ -220,12 +222,15 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             pageSize: 10,
           }
         })
+        // 手动设置分页
+        this.setState({
+          current: 1,
+        })
       }
     });
   };
 
   onChangePagesize = (page: any) => {
-
     this.props.dispatch({
       type: 'fyhList/fetch',
       payload: this.props.fyhList.seachData,
@@ -233,6 +238,10 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         pageNo: page,
         pageSize: 10,
       }
+    })
+    // 手动设置分页
+    this.setState({
+      current: page,
     })
   }
 
@@ -356,7 +365,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           </Col>
         </Row> */}
 
-        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
+        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize, current: this.state.current }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );
   }

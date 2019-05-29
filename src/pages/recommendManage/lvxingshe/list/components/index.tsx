@@ -21,6 +21,7 @@ interface UserFormProps extends FormComponentProps {
     auditFailedVisible: boolean,
     seachData: any,
     pageNo: number,
+    totalResults:any,
   },
 }
 interface BasicLayoutState {
@@ -31,6 +32,7 @@ interface BasicLayoutState {
   tableColumns: any[],
   record: any,
   auditFailedVisible: boolean,
+  current: number,
 }
 
 @connect(
@@ -41,6 +43,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   constructor(props: UserFormProps) {
     super(props)
     this.state = {
+      current: 1, // 手动设置分页
       auditFailedVisible: false,  // 控制审核失败模态框显示隐藏
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
@@ -166,7 +169,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   confirm = (record: any) => {
-    console.log(this.props.lxsList.pageNo,this.props.lxsList.seachData)
+    console.log(this.props.lxsList.pageNo, this.props.lxsList.seachData)
     this.props.dispatch({
       type: 'lxsList/examine',
       payload: {
@@ -253,7 +256,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         payload: {
           seachData: obj
         }
-      })
+      })   
       this.props.dispatch({
         type: 'lxsList/fetch',
         payload: obj,
@@ -261,6 +264,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           pageNo: 1,
           pageSize: 10,
         }
+      })
+      this.setState({
+        current:1
       })
     });
   };
@@ -274,7 +280,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         pageNo: page
       }
     })
-
+    // 手动设置分页
+    this.setState({
+      current: page,
+    });
     this.props.dispatch({
       type: 'lxsList/fetch',
       payload: this.props.lxsList.seachData,
@@ -413,7 +422,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row> */}
-        <Table rowSelection={rowSelection} pagination={{ total: this.props.lxsList.totalResults, onChange: this.onChangePagesize }} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
+        <Table rowSelection={rowSelection} pagination={{ total: this.props.lxsList.totalResults, onChange: this.onChangePagesize, current: this.state.current }} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
 
         {/* 审核未通过 */}
         <Modal
