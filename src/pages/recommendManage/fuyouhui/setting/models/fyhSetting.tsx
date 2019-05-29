@@ -81,20 +81,26 @@ export default {
       });
     },
 
-    *edit({ payload }, { call, put }: any) {
+    *edit({ payload, query, fetchPayload }, { call, put }: any) {
       const result = yield call(Service.edit, payload);
       if (result.data.code === "0") {
-        if (result.data.code === "0") {
+
+        if (payload.type == 'edit') { // 编辑的 
           message.success('修改成功');
           router.goBack()
-        }
-        // yield put({
-        //   type: 'fetch',
-        //   payload: fetchPayload,
-        //   query: {
-        //     pageNo: query,
-        //   }
-        // });
+          return
+        } 
+
+        // 启用停用
+        yield put({
+          type: 'fetch',
+          payload: fetchPayload,
+          query: {
+            pageNo: query,
+          }
+        });
+
+
       }
     },
 

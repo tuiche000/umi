@@ -88,6 +88,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
           })
         } else {
           values.id = this.state.data.id
+          values.type = 'edit'
           this.props.dispatch({
             type: 'fyhSetting/edit',
             payload: values
