@@ -81,11 +81,11 @@ export default {
       });
     },
 
-    *edit({ payload, query, fetchPayload }, { call, put }: any) {
+    *edit({ payload }, { call, put }: any) {
       const result = yield call(Service.edit, payload);
       if (result.data.code === "0") {
         if (result.data.code === "0") {
-          message.success('添加成功');
+          message.success('修改成功');
           router.goBack()
         }
         // yield put({
@@ -102,7 +102,7 @@ export default {
       const result = yield call(Service.add, payload);
       console.log(result.data.code)
       if (result.data.code === "0") {
-        message.success('修改成功');
+        message.success('添加成功');
         router.goBack()
       }
     },
