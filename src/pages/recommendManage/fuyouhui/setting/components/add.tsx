@@ -2,6 +2,7 @@ import React from 'react'
 import Stage from './stage'
 import { connect } from 'dva';
 import router from "umi/router"
+import moment from 'moment';
 import {
   Form,
   Input,
@@ -20,6 +21,7 @@ import {
   Popconfirm,
   message
 } from 'antd';
+import { FormStage } from './stage'
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -52,6 +54,7 @@ interface IntProp {
         ruleType: string,
         serial: number,
         stages: any[],
+        validity?: any[],
       }
     }
   }
@@ -65,6 +68,10 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
   state = {
     confirmDirty: false,
     autoCompleteResult: [],
+    visible: false, // 弹出框是否显示
+    currentEdit: {}, // 当前编辑的数据
+    type: 'add', // 枚举，add=> 添加，  edit=>修改
+    data: {}, // 编辑数据
   };
 
   handleSubmit = (e: any) => {
@@ -74,12 +81,18 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
         values.beginTime = values.validity[0]
         values.endTime = values.validity[1]
         values.stages = this.props.fyhSetting.stages
-        console.log('Received values of form: ', values);
-
-        this.props.dispatch({
-          type: 'fyhSetting/add',
-          payload: values
-        })
+        if (this.state.type == 'add') {
+          this.props.dispatch({
+            type: 'fyhSetting/add',
+            payload: values
+          })
+        } else {
+          values.id = this.state.data.id
+          this.props.dispatch({
+            type: 'fyhSetting/edit',
+            payload: values
+          })
+        }
       }
     });
   };
@@ -122,9 +135,60 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
       payload: index
     })
   }
+  // 弹出框点确定
+  handleCreate = (data) => {
+    console.log(data)
+    const form = this.formRef.props.form;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+      let stage = Object.assign({}, data, values)
+      const stages = this.props.fyhSetting.stages
+      const index = stages.findIndex((item: any) => {
+        return item.stage === stage.stage
+      })
+      stages[index] = stage
+      this.props.dispatch({
+        type: 'fyhSetting/save',
+        payload: {
+          stages
+        }
+      })
+      console.log('Received values of form: ', values);
+      form.resetFields();
+      this.setState({ visible: false });
+    });
+  }
+
+  saveFormRef = formRef => {
+    this.formRef = formRef;
+  };
+  // 
+  onEdit = (value: intStage, e: Event): void => {
+    this.setState({
+      visible: true,
+      currentEdit: value
+    })
+  }
 
   componentDidMount() {
-    // if (this.props.routing.location.state) {}
+    let editData = this.props.routing.location.state
+    if (editData) {
+      let dateFormat = 'YYYY-MM-DD'
+      let validity = [moment(editData.beginDate, dateFormat), moment(editData.endDate, dateFormat)]
+      this.props.dispatch({
+        type: 'fyhSetting/save',
+        payload: {
+          stages: editData.stages
+        }
+      })
+      this.setState({
+        type: 'edit',
+        data: editData,
+        validity
+      })
+    }
   }
 
   render() {
@@ -168,7 +232,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
 
     return (
       <div>
-        <h3>新增活动设置</h3>
+        <h3>{this.state.type == 'add' ? '新增活动设置' : '编辑活动设置'}</h3>
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item
             label={
@@ -179,6 +243,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
           >
             {getFieldDecorator('activityName', {
               rules: [{ required: true, message: '请输入活动名称', whitespace: true }],
+              initialValue: this.state.data.activityName
             })(<Input />)}
           </Form.Item>
           <Form.Item
@@ -189,6 +254,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
             }
           >
             {getFieldDecorator('activitySubtitle', {
+              initialValue: this.state.data.activitySubtitle
               // rules: [{ required: true, message: '请输入活动名称', whitespace: true }],
             })(<Input />)}
           </Form.Item>
@@ -200,6 +266,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
             }
           >
             {getFieldDecorator('activityDescription', {
+              initialValue: this.state.data.activityDescription
               // rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
             })(<Input />)}
           </Form.Item>
@@ -211,6 +278,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   message: '请选择推荐时间',
                 },
               ],
+              initialValue: this.state.validity
             })(<RangePicker />)}
           </Form.Item>
           <Form.Item {...formItemLayout} label="奖励类型">
@@ -221,6 +289,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   message: '请选择奖励类型',
                 },
               ],
+              initialValue: this.state.data.ruleType
             })(
               <Radio.Group>
                 <Radio value="SINGLE">单次奖励</Radio>
@@ -236,6 +305,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   message: '请选择适用人群',
                 },
               ],
+              initialValue: this.state.data.limitation
             })(
               <Radio.Group>
                 <Radio value="ALL_MEMBER">全部</Radio>
@@ -251,7 +321,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   xs: { span: 24 },
                   sm: { span: 16 },
                 }
-                } key={item.name} >
+                } key={item.stage} >
                   <Descriptions bordered >
                     <DescriptionsItem label="开始次数">
                       <span>{item.timesBegin}</span>
@@ -276,6 +346,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   >
                     <Button type="danger">删除</Button>
                   </Popconfirm>
+                  <Button style={{ marginLeft: 10 }} onClick={e => this.onEdit(item, e)}>编辑</Button>
                 </Form.Item>
               )
             })
@@ -284,13 +355,23 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
             <Stage />
           </Form.Item>
 
-
+          <FormStage
+            data={this.state.currentEdit}
+            wrappedComponentRef={this.saveFormRef}
+            visible={this.state.visible}
+            onCancel={(): void => {
+              this.setState({
+                visible: false
+              })
+            }}
+            onCreate={this.handleCreate}
+          ></FormStage>
 
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
               保存
           </Button>
-            <Button style={{ marginLeft: 20 }} type="primary" htmlType="submit" onClick={() => router.goBack()}>
+            <Button style={{ marginLeft: 10 }} type="primary" onClick={() => router.goBack()}>
               返回
           </Button>
           </Form.Item>

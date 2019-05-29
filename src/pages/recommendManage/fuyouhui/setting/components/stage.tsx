@@ -6,6 +6,18 @@ import { connect } from 'dva';
 
 const { TextArea } = Input
 
+interface intStage {
+  "stage": number,
+  "name": string,
+  "subTitle": string,
+  "description": string,
+  "image": string,
+  "timesBegin": number,
+  "timesEnd": number,
+  "prizeScale": string,
+  "value": number
+}
+
 interface Props {
 
 }
@@ -39,6 +51,7 @@ export default class Stage extends React.Component<Props, State> {
         return;
       }
       values.prizeScale = "NUMBER"
+      values.stage = this.props.fyhSetting.stages.length
       let stages = [...this.props.fyhSetting.stages, values]
       this.props.dispatch({
         type: 'fyhSetting/save',
@@ -58,12 +71,12 @@ export default class Stage extends React.Component<Props, State> {
   render() {
     return (
       <div id="stage">
-        <Form_stage
+        <FormStage
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
-        ></Form_stage>
+        ></FormStage>
         <Button type="dashed" onClick={this.fnAddstage} style={{ width: '50%' }}>
           <Icon type="plus" /> Add field
           </Button>
@@ -77,10 +90,13 @@ export default class Stage extends React.Component<Props, State> {
   }
 }
 
-@Form.create({ name: 'form_stage' })
-class Form_stage extends React.Component {
+@Form.create({ name: 'FormStage' })
+export class FormStage extends React.Component {
   render() {
-    const { visible, onCancel, onCreate, form } = this.props;
+    let { visible, onCancel, onCreate, form, data } = this.props;
+    if (!data) {
+      data = {}
+    }
     const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
@@ -95,35 +111,43 @@ class Form_stage extends React.Component {
     return (
       <Modal
         visible={visible}
-        title="Create a new collection"
+        // title="Create a new collection"
         okText="Create"
         onCancel={onCancel}
-        onOk={onCreate}
+        onOk={
+          () => { 
+            return onCreate(data) 
+          }
+        }
+        data={data}
       >
         <Form layout="vertical" {...formItemLayout}>
           <Form.Item label="开始次数">
             {getFieldDecorator('timesBegin', {
-              rules: [{ required: true, message: 'Please input the title of collection!' }],
+              rules: [{ required: true, message: 'Please input' }],
+              initialValue: data.timesBegin
             })(<InputNumber />)}
           </Form.Item>
           <Form.Item label="结束次数">
             {getFieldDecorator('timesEnd', {
-              rules: [{ required: true, message: 'Please input the title of collection!' }],
+              rules: [{ required: true, message: 'Please input' }],
+              initialValue: data.timesEnd
             })(<InputNumber />)}
           </Form.Item>
           <Form.Item label="金额">
             {getFieldDecorator('value', {
-              rules: [{ required: true, message: 'Please input the value of collection!' }],
+              rules: [{ required: true, message: 'Please input' }],
+              initialValue: data.value
             })(<InputNumber />)}
           </Form.Item>
           <Form.Item label="活动名称">
-            {getFieldDecorator('name')(<Input type="textarea" />)}
+            {getFieldDecorator('name', { initialValue: data.name })(<Input type="textarea" />)}
           </Form.Item>
           <Form.Item label="活动副标题">
-            {getFieldDecorator('subTitle')(<Input type="textarea" />)}
+            {getFieldDecorator('subTitle', { initialValue: data.subTitle })(<Input type="textarea" />)}
           </Form.Item>
           <Form.Item label="活动说明">
-            {getFieldDecorator('description')(<TextArea rows={3} />)}
+            {getFieldDecorator('description', { initialValue: data.description })(<TextArea rows={3} />)}
           </Form.Item>
         </Form>
       </Modal>

@@ -80,10 +80,10 @@ export default {
     *edit({ payload }, { call, put }: any) {
       const result = yield call(Service.edit, payload);
       if (result.data.code === "0") {
-        yield put({
-          type: 'fetch',
-          payload: "",
-        });
+        if (result.data.code === "0") {
+          message.success('添加成功');
+          router.goBack()
+        }
       }
     },
 
@@ -91,7 +91,7 @@ export default {
       const result = yield call(Service.add, payload);
       console.log(result.data.code)
       if (result.data.code === "0") {
-        message.success('添加成功');
+        message.success('修改成功');
         router.goBack()
       }
     },
