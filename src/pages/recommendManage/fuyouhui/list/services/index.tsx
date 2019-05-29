@@ -8,7 +8,7 @@ export function tasklist(
     pageSize: 10,
   }
 ) {
-  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/task/list`, params,query);
+  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/recommends/task/list`, params,query);
 }
 
 export function detail(
@@ -16,7 +16,7 @@ export function detail(
     id: string
   }
 ) {
-  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/recommends/${params.id}/member/detail`);
+  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/recommends/${params.id}/member/detail`);
 }
 export function review(
   params: {
@@ -26,6 +26,6 @@ export function review(
     remark: string,
   }
 ) {
-  return request.post(`	http://101.132.27.104:7077/api/mms/spread/backend/recommend-prize/review`, params);
+  return request.post(`	http://api.fosunholiday.com/api/mms/spread/backend/recommend-prize/review`, params);
 }
 

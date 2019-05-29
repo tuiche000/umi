@@ -294,13 +294,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           </Row>
         </Form>
         <br />
-        <Row gutter={20}>
+        {/* <Row gutter={20}>
           <Col span={24} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit" onClick={this.goNewlyAdded}>
               新增
             </Button>
           </Col>
-        </Row>
+        </Row> */}
         <Table rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhSetting.totalResults, onChange: this.onChangePagesize, current: this.state.current }} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
 
         {/* 编辑模态框 */}

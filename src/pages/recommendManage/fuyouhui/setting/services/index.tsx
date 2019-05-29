@@ -8,7 +8,7 @@ export function tasklist(
     pageSize: 10,
   }
 ) {
-  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/product/tasklist`, params, query);
+  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/product/tasklist`, params, query);
 }
 
 export function edit(
@@ -24,7 +24,7 @@ export function edit(
     stages: any,
   }
 ) {
-  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/product/update/task`, params);
+  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/product/update/task`, params);
 }
 
 export function add(
@@ -39,5 +39,5 @@ export function add(
     stages?: string
   }
 ) {
-  return request.post(`http://101.132.27.104:7077/api/mms/spread/backend/product/task/creat`, params);
+  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/product/task/creat`, params);
 }
