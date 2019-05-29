@@ -36,7 +36,7 @@ const request = (url, method = 'get', data, query) => {
         method: method, // HTTP请求方法，默认为GET
         headers: { // HTTP的请求头，默认为{}
             'Content-Type': contentType,
-            // 'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         },
     }
     if (method === 'get') {

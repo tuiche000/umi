@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
 import styles from './Login.css';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
@@ -18,13 +18,17 @@ export default class NormalLoginForm extends React.Component<UserFormProps> {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        // console.log(this.props)
-        // console.log('Received values of form: ', values);
-        this.props.dispatch({
-          type: 'login/asyncLogin',
-          payload: ''
-        })
-        router.replace('/')    
+        if (values.username === 'admin' && values.password === 'password') {
+          // this.props.dispatch({
+          //   type: 'login/asyncLogin',
+          //   payload: ''
+          // })
+          localStorage.setItem('access_token', 'access_token')
+          message.success('登录成功')
+          router.replace('/')
+          return
+        }
+        message.info('账户或密码不对')
       }
     });
   };
