@@ -21,6 +21,7 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
+  current: number,
 }
 
 const limitation = {
@@ -43,6 +44,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
       record: {}, //编辑选中的数据
+      current: 1,
       tableColumns: [
         {
           title: '序号',
@@ -213,6 +215,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             pageSize: 10,
           }
         })
+        this.setState({
+          current: 1
+        })
       }
     });
   };
@@ -276,6 +281,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       payload: {
         pageNo: page
       }
+    })
+    // 手动设置分页
+    this.setState({
+      current: page
     })
     this.props.dispatch({
       type: 'lvxSetting/fetch',
@@ -363,7 +372,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           </Col>
         </Row> */}
 
-        <Table loading={this.props.loading.global} pagination={{ total: this.props.lvxSetting.totalResults, onChange: this.onChangePagesize }} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
+        <Table loading={this.props.loading.global} pagination={{ total: this.props.lvxSetting.totalResults, onChange: this.onChangePagesize, current: this.state.current }} rowKey={((record: object, index: number) => record.id)} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.lvxSetting.tableData} />
 
         {/* 批量设置模态框 */}
         <Modal

@@ -32,6 +32,7 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
+  current: number
 }
 
 @connect(
@@ -41,6 +42,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   constructor(props: UserFormProps) {
     super(props)
     this.state = {
+      current: 1, // 手动设置分页
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
@@ -132,8 +134,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     this.props.dispatch({
       type: 'fyhSetting/edit',
       payload: record,
-      query:this.props.fyhSetting.pageNo,
-      fetchPayload:this.props.fyhSetting.seachData
+      query: this.props.fyhSetting.pageNo,
+      fetchPayload: this.props.fyhSetting.seachData
     })
   }
 
@@ -190,6 +192,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             pageSize: 10,
           }
         })
+        // 手动设置分页
+        this.setState({
+          current: 1,
+        })
       }
     });
   };
@@ -226,7 +232,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         pageNo: page
       }
     })
-    console.log(this.props.fyhSetting.seachData)
     this.props.dispatch({
       type: 'fyhSetting/fetch',
       payload: this.props.fyhSetting.seachData,
@@ -234,6 +239,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         pageNo: page,
         pageSize: 10,
       }
+    })
+    // 手动设置分页
+    this.setState({
+      current: page,
     })
   }
 
@@ -292,7 +301,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             </Button>
           </Col>
         </Row>
-        <Table rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhSetting.totalResults, onChange: this.onChangePagesize }} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
+        <Table rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhSetting.totalResults, onChange: this.onChangePagesize, current: this.state.current }} loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.fyhSetting.tableData} />
 
         {/* 编辑模态框 */}
         <Modal
