@@ -21,6 +21,8 @@ interface UserFormProps extends FormComponentProps {
   dispatch: Function,
   fyhSetting: {
     tableData: object[]
+    seachData: any,
+    pageNo: number,
   },
 }
 interface BasicLayoutState {
@@ -30,7 +32,6 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
-  AtableData: any,
 }
 
 @connect(
@@ -130,7 +131,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     record.enabled = !record.enabled
     this.props.dispatch({
       type: 'fyhSetting/edit',
-      payload: record
+      payload: record,
+      query:this.props.fyhSetting.pageNo,
+      fetchPayload:this.props.fyhSetting.seachData
     })
   }
 
@@ -172,6 +175,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             delete obj[key]
           }
         }
+        // 设置全局搜索数据
+        this.props.dispatch({
+          type: 'fyhSetting/save',
+          payload: {
+            seachData: obj
+          }
+        })
         this.props.dispatch({
           type: 'fyhSetting/fetch',
           payload: obj,
@@ -190,10 +200,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       pathname: './setting/add',
       state: record
     })
-    // this.setState({
-    //   EditVisible: true,
-    //   record,
-    // });
   };
   //  编辑点击确定回调
   EditHandleOk = (e: any) => {
@@ -211,9 +217,19 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   };
 
   onChangePagesize = (page: any) => {
+    let obj = this.props.form.getFieldsValue()
+    obj.activityDate = this.formatDate(obj.activityDate ? obj.activityDate._d : undefined)
+    // 设置分页
+    this.props.dispatch({
+      type: 'fyhSetting/save',
+      payload: {
+        pageNo: page
+      }
+    })
+    console.log(this.props.fyhSetting.seachData)
     this.props.dispatch({
       type: 'fyhSetting/fetch',
-      paload:this.props.form.getFieldsValue(),
+      payload: this.props.fyhSetting.seachData,
       query: {
         pageNo: page,
         pageSize: 10,

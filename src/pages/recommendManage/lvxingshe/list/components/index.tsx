@@ -3,6 +3,7 @@ import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Popconfir
 // import './index.css'
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
+import moment from 'moment';
 
 
 const { Option } = Select;
@@ -18,6 +19,8 @@ interface UserFormProps extends FormComponentProps {
   lxsList: {
     tableData: object[],
     auditFailedVisible: boolean,
+    seachData: any,
+    pageNo: number,
   },
 }
 interface BasicLayoutState {
@@ -163,12 +166,15 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   confirm = (record: any) => {
+    console.log(this.props.lxsList.pageNo,this.props.lxsList.seachData)
     this.props.dispatch({
       type: 'lxsList/examine',
       payload: {
         id: record.id,
         status: "SUCCESSFUL",
-      }
+      },
+      fetchPayload: this.props.lxsList.seachData,
+      query: this.props.lxsList.pageNo,
     })
   }
 
@@ -241,6 +247,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           delete obj[key]
         }
       }
+      // 将搜索条件数据给到全局
+      this.props.dispatch({
+        type: 'lxsList/save',
+        payload: {
+          seachData: obj
+        }
+      })
       this.props.dispatch({
         type: 'lxsList/fetch',
         payload: obj,
@@ -253,9 +266,18 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   };
 
   onChangePagesize = (page: any) => {
+
+    // 将页码给到全局
+    this.props.dispatch({
+      type: 'lxsList/save',
+      payload: {
+        pageNo: page
+      }
+    })
+
     this.props.dispatch({
       type: 'lxsList/fetch',
-      paload:this.props.form.getFieldsValue(),
+      payload: this.props.lxsList.seachData,
       query: {
         pageNo: page,
         pageSize: 10,
@@ -278,6 +300,10 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
+    const disabledDate = (current: any) => {
+      // Can not select days before today and today
+      return current && current > moment().endOf('day');
+    }
     return (
       <div>
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch} >
@@ -303,7 +329,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                   //     message: '请选择推荐时间',
                   //   },
                   // ],
-                })(<RangePicker format="YYYY-MM-DD" />)}
+                })(<RangePicker format="YYYY-MM-DD" disabledDate={disabledDate} />)}
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -427,10 +453,10 @@ class SetupModel extends React.Component<UserFormProps> {
         }
         this.props.dispatch({
           type: 'lxsList/examine',
-          payload: obj
+          payload: obj,
+          fetchPayload: this.props.lxsList.pageNo,
+          query: this.props.lxsList.pageNo,
         })
-        console.log(obj)
-        
         this.props.dispatch({
           type: 'lxsList/save',
           payload: {

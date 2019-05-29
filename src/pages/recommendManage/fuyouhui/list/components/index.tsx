@@ -4,6 +4,7 @@ import { Form, Row, Col, Input, Button, Table, Modal, Select, DatePicker, Popove
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import router from "umi/router"
+import moment from 'moment';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -16,6 +17,9 @@ interface UserFormProps extends FormComponentProps {
   record?: any,
   fyhList: {
     tableData: object[]
+    seachData: any,
+    pageNo: number,
+    totalResults: number,
   },
 }
 interface BasicLayoutState {
@@ -82,18 +86,18 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           key: 'activitytDestription',
           align: "center",
         },
-        {
-          title: '活动类型',
-          dataIndex: 'ActivityType',
-          key: 'ActivityType',
-          align: "center",
-        },
-        {
-          title: '目前阶段',
-          dataIndex: 'CurrentStage',
-          key: 'CurrentStage',
-          align: "center",
-        },
+        // {
+        //   title: '活动类型',
+        //   dataIndex: 'ActivityType',
+        //   key: 'ActivityType',
+        //   align: "center",
+        // },
+        // {
+        //   title: '目前阶段',
+        //   dataIndex: 'CurrentStage',
+        //   key: 'CurrentStage',
+        //   align: "center",
+        // },
         {
           title: '奖励状态',
           render: (text: {
@@ -119,12 +123,12 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             )
           },
         },
-        {
-          title: '订单类型',
-          dataIndex: 'orderType',
-          key: 'orderType',
-          align: "center",
-        },
+        // {
+        //   title: '订单类型',
+        //   dataIndex: 'orderType',
+        //   key: 'orderType',
+        //   align: "center",
+        // },
         {
           title: '操作',
           key: 'action',
@@ -201,6 +205,13 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             delete obj[key]
           }
         }
+        // 设置全局搜索数据
+        this.props.dispatch({
+          type: 'fyhList/save',
+          payload: {
+            seachData: obj
+          }
+        })
         this.props.dispatch({
           type: 'fyhList/fetch',
           payload: obj,
@@ -214,9 +225,10 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   };
 
   onChangePagesize = (page: any) => {
+
     this.props.dispatch({
       type: 'fyhList/fetch',
-      paload:this.props.form.getFieldsValue(),
+      payload: this.props.fyhList.seachData,
       query: {
         pageNo: page,
         pageSize: 10,
@@ -240,6 +252,10 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
+    const disabledDate = (current: any) => {
+      // Can not select days before today and today
+      return current && current > moment().endOf('day');
+    }
     return (
       <div>
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch} >
@@ -265,7 +281,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                   //     message: '请选择推荐时间',
                   //   },
                   // ],
-                })(<RangePicker />)}
+                })(<RangePicker disabledDate={disabledDate} />)}
               </Form.Item>
             </Col>
             {/* <Col span={8}>
@@ -339,7 +355,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             </Button>
           </Col>
         </Row> */}
-        
+
         <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );

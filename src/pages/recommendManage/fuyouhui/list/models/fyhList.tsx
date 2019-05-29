@@ -11,9 +11,13 @@ interface interface_state {
   record: any,
   detailData: {}, // 列表详情数据
   totalResults: number
+  seachData: any,
+  pageNo: number,
 }
 export default {
   state: {
+    seachData: {}, // 搜索数据
+    pageNo: 1, // 分页
     setUpVisible: false, //  控制批量设置模态框显示隐藏
     EditVisible: false, //  控制编辑模态框显示隐藏
     selectedRowKeys: [], // 表格选择框选定的数据
@@ -21,7 +25,7 @@ export default {
     tableData: [], // 表格数据
     tableColumns: [],
     detailData: {}, // 列表详情数据
-    totalResults:Number,
+    totalResults: Number,
   },
   reducers: {
     save(state: interface_state, action: {
@@ -32,8 +36,8 @@ export default {
     }
   },
   effects: {
-    *fetch({ payload ,query}, { call, put }: any) {
-      const result = yield call(Service.tasklist, payload ,query);
+    *fetch({ payload, query }, { call, put }: any) {
+      const result = yield call(Service.tasklist, payload, query);
       const { data } = result.data
       const { totalResults } = data
       if (data.result) {
@@ -61,12 +65,20 @@ export default {
             detailData: data
           },
         });
+        console.log("11")
       }
     },
-    *review({ payload }, { call, put }: any) {
-      const result = yield call(Service.review, payload);
+    *review({ payload , id }, { call, put }: any) {
+      const result = yield call(Service.review, payload);    
       if (result.data.code != "0") {
         message.error(result.data.message);
+      }else if (result.data.code == "0") {
+        yield put({
+          type: 'detail',
+          payload: {
+            id,
+          },
+        });
       }
     },
   },

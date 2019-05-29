@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input, Table } from 'antd';
+import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input, Table , Popover } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import router from "umi/router"
@@ -93,7 +93,8 @@ class Detail extends React.Component<interface_props, interface_state> {
       payload: {
         id: item.id,
         status: "SUCCESSFUL",
-      }
+      },
+      id:this.props.routing.location.query.id
     })
   }
   // 审核失败 模态框显示
@@ -119,7 +120,8 @@ class Detail extends React.Component<interface_props, interface_state> {
             id: this.state.recode.id,
             status: "FAILED",
             reason: values.reason,
-          }
+          },
+          id:this.props.routing.location.query.id
         })
       }
     });
@@ -172,7 +174,9 @@ class Detail extends React.Component<interface_props, interface_state> {
                     <Col span={4}>阶段{item.stage + 1}</Col>
                     <Col span={4}>是否发放奖励：{item.status === "SUCCESSFUL" ? "是" : "否"}</Col>
                     <Col span={4}>奖励金：{item.prize}元</Col>
-                    <Col span={4}>是否成功审核：{item.recommendReviews && item.recommendReviews[0].status === "SUCCESSFUL" ? "是" : "否"}</Col>
+                    {item.recommendReviews && item.recommendReviews[0].status  ? null : <Col span={4}>是否成功审核: </Col>}
+                    {item.recommendReviews && item.recommendReviews[0].status === "SUCCESSFUL" ? <Col span={4}>是否成功审核：是 </Col> : null}
+                    {item.recommendReviews && item.recommendReviews[0].status === "FAILED" ? <Popover  content={<span>{item.recommendReviews[0].reason}</span>}><Col span={4}>是否成功审核：否 </Col></Popover> : null}
                     <Col span={4}>审核人：{item.recommendReviews && item.recommendReviews[0].reviewer}</Col>
                     <Col span={4}>审核时间：{item.recommendReviews && item.recommendReviews[0].reviewDate}</Col>
                   </Row>

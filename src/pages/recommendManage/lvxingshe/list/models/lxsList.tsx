@@ -11,9 +11,13 @@ interface interface_state {
   tableColumns: any[],
   record: any,
   totalResults: number,
+  seachData: any,
+  pageNo: number,
 }
 export default {
   state: {
+    seachData: {}, // 搜索数据
+    pageNo: 1, // 分页数据
     setUpVisible: false, //  控制批量设置模态框显示隐藏
     EditVisible: false, //  控制编辑模态框显示隐藏
     auditFailedVisible: false, // 控制审核失败模态框
@@ -60,10 +64,18 @@ export default {
         },
       });
     },
-    *examine({ payload }, { call, put }: any) {
+    *examine({ payload, query, fetchPayload }, { call, put }: any) {
       const result = yield call(Service.examine, payload);
       if (result.data.code != "0") {
         message.error(result.data.message);
+      } else if (result.data.code == "0") {
+        yield put({
+          type: 'fetch',
+          query: {
+            pageNo: query,
+          },
+          payload: fetchPayload,
+        });
       }
     },
   },
