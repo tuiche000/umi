@@ -10,7 +10,7 @@ export function productlist(
     pageSize: 10,
   }
 ) {
-  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/product/productlist`, params, query);
+  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/productlist`, params, query);
 }
 
 export function edit(
@@ -30,6 +30,6 @@ export function edit(
     enabled: boolean,
   }
 ) {
-  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/product/update/product`, params);
+  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/update/product`, params);
 }
 

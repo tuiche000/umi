@@ -8,7 +8,7 @@ export function productTasklist(
     pageSize: 10,
   }
 ) {
-  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/recommends/product/list`, params,query);
+  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/recommends/product/list`, params,query);
 }
 
 export function examine(
@@ -19,5 +19,5 @@ export function examine(
     remark: string,
   }
 ) {
-  return request.post(`http://api.fosunholiday.com/api/mms/spread/backend/recommend-prize/review`, params);
+  return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/recommend-prize/review`, params);
 }

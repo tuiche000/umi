@@ -20,7 +20,7 @@ export default {
           routes: [
             { path: '/recommendManage/lvxingshe/setting', component: './recommendManage/setting', name: '推荐设置' },
             { path: '/recommendManage/lvxingshe/list', component: './recommendManage/list', name: '推荐列表' },
-            // { path: '/recommendManage/lvxingshe/dataOutput', component: './recommendManage/dataOutput', name: '数据导出' },
+            { path: '/recommendManage/lvxingshe/dataOutput', component: './recommendManage/dataOutput', name: '数据导出' },
           ]
         },
         {
@@ -31,10 +31,10 @@ export default {
             { path: '/recommendManage/fuyouhui/list', component: './fuyouhui/list', name: '推荐列表' },
           ]
         },
-        // {
-        //   path: '/recommendManage/bujiangli',
-        //   name: '补发奖励管理'
-        // },
+        {
+          path: '/recommendManage/bujiangli',
+          name: '补发奖励管理'
+        },
       ]
     }
   ],

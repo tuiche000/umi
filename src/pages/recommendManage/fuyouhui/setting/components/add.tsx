@@ -316,7 +316,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
             )}
           </Form.Item>
           {
-            this.props.fyhSetting.stages.map((item: intStage, index: number) => {
+            (this.props.fyhSetting.stages || []).map((item: intStage, index: number) => {
               return (
                 <Form.Item label={`阶段${index + 1}`} wrapperCol={{
                   xs: { span: 24 },
