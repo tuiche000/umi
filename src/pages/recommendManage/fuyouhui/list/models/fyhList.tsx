@@ -65,7 +65,6 @@ export default {
             detailData: data
           },
         });
-        console.log("11")
       }
     },
     *review({ payload , id }, { call, put }: any) {

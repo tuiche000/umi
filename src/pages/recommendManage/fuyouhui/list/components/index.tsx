@@ -21,6 +21,7 @@ interface UserFormProps extends FormComponentProps {
     pageNo: number,
     totalResults: number,
   },
+  dispatch: Function,
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
@@ -158,7 +159,8 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     })
   }
   goDetail(record: any) {
-    router.push("./list/detail?id=" + record.id)
+    // router.push("./list/detail?id=" + record.id)
+    router.push(`./list/detail?id=${record.id}`)
   }
   // 批量停用模态框
   fnDiscontinueUse() {
@@ -170,7 +172,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
       icon: null,
       centered: true,
       onOk() {
-        console.log(that.state.selectedRowKeys)
+        // console.log(that.state.selectedRowKeys)
       }
     });
   }
@@ -192,7 +194,6 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      console.log(values)
       if (!err) {
         let obj = {
           activitytSubTitle: values.activitytSubTitle && values.activitytSubTitle.trim(),
@@ -258,11 +259,11 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
         this.setState({
           selectedRowKeys,
         })
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
     const disabledDate = (current: any) => {
-      // Can not select days before today and today
+      // Can not select days after today
       return current && current > moment().endOf('day');
     }
     return (

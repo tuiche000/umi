@@ -138,7 +138,6 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
   }
   // 弹出框点确定
   handleCreate = (data) => {
-    console.log(data)
     const form = this.formRef.props.form;
     form.validateFields((err, values) => {
       if (err) {
@@ -156,7 +155,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
           stages
         }
       })
-      console.log('Received values of form: ', values);
+      // console.log('Received values of form: ', values);
       form.resetFields();
       this.setState({ visible: false });
     });
@@ -279,8 +278,8 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   message: '请选择推荐时间',
                 },
               ],
-              initialValue: this.state.validity
-            })(<RangePicker />)}
+              initialValue: (this.state.validity && this.state.validity[0]._i) && this.state.validity 
+            })(<RangePicker  />)}
           </Form.Item>
           <Form.Item {...formItemLayout} label="奖励类型">
             {getFieldDecorator('ruleType', {
@@ -339,7 +338,6 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                     title="Are you sure delete this task?"
                     onConfirm={this.onConfirm.bind(this, item, index)}
                     onCancel={(e) => {
-                      console.log(e);
                       message.error('Click on No');
                     }}
                     okText="Yes"

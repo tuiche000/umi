@@ -23,6 +23,7 @@ interface UserFormProps extends FormComponentProps {
     tableData: object[]
     seachData: any,
     pageNo: number,
+    totalResults: any,
   },
 }
 interface BasicLayoutState {
@@ -257,9 +258,13 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         this.setState({
           selectedRowKeys,
         })
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
+    const disabledDate = (current: any) => {
+      // Can not select days after today
+      return current && current > moment().endOf('day');
+    }
     return (
       <div>
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch} >
@@ -280,7 +285,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               <Form.Item {...formItemLayout} label="活动时间">
                 {getFieldDecorator('activityDate', {
                   // rules: [{ type: 'object', required: true, message: '请选择活动时间' }],
-                })(<DatePicker />)}
+                })(<DatePicker disabledDate={disabledDate} />)}
               </Form.Item>
             </Col>
           </Row>
@@ -323,12 +328,11 @@ class SetupModel extends React.Component<UserFormProps> {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        // console.log('Received values of form: ', values);
       }
     })
   }
   render() {
-    console.log(this.props.record)
     const { getFieldDecorator } = this.props.form
 
     // 点击编辑从父组件中得到的数据

@@ -23,6 +23,7 @@ interface UserFormProps extends FormComponentProps {
     pageNo: number,
     totalResults:any,
   },
+  dispatch: Function,
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
@@ -146,7 +147,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               </Popconfirm>
               <Divider type="vertical" />
               <a href="javascript:;" onClick={this.auditFailed.bind(this, record)} >审核失败</a>
-              {/* <a href="javascript:;" onClick={this.auditFailed}>审核未通过</a> */}
             </span>
           ),
         },
@@ -194,7 +194,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     });
   }
 
-  //  审核未通过模态框点击取消回调
+  //  审核失败模态框点击取消回调
   auditFailedleCancel = (e: any) => {
     this.props.dispatch({
       type: 'lxsList/save',
@@ -209,8 +209,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     let that = this
     Modal.confirm({
       content: '批量处理审核数据',
-      okText: '审核通过',
-      cancelText: '审核未通过',
+      okText: '审核成功',
+      cancelText: '审核失败',
       icon: null,
       centered: true,
       onOk() {
@@ -306,11 +306,11 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         this.setState({
           selectedRowKeys,
         })
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
     const disabledDate = (current: any) => {
-      // Can not select days before today and today
+      // Can not select days after today
       return current && current > moment().endOf('day');
     }
     return (
@@ -398,8 +398,8 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
                   // initialValue: [1],
                 })(
                   <Select placeholder="请选择" allowClear={true}>
-                    <Option value={1}>审核通过</Option>
-                    <Option value={2}>审核未通过</Option>
+                    <Option value={1}>审核成功</Option>
+                    <Option value={2}>审核失败</Option>
                     <Option value={0}>待审核</Option>
                   </Select>,
                 )}
@@ -424,7 +424,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         </Row> */}
         <Table rowSelection={rowSelection} pagination={{ total: this.props.lxsList.totalResults, onChange: this.onChangePagesize, current: this.state.current }} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={this.props.lxsList.tableData} />
 
-        {/* 审核未通过 */}
+        {/* 审核失败 */}
         <Modal
           visible={this.props.lxsList.auditFailedVisible}
           onCancel={this.auditFailedleCancel}

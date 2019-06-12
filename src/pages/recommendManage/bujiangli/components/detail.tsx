@@ -34,7 +34,7 @@ class Detail extends React.Component<interface_props, interface_state> {
 
   // 审核通过确定回调函数
   auditPassConfirm() {
-    console.log("11")
+    // console.log("11")
   }
   // 审核未通过模态框显示
   auditFailed() {
@@ -49,7 +49,7 @@ class Detail extends React.Component<interface_props, interface_state> {
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        // console.log('Received values of form: ', values);
         this.setState({
           auditFailedVisible: false,
         });
@@ -65,7 +65,6 @@ class Detail extends React.Component<interface_props, interface_state> {
   };
 
   render() {
-    console.log(this.props)
     const { getFieldDecorator } = this.props.form;
     return (
       <div>

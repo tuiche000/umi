@@ -142,7 +142,7 @@ class Detail extends React.Component<interface_props, interface_state> {
         this.setState({
           selectedRowKeys,
         })
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
 

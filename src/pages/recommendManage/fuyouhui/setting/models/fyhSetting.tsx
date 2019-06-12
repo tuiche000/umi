@@ -50,7 +50,7 @@ export default {
     }) {
       let obj = Object.assign({}, state)
       state.stages.splice(action.payload, 1)
-      console.log({ ...obj.stages })
+      // console.log({ ...obj.stages })
       return state
     },
     clear(state: interface_state, action: {
@@ -106,7 +106,6 @@ export default {
 
     *add({ payload }, { call, put }: any) {
       const result = yield call(Service.add, payload);
-      console.log(result.data.code)
       if (result.data.code === "0") {
         message.success('添加成功');
         router.goBack()

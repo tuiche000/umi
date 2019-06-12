@@ -25,7 +25,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
 
   onChange(value: any, dateString: any[]) {
     // console.log('Selected Time: ', value);
-    console.log('Formatted Selected Time: ', dateString);
+    // console.log('Formatted Selected Time: ', dateString);
     this.setState({
       dateString,
     })
@@ -33,26 +33,23 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
 
   // 导出发放奖励数据
   ExportRewardData() {
-    console.log("1", this.state.dateString)
+    // console.log("1", this.state.dateString)
   }
 
   // 导出消费奖励数据
   ExportConsumptionData() {
-    console.log("2", this.state.dateString)
+    // console.log("2", this.state.dateString)
   }
 
   // 总数据导出
   ExportTotalData() {
-    console.log("3", this.state.dateString)
+    // console.log("3", this.state.dateString)
   }
   render() {
     // 获取当前时间给到日期控件
     const dateFormat = 'YYYY/MM/DD';
-    // const date = new Date();
-    // const startDatastr = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
-    // const endDatastr = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + (date.getDate() + 7);
     const disabledDate = (current: any) => {
-      // Can not select days before today and today
+      // Can not select days after today
       return current && current > moment().endOf('day');
     }
     return (
@@ -66,13 +63,13 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           />
         </div>
         <br />
-        <Button type="primary" size="large" onClick={this.ExportRewardData}>导出发放奖励数据</Button>
+        <Button type="primary" size="large" shape="round" icon="download" onClick={this.ExportRewardData}>导出发放奖励数据</Button>
         <br />
         <br />
-        <Button type="primary" size="large" onClick={this.ExportConsumptionData}>导出消费奖励数据</Button>
+        <Button type="primary" size="large" shape="round" icon="download" onClick={this.ExportConsumptionData}>导出消费奖励数据</Button>
         <br />
         <br />
-        <Button type="primary" size="large" onClick={this.ExportTotalData}>总数据导出</Button>
+        <Button type="primary" size="large" shape="round" icon="download" onClick={this.ExportTotalData}>总数据导出</Button>
       </div>
     );
   }

@@ -151,12 +151,12 @@ export default class RegistrationForm extends React.Component {
         >
           {getFieldDecorator('nickname', {
             rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-          })(<Input />)}
+          })(<Input placeholder="请输入用户账号"/>)}
         </Form.Item>
         <Form.Item label="手机号码">
           {getFieldDecorator('手机号码', {
             rules: [{ required: true, message: 'Please input your phone number!' }],
-          })(<Input addonBefore={prefixSelector} style={{ width: '100%' }} />)}
+          })(<Input addonBefore={prefixSelector} style={{ width: '100%' }} placeholder="请输入手机号码"/>)}
         </Form.Item>
         <Form.Item
           label={
@@ -167,13 +167,13 @@ export default class RegistrationForm extends React.Component {
         >
           {getFieldDecorator('nickname', {
             rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-          })(<Input />)}
+          })(<Input placeholder="请输入奖励"/>)}
         </Form.Item>
         <Form.Item label="所属平台" hasFeedback>
           {getFieldDecorator('select', {
             rules: [{ required: true, message: 'Please select your country!' }],
           })(
-            <Select placeholder="Please select a country">
+            <Select placeholder="请选择所属平台">
               <Option value="0">旅行社</Option>
               <Option value="1">复游会</Option>
             </Select>,
@@ -188,15 +188,13 @@ export default class RegistrationForm extends React.Component {
           }
         >
           {getFieldDecorator('nickname', {
-            rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-          })(<Input />)}
+          })(<Input  placeholder="请输入订单ID"/>)}
         </Form.Item>
 
         <Form.Item label="备注" hasFeedback>
           {getFieldDecorator('select', {
-            rules: [{ required: true, message: 'Please select your country!' }],
           })(
-            <TextArea rows={4} />,
+            <TextArea rows={4} placeholder="请输入备注"/>,
           )}
         </Form.Item>
         

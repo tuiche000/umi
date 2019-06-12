@@ -178,7 +178,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       icon: null,
       centered: true,
       onOk() {
-        console.log(that.state.selectedRowKeys)
+        // console.log(that.state.selectedRowKeys)
       }
     });
   }
@@ -249,7 +249,6 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
   // 编辑开启模态框回调
   EditShowModal = (record: any) => {
-    console.log(record, this.props.lvxSetting.EditVisible)
     this.props.dispatch({
       type: 'lvxSetting/save',
       payload: {
@@ -307,7 +306,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         this.setState({
           selectedRowKeys,
         })
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
     return (

@@ -3,11 +3,13 @@ import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Radio, Po
 import { FormComponentProps } from 'antd/lib/form';
 import router from "umi/router"
 import { connect } from 'dva';
+import moment from 'moment';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 interface ComponentProps {
   record?: any,
+  dispatch: Function,
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
@@ -114,10 +116,10 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
   }
 
   componentDidMount() {
-    this.props.dispatch({
-      type: 'bjlList/fetch',
-      payload: ''
-    })
+    // this.props.dispatch({
+    //   type: 'bjlList/fetch',
+    //   payload: ''
+    // })
     console.log(this.props)
   }
 
@@ -159,8 +161,8 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
   render() {
 
     const formItemLayout = {
-      labelCol: { span: 5 },
-      wrapperCol: { span: 9 },
+      labelCol: { span: 8 },
+      wrapperCol: { span: 14 },
     }
     const { getFieldDecorator } = this.props.form
 
@@ -173,6 +175,10 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
     };
+    const disabledDate = (current: any) => {
+      // Can not select days after today
+      return current && current > moment().endOf('day');
+    }
     return (
       <div>
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch} >
@@ -180,34 +186,21 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
             <Col span={8}>
               <Form.Item {...formItemLayout} label="操作人">
                 {getFieldDecorator('recommender', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入操作人',
-                    },
-                  ],
                 })(<Input placeholder="请输入操作人" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="补发时间">
                 {getFieldDecorator('recommendedTime', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请选择补发时间',
-                    },
-                  ],
-                })(<RangePicker />)}
+                })(<RangePicker allowClear={true} disabledDate={disabledDate} />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
                 {getFieldDecorator('recommendation', {
-                  rules: [{ required: true, message: '请选择' }],
-                  initialValue: ['yes'],
+                  // initialValue: ['0'],
                 })(
-                  <Select placeholder="请选择">
+                  <Select placeholder="请选择" allowClear={true}>
                     <Option value="0">已发放</Option>
                     <Option value="1">未发放</Option>
                     <Option value="2">审核中</Option>
@@ -218,34 +211,21 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
             <Col span={8}>
               <Form.Item {...formItemLayout} label="用户名">
                 {getFieldDecorator('recommendedProducts', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入用户名',
-                    },
-                  ],
                 })(<Input placeholder="请输入用户名" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="用户手机号">
                 {getFieldDecorator('recommendedPerson', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入用户手机号',
-                    },
-                  ],
                 })(<Input placeholder="请输入用户手机号" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="审核状态" hasFeedback={true}>
                 {getFieldDecorator('auditStatus', {
-                  rules: [{ required: true, message: '请选择' }],
-                  initialValue: ['pass'],
+                  // initialValue: ['pass'],
                 })(
-                  <Select placeholder="请选择">
+                  <Select placeholder="请选择" allowClear={true}>
                     <Option value="pass">审核通过</Option>
                     <Option value="notPass">审核未通过</Option>
                     <Option value="wait">待审核</Option>
