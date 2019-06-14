@@ -7,9 +7,24 @@ import moment from 'moment';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const reviewStatus = {
+  0: '待审核',
+  1: '审核成功',
+  2: '审核失败'
+}
+const channel = {
+  0: '复游会',
+  1: '旅行社',
+  2: '好物商城'
+}
 interface ComponentProps {
   record?: any,
   dispatch: Function,
+  bjlList: {
+    seachData: {},
+    totalResults: number,
+    tableData: {},
+  },
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
@@ -18,6 +33,7 @@ interface BasicLayoutState {
   tableData?: any[],
   tableColumns: any[],
   record: any,
+  current: number,
 }
 
 @connect(
@@ -28,6 +44,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
   constructor(props: ComponentProps) {
     super(props)
     this.state = {
+      current: 1, // 分页页码
       setUpVisible: false, //  控制批量设置模态框显示隐藏
       EditVisible: false, //  控制编辑模态框显示隐藏
       selectedRowKeys: [], // 表格选择框选定的数据
@@ -35,63 +52,77 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
       tableColumns: [
         {
           title: '序号',
-          dataIndex: '0',
-          key: '0',
+          dataIndex: 'serial',
+          key: 'serial',
           align: "center",
         },
         {
           title: '补发ID',
-          dataIndex: '1',
-          key: '1',
+          dataIndex: 'id',
+          key: 'id',
           align: "center",
         },
         {
           title: '操作人',
-          dataIndex: 'Recommender',
-          key: 'Recommender',
+          dataIndex: 'operator',
+          key: 'operator',
           align: "center",
         },
         {
           title: '补发时间',
-          dataIndex: 'RecommendedTime',
-          key: 'RecommendedTime',
+          dataIndex: 'reissueDate',
+          key: 'reissueDate',
           align: "center",
         },
         {
           title: '所属平台',
-          dataIndex: 'ProductName',
-          key: 'ProductName',
+          render: (text: {
+            channel: 0 | 1 | 2
+          }): JSX.Element => {
+            return <span>{channel[text.channel]}</span>
+          },
+          key: 'channel',
           align: "center",
         },
-        {
-          title: '用户名',
-          dataIndex: 'PlatformType',
-          key: 'PlatformType',
-          align: "center",
-        },
+        // {
+        //   title: '用户名',
+        //   dataIndex: 'PlatformType',
+        //   key: 'PlatformType',
+        //   align: "center",
+        // },
         {
           title: '用户手机号码',
-          dataIndex: 'Recommendation',
-          key: 'Recommendation',
+          dataIndex: 'mobile',
+          key: 'mobile',
           align: "center",
         },
         {
           title: '奖励金额',
-          dataIndex: 'RecommendedPerson',
-          key: 'RecommendedPerson',
+          dataIndex: 'prize',
+          key: 'prize',
           align: "center",
         },
         {
           title: '奖励状态',
-          dataIndex: 'RecommendedWay',
-          key: 'RecommendedWay',
+          render: (text: {
+            prizeStatus: Number
+          }): JSX.Element => {
+            return <span>{text.prizeStatus === 0 ? '未发放' : '已发放'}</span>
+          },
+          key: 'prizeStatus',
           align: "center",
         },
         {
           title: '审核状态',
-          dataIndex: 'AuditStatus',
-          key: 'AuditStatus',
+          key: 'reviewStatus',
           align: "center",
+          render: (text: {
+            reviewStatus: 0 | 1 | 2
+          }, record: any): JSX.Element => {
+            return (
+              <span>{reviewStatus[text.reviewStatus]}</span>
+            )
+          },
         },
         {
           title: '操作',
@@ -109,18 +140,23 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
       ], // 表格表头
     };
 
-    this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
+    // this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.fnAdd = this.fnAdd.bind(this)
     // this.fnDetail = this.fnDetail.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
   }
 
   componentDidMount() {
-    // this.props.dispatch({
-    //   type: 'bjlList/fetch',
-    //   payload: ''
-    // })
-    console.log(this.props)
+    this.props.dispatch({
+      type: 'bjlList/fetch',
+      query: {
+        pageNo: 1,
+        pageSize: 10,
+      },
+      payload: {
+        channel: 1,
+      }
+    })
   }
 
   // 详情
@@ -135,29 +171,96 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
     router.push('./bujiangli/add')
   }
 
-  // 批量停用模态框
-  fnDiscontinueUse() {
-    let that = this
-    Modal.confirm({
-      content: '批量处理审核数据',
-      okText: '审核通过',
-      cancelText: '审核未通过',
-      icon: null,
-      centered: true,
-      onOk() {
-        console.log(that.state.selectedRowKeys)
-      }
-    });
-  }
+  // 批量审核模态框
+  // fnDiscontinueUse() {
+  //   let that = this
+  //   Modal.confirm({
+  //     content: '批量处理审核数据',
+  //     okText: '审核通过',
+  //     cancelText: '审核未通过',
+  //     icon: null,
+  //     centered: true,
+  //     onOk() {
+  //       console.log(that.state.selectedRowKeys)
+  //     }
+  //   });
+  // }
 
   // 搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      console.log('Received values of form: ', values);
+    this.props.form.validateFields((err: any, values: any) => {
+      console.log(values);
+      let obj = {
+        mobile: values.mobile && values.mobile.trim(),
+        beginDate: this.formatDate(values.reissueDate && values.reissueDate.length != 0 ? values.reissueDate[0]._d : undefined),
+        endDate: this.formatDate(values.reissueDate && values.reissueDate.length != 0 ? values.reissueDate[1]._d : undefined),
+        reviewStatus: values.reviewStatus,
+        prizeStatus: values.prizeStatus,
+        channel: 1,
+      }
+      // 当对象key值无数据时删除该key
+      for (let key in obj) {
+        if (!obj[key] && obj[key] !== 0) {
+          delete obj[key]
+        }
+      }
+      console.log(obj)
+      // 将搜索条件数据给到全局
+      this.props.dispatch({
+        type: 'bjlList/save',
+        payload: {
+          seachData: obj
+        }
+      })
+      this.props.dispatch({
+        type: 'bjlList/fetch',
+        query: {
+          pageNo: 1,
+          pageSize: 10,
+        },
+        payload: obj
+      })
+      this.setState({
+        current: 1
+      })
     });
   };
+  onChangePagesize = (page: any) => {
 
+    // 将页码给到全局
+    this.props.dispatch({
+      type: 'bjlList/save',
+      payload: {
+        pageNo: page
+      }
+    })
+    // 手动设置分页
+    this.setState({
+      current: page,
+    });
+    this.props.dispatch({
+      type: 'bjlList/fetch',
+      payload: this.props.bjlList.seachData,
+      query: {
+        pageNo: page,
+        pageSize: 10,
+      }
+    })
+  }
+  // 将获取到的标准时间转换格式
+  formatDate(date: any) {
+    if (date) {
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? '0' + m : m;
+      var d = date.getDate();
+      d = d < 10 ? ('0' + d) : d;
+      return y + '-' + m + '-' + d;
+    } else {
+      return undefined
+    }
+  }
   render() {
 
     const formItemLayout = {
@@ -183,21 +286,21 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
       <div>
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch} >
           <Row gutter={24}>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item {...formItemLayout} label="操作人">
-                {getFieldDecorator('recommender', {
+                {getFieldDecorator('operator', {
                 })(<Input placeholder="请输入操作人" />)}
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="补发时间">
-                {getFieldDecorator('recommendedTime', {
+                {getFieldDecorator('reissueDate', {
                 })(<RangePicker allowClear={true} disabledDate={disabledDate} />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="奖励状态" hasFeedback={true}>
-                {getFieldDecorator('recommendation', {
+                {getFieldDecorator('prizeStatus', {
                   // initialValue: ['0'],
                 })(
                   <Select placeholder="请选择" allowClear={true}>
@@ -208,27 +311,27 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
                 )}
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item {...formItemLayout} label="用户名">
                 {getFieldDecorator('recommendedProducts', {
                 })(<Input placeholder="请输入用户名" />)}
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Form.Item {...formItemLayout} label="用户手机号">
-                {getFieldDecorator('recommendedPerson', {
+                {getFieldDecorator('mobile', {
                 })(<Input placeholder="请输入用户手机号" />)}
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item {...formItemLayout} label="审核状态" hasFeedback={true}>
-                {getFieldDecorator('auditStatus', {
+                {getFieldDecorator('reviewStatus', {
                   // initialValue: ['pass'],
                 })(
                   <Select placeholder="请选择" allowClear={true}>
-                    <Option value="pass">审核通过</Option>
-                    <Option value="notPass">审核未通过</Option>
-                    <Option value="wait">待审核</Option>
+                    <Option value={1}>审核成功</Option>
+                    <Option value={2}>审核失败</Option>
+                    <Option value={0}>待审核</Option>
                   </Select>,
                 )}
               </Form.Item>
@@ -245,15 +348,15 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
         <br />
         <Row gutter={20}>
           <Col span={24} style={{ textAlign: 'right' }}>
-            <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
+            {/* <Button type="primary" htmlType="submit" onClick={this.fnDiscontinueUse}>
               批量审核
-            </Button>
+            </Button> */}
             <Button type="primary" htmlType="submit" onClick={this.fnAdd} style={{ marginLeft: 10 }}>
               新增
             </Button>
           </Col>
         </Row>
-        <Table loading={this.props.loading.global} rowSelection={rowSelection} columns={this.state.tableColumns} dataSource={this.props.bjlList.tableData} />
+        <Table loading={this.props.loading.global} rowSelection={rowSelection} pagination={{ total: this.props.bjlList.totalResults, onChange: this.onChangePagesize, current: this.state.current }} rowKey={((record: object, index: number) => record.id)} columns={this.state.tableColumns} dataSource={this.props.bjlList.tableData} />
       </div>
     );
   }

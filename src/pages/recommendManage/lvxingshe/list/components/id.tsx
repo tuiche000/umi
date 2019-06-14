@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import { connect } from 'dva';
 
 interface UserFormProps extends FormComponentProps {
 
@@ -9,9 +10,18 @@ interface interface_state {
   auditFailedVisible: boolean,
 }
 interface interface_props extends UserFormProps {
-
+  routing: {
+    location: {
+      query: {
+        id: string
+      }
+    }
+  }
 }
 
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
 class Detail extends React.Component<interface_props, interface_state> {
   constructor(props: any) {
     super(props)
@@ -21,7 +31,15 @@ class Detail extends React.Component<interface_props, interface_state> {
     this.auditFailed = this.auditFailed.bind(this)
     this.auditPassConfirm = this.auditPassConfirm.bind(this)
   };
-
+  componentDidMount() {
+    console.log(this.props.routing.location.query.id)
+    this.props.dispatch({
+      type: 'lxsList/detail',
+      payload: {
+        id:this.props.routing.location.query.id,
+      }
+    })
+  }
   // 审核通过确定回调函数
   auditPassConfirm() {
     // console.log("11")
@@ -56,6 +74,7 @@ class Detail extends React.Component<interface_props, interface_state> {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    console.log(this.props)
     return (
       <div>
         <h2>

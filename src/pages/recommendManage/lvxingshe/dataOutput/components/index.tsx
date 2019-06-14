@@ -1,6 +1,8 @@
 import React from 'react';
 import { DatePicker, Button } from 'antd';
 import moment from 'moment';
+import { connect } from 'dva';
+import router from "umi/router"
 
 const { RangePicker } = DatePicker;
 
@@ -10,7 +12,9 @@ interface UserFormProps {
 interface BasicLayoutState {
   dateString: any,
 }
-
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
 export default class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState> {
   constructor(props: UserFormProps) {
     super(props)
@@ -33,17 +37,17 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
 
   // 导出发放奖励数据
   ExportRewardData() {
-    // console.log("1", this.state.dateString)
+    window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/issue?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
   }
 
   // 导出消费奖励数据
   ExportConsumptionData() {
-    // console.log("2", this.state.dateString)
+    window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/deduction?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
   }
 
   // 总数据导出
   ExportTotalData() {
-    // console.log("3", this.state.dateString)
+    window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/sum?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
   }
   render() {
     // 获取当前时间给到日期控件

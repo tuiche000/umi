@@ -78,6 +78,18 @@ export default {
         });
       }
     },
+    *detail({ payload }, { call, put }: any) {
+      const result = yield call(Service.detail, payload);
+      const { data } = result.data
+      if (result.data.code === "0") {
+        yield put({
+          type: 'save',
+          payload: {
+            detailData: data
+          },
+        });
+      }
+    },
   },
   subscriptions: {
     // setup({ dispatch, history }: any, done: any) {

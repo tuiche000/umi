@@ -16,7 +16,11 @@ interface interface_props extends UserFormProps {
         id: string
       }
     }
-  }
+  },
+  dispatch: Function,
+  bjlList: {
+    detailData: {}
+  },
 }
 
 @connect(
@@ -31,10 +35,23 @@ class Detail extends React.Component<interface_props, interface_state> {
     this.auditFailed = this.auditFailed.bind(this)
     this.auditPassConfirm = this.auditPassConfirm.bind(this)
   };
-
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'bjlList/detail',
+      payload: {
+        id: this.props.routing.location.query.id
+      }
+    })
+  }
   // 审核通过确定回调函数
   auditPassConfirm() {
-    // console.log("11")
+    this.props.dispatch({
+      type: 'bjlList/review',
+      payload: {
+        id: this.props.routing.location.query.id,
+        status: "SUCCESSFUL",
+      }
+    })
   }
   // 审核未通过模态框显示
   auditFailed() {
@@ -49,7 +66,23 @@ class Detail extends React.Component<interface_props, interface_state> {
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        // console.log('Received values of form: ', values);
+        console.log('Received values of form: ', values);
+        let obj = {
+          id: this.props.routing.location.query.id,
+          status: "FAILED",
+          reason: values.reason,
+          remark: values.remark,
+        }
+        // 当对象key值无数据时删除该key
+        for (let key in obj) {
+          if (!obj[key] && obj[key] !== 0) {
+            delete obj[key]
+          }
+        }
+        this.props.dispatch({
+          type: 'bjlList/review',
+          payload: obj
+        })
         this.setState({
           auditFailedVisible: false,
         });
@@ -63,13 +96,13 @@ class Detail extends React.Component<interface_props, interface_state> {
       auditFailedVisible: false,
     });
   };
-
   render() {
     const { getFieldDecorator } = this.props.form;
+    console.log(this.props.bjlList.detailData)
     return (
       <div>
         <h2>
-          <b>ID：{this.props.routing.location.query.id}</b>
+          <b>ID：{this.props.bjlList.detailData.id}</b>
         </h2>
         <Card bordered={false}>
           <div>
@@ -77,44 +110,47 @@ class Detail extends React.Component<interface_props, interface_state> {
               <b>推荐信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>补发ID：2265xxxx</Col>
-              <Col span={8}>推荐方式：旅行社</Col>
-              <Col span={8}>用户名：杨幂</Col>
-              <Col span={8}>补发时间：2019-01-22 09:09:09</Col>
-              <Col span={8}>用户手机号：139000000000</Col>
+              <Col span={8}>补发ID：{this.props.bjlList.detailData.id}</Col>
+              <Col span={8}>推荐方式：{this.props.bjlList.detailData.channel == 0 ? "复游会" : "旅行社"}</Col>
+              <Col span={8}>用户名：{this.props.bjlList.detailData.mobile}</Col>
+              <Col span={8}>补发时间：{this.props.bjlList.detailData.reissueDate}</Col>
+              <Col span={8}>用户手机号：{this.props.bjlList.detailData.mobile}</Col>
             </Row>
-            <Row gutter={20}>
-              <Col span={24} style={{ textAlign: 'right' }}>
-                <Popconfirm
-                  title="Are you sure？"
-                  onConfirm={this.auditPassConfirm}
-                  icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-                >
-                  <Button type="primary">
-                    审核通过
+            {this.props.bjlList.detailData.reviewStatus === 0 && (
+              <Row gutter={20}>
+                <Col span={24} style={{ textAlign: 'right' }}>
+                  <Popconfirm
+                    title="Are you sure？"
+                    onConfirm={this.auditPassConfirm}
+                    icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                  >
+                    <Button type="primary">
+                      审核通过
                     </Button>
-                </Popconfirm>
-                <Button type="primary" style={{ marginLeft: 10 }} onClick={this.auditFailed}>
-                  审核未通过
+                  </Popconfirm>
+                  <Button type="primary" style={{ marginLeft: 10 }} onClick={this.auditFailed}>
+                    审核未通过
               </Button>
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            )}
+
           </div>
           <Divider />
           <div>
             <h3>
               <b>订单信息</b>
             </h3>
-            {/* <Row gutter={32}>
-              <Col span={8}>订单号： 9208</Col>
-              <Col span={8}>总应收：１000.00（<span style={{ color: "red" }}>已收：1000.00</span>）</Col>
-              <Col span={8}>售卖币种：RMB(元)</Col>
-              <Col span={8}>下单时间：2019-01-22 19:09:09</Col>
-              <Col span={8}>产品名称：三亚5天4夜自由行套餐 (【春季特惠·畅玩双湾】三亚ClubMed一价全包2晚+三亚亚特兰蒂斯2晚海景双床房（无限次游玩水世界、水族馆）+亚特兰蒂斯入住期间制定餐厅晚餐85折—三亚奢华之旅)ID:2040 (自由行套餐|三亚——三亚) </Col>
-              <Col span={8}>产品类型：自由行</Col>
-              <Col span={8}>产品经理：admin</Col>
+            <Row gutter={32}>
+              <Col span={8}>订单号： {this.props.bjlList.detailData.outOrderId}</Col>
+              <Col span={8}>总应收：{this.props.bjlList.detailData.orderPrize}（<span style={{ color: "red" }}>已收：{this.props.bjlList.detailData.orderPrize}</span>）</Col>
+              <Col span={8}>售卖币种：{this.props.bjlList.detailData.currencyId}(元)</Col>
+              <Col span={8}>下单时间：{this.props.bjlList.detailData.orderTime}</Col>
+              <Col span={8}>产品名称：{this.props.bjlList.detailData.productName}</Col>
+              {/* <Col span={8}>产品类型：自由行</Col>
+              <Col span={8}>产品经理：admin</Col> */}
             </Row>
-            <Row gutter={20}>
+            {/* <Row gutter={20}>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary">
                   查看订单
@@ -128,17 +164,17 @@ class Detail extends React.Component<interface_props, interface_state> {
               <b>奖励信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>奖励金：100</Col>
+              <Col span={8}>奖励金：{this.props.bjlList.detailData.prize}</Col>
               <Col span={8}>奖励类型：固定金额</Col>
-              <Col span={8}>奖励状态：未发放</Col>
+              <Col span={8}>奖励状态：{this.props.bjlList.detailData.prizeStatus === 0 ? '未发放' : '已发放'}</Col>
             </Row>
-            <Row gutter={20}>
+            {/* <Row gutter={20}>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary">
                   修改
               </Button>
               </Col>
-            </Row>
+            </Row> */}
           </div>
           <Divider />
           <div>
@@ -146,11 +182,13 @@ class Detail extends React.Component<interface_props, interface_state> {
               <b>审核信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>审核人：xxxx</Col>
-              <Col span={8}>审核时间：2019-03-04 12:19:33</Col>
-              <Col span={8}>审核状态：审核通过</Col>
-              <Col span={8}>备注：xxxxxxxxxxxxxxxxxxxxxxxx</Col>
-              <Col span={8}>失败原因：xxx</Col>
+              <Col span={8}>审核人：{this.props.bjlList.detailData.reviewer}</Col>
+              <Col span={8}>审核时间：{this.props.bjlList.detailData.reviewDate}</Col>
+              {this.props.bjlList.detailData.reviewStatus === 0 && <Col span={8}>审核状态：待审核</Col>}
+              {this.props.bjlList.detailData.reviewStatus === 1 && <Col span={8}>审核状态：审核成功</Col>}
+              {this.props.bjlList.detailData.reviewStatus === 2 && <Col span={8}>审核状态：审核失败</Col>}
+              <Col span={8}>备注：{this.props.bjlList.detailData.remark}</Col>
+              <Col span={8}>失败原因：{this.props.bjlList.detailData.reason}</Col>
             </Row>
           </div>
           <Divider />
@@ -174,7 +212,7 @@ class Detail extends React.Component<interface_props, interface_state> {
               )}
             </Form.Item>
             <Form.Item>
-              {getFieldDecorator('remarks', {
+              {getFieldDecorator('remark', {
                 // rules: [{ required: true, message: '请输入备注' }],
               })(
                 <Input

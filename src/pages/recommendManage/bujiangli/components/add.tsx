@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {
   Form,
   Input,
@@ -13,6 +12,7 @@ import {
   Button,
   AutoComplete,
 } from 'antd';
+import { connect } from 'dva';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -53,6 +53,9 @@ const residences = [
   },
 ];
 
+@connect(
+  (props: {}, state: {}) => Object.assign({}, props, state)
+)
 @Form.create({ name: 'register' })
 export default class RegistrationForm extends React.Component {
   state = {
@@ -64,7 +67,16 @@ export default class RegistrationForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        for (let key in values) {
+          if (!values[key] && values[key] !== 0) {
+            delete values[key]
+          }
+        }
+        console.log(values)
+        this.props.dispatch({
+          type: 'bjlList/creat',
+          payload: values
+        })
       }
     });
   };
@@ -142,19 +154,19 @@ export default class RegistrationForm extends React.Component {
 
     return (
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-        <Form.Item
+        {/* <Form.Item
           label={
             <span>
               用户账号
             </span>
           }
         >
-          {getFieldDecorator('nickname', {
+          {getFieldDecorator('mobile', {
             rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-          })(<Input placeholder="请输入用户账号"/>)}
-        </Form.Item>
+          })(<Input placeholder="请输入用户账号" />)}
+        </Form.Item> */}
         <Form.Item label="手机号码">
-          {getFieldDecorator('手机号码', {
+          {getFieldDecorator('mobile', {
             rules: [{ required: true, message: 'Please input your phone number!' }],
           })(<Input addonBefore={prefixSelector} style={{ width: '100%' }} placeholder="请输入手机号码"/>)}
         </Form.Item>
@@ -165,17 +177,17 @@ export default class RegistrationForm extends React.Component {
             </span>
           }
         >
-          {getFieldDecorator('nickname', {
+          {getFieldDecorator('prize', {
             rules: [{ required: true, message: 'Please input your nickname!', whitespace: true }],
-          })(<Input placeholder="请输入奖励"/>)}
+          })(<Input placeholder="请输入奖励" />)}
         </Form.Item>
         <Form.Item label="所属平台" hasFeedback>
-          {getFieldDecorator('select', {
-            rules: [{ required: true, message: 'Please select your country!' }],
+          {getFieldDecorator('channel', {
+            rules: [{ required: true, message: '请选择所属平台' }],
           })(
             <Select placeholder="请选择所属平台">
-              <Option value="0">旅行社</Option>
-              <Option value="1">复游会</Option>
+              <Option value="0">复游会</Option>
+              <Option value="1">旅行社</Option>
             </Select>,
           )}
         </Form.Item>
@@ -187,20 +199,20 @@ export default class RegistrationForm extends React.Component {
             </span>
           }
         >
-          {getFieldDecorator('nickname', {
-          })(<Input  placeholder="请输入订单ID"/>)}
+          {getFieldDecorator('outOrderId', {
+          })(<Input placeholder="请输入订单ID" />)}
         </Form.Item>
 
         <Form.Item label="备注" hasFeedback>
-          {getFieldDecorator('select', {
+          {getFieldDecorator('remark', {
           })(
-            <TextArea rows={4} placeholder="请输入备注"/>,
+            <TextArea rows={4} placeholder="请输入备注" />,
           )}
         </Form.Item>
-        
+
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
-            Register
+            确定
           </Button>
         </Form.Item>
       </Form>

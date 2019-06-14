@@ -21,3 +21,10 @@ export function examine(
 ) {
   return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/recommend-prize/review`, params);
 }
+export function detail(
+  params: {
+    id: string,
+  }
+) {
+  return request.get(`http://unitest.fosunholiday.com/api/mms/spread/backend/recommends/${params.id}/product/detail`);
+}

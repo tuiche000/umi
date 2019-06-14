@@ -4,6 +4,7 @@ import { Form, Row, Col, Input, Button, Table, Divider, Modal, Select, Popconfir
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import moment from 'moment';
+import router from "umi/router"
 
 
 const { Option } = Select;
@@ -21,7 +22,7 @@ interface UserFormProps extends FormComponentProps {
     auditFailedVisible: boolean,
     seachData: any,
     pageNo: number,
-    totalResults:any,
+    totalResults: any,
   },
   dispatch: Function,
 }
@@ -131,22 +132,32 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
             )
           },
         },
+        // {
+        //   title: '操作',
+        //   key: 'action',
+        //   width: 180,
+        //   align: "center",
+        //   render: (text: any, record: any) => (
+        //     <span style={record.reviewStatus === 0 ? { display: "inline-block" } : { display: "none" }}>
+        //       <Popconfirm
+        //         title="Are you sure？"
+        //         onConfirm={this.confirm.bind(this, record)}
+        //         icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+        //       >
+        //         <a href="javascript:;">审核成功</a>
+        //       </Popconfirm>
+        //       <Divider type="vertical" />
+        //       <a href="javascript:;" onClick={this.auditFailed.bind(this, record)} >审核失败</a>
+        //     </span>
+        //   ),
+        // },
         {
           title: '操作',
           key: 'action',
-          width: 180,
           align: "center",
           render: (text: any, record: any) => (
-            <span style={record.reviewStatus === 0 ? { display: "inline-block" } : { display: "none" }}>
-              <Popconfirm
-                title="Are you sure？"
-                onConfirm={this.confirm.bind(this, record)}
-                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-              >
-                <a href="javascript:;">审核成功</a>
-              </Popconfirm>
-              <Divider type="vertical" />
-              <a href="javascript:;" onClick={this.auditFailed.bind(this, record)} >审核失败</a>
+            <span>
+              <a href="javascript:;" onClick={this.goDetail.bind(this, record)}>查看详情</a>
             </span>
           ),
         },
@@ -155,7 +166,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
 
     this.fnDiscontinueUse = this.fnDiscontinueUse.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
-    this.auditFailed = this.auditFailed.bind(this)
+    // this.auditFailed = this.auditFailed.bind(this)
   }
 
   componentDidMount(): void {
@@ -167,9 +178,12 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
       }
     })
   }
-
+  goDetail(record: any) {
+    // router.push("./list/detail?id=" + record.id)
+    router.push(`./list/id?id=${record.id}`)
+  }
   confirm = (record: any) => {
-    console.log(this.props.lxsList.pageNo, this.props.lxsList.seachData)
+    // console.log(this.props.lxsList.pageNo, this.props.lxsList.seachData)
     this.props.dispatch({
       type: 'lxsList/examine',
       payload: {
@@ -256,7 +270,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         payload: {
           seachData: obj
         }
-      })   
+      })
       this.props.dispatch({
         type: 'lxsList/fetch',
         payload: obj,
@@ -266,7 +280,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
         }
       })
       this.setState({
-        current:1
+        current: 1
       })
     });
   };
