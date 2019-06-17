@@ -4,6 +4,9 @@ import { FormComponentProps } from 'antd/lib/form';
 import router from "umi/router"
 import { connect } from 'dva';
 import moment from 'moment';
+import 'antd/lib/locale-provider/zh_CN';
+
+moment.locale('zh-cn');
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -262,7 +265,16 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
     }
   }
   render() {
-
+    // const locale = {
+    //   "lang": {
+    //     "placeholder": "请选择日期",
+    //     "yearFormat": "YYYY",
+    //     "dateFormat": "M-D-YYYY",
+    //     // "dayFormat": "D",
+    //     // "dateTimeFormat": "M/D/YYYY HH:mm:ss",
+    //     "monthFormat": "MMMM"
+    //   }
+    // }
     const formItemLayout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -304,9 +316,9 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
                   // initialValue: ['0'],
                 })(
                   <Select placeholder="请选择" allowClear={true}>
-                    <Option value="0">已发放</Option>
-                    <Option value="1">未发放</Option>
-                    <Option value="2">审核中</Option>
+                    <Option value={0}>已发放</Option>
+                    <Option value={1}>未发放</Option>
+                    <Option value={2}>审核中</Option>
                   </Select>,
                 )}
               </Form.Item>

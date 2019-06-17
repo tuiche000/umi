@@ -3,6 +3,7 @@ import { DatePicker, Button, message } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import router from "umi/router"
+import locale from 'antd/lib/date-picker/locale/zh_CN';
 
 const { RangePicker } = DatePicker;
 
@@ -76,6 +77,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             format={dateFormat}
             onChange={this.onChange}
             disabledDate={disabledDate}
+            locale={locale}
           />
         </div>
         <br />

@@ -113,7 +113,7 @@ class Detail extends React.Component<interface_props, interface_state> {
               <Col span={8}>补发ID：{this.props.bjlList.detailData.id}</Col>
               <Col span={8}>推荐方式：{this.props.bjlList.detailData.channel == 0 ? "复游会" : "旅行社"}</Col>
               <Col span={8}>用户名：{this.props.bjlList.detailData.mobile}</Col>
-              <Col span={8}>补发时间：{this.props.bjlList.detailData.reissueDate}</Col>
+              <Col span={8}>创建时间：{this.props.bjlList.detailData.reissueDate}</Col>
               <Col span={8}>用户手机号：{this.props.bjlList.detailData.mobile}</Col>
             </Row>
             {this.props.bjlList.detailData.reviewStatus === 0 && (

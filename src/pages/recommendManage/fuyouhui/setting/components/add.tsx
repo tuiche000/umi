@@ -22,7 +22,9 @@ import {
   message
 } from 'antd';
 import { FormStage } from './stage'
+import  'antd/lib/locale-provider/zh_CN';
 
+moment.locale('zh-cn');
 const { Option } = Select;
 const { TextArea } = Input;
 const AutoCompleteOption = AutoComplete.Option;

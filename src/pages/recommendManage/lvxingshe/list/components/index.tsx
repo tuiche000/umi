@@ -5,7 +5,9 @@ import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import moment from 'moment';
 import router from "umi/router"
+import  'antd/lib/locale-provider/zh_CN';
 
+moment.locale('zh-cn');
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
