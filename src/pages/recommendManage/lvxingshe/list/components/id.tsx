@@ -4,7 +4,11 @@ import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 
 interface UserFormProps extends FormComponentProps {
-
+  lxsList: {
+    detailData: {
+      id: any,
+    }
+  },
 }
 interface interface_state {
   auditFailedVisible: boolean,
@@ -16,7 +20,8 @@ interface interface_props extends UserFormProps {
         id: string
       }
     }
-  }
+  },
+  dispath: Function,
 }
 
 @connect(
@@ -36,13 +41,21 @@ class Detail extends React.Component<interface_props, interface_state> {
     this.props.dispatch({
       type: 'lxsList/detail',
       payload: {
-        id:this.props.routing.location.query.id,
+        id: this.props.routing.location.query.id,
       }
     })
   }
   // 审核通过确定回调函数
   auditPassConfirm() {
-    // console.log("11")
+    this.props.dispatch({
+      type: 'lxsList/examine',
+      payload: {
+        id: this.props.routing.location.query.id,
+        status: "SUCCESSFUL",
+      },
+      // fetchPayload: this.props.lxsList.seachData,
+      // query: this.props.lxsList.pageNo,
+    })
   }
   // 审核未通过模态框显示
   auditFailed() {
@@ -57,10 +70,29 @@ class Detail extends React.Component<interface_props, interface_state> {
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        // console.log('Received values of form: ', values);
+        let obj = {
+          id: this.props.routing.location.query.id,
+          status: "FAILED",
+          reason: values.reason,
+          remark: values.remark,
+        }
+        // 当对象key值无数据时删除该key
+        for (let key in obj) {
+          if (!obj[key]) {
+            delete obj[key]
+          }
+        }
+        this.props.dispatch({
+          type: 'lxsList/examine',
+          payload: obj,
+          // fetchPayload: this.props.lxsList.pageNo,
+          // query: this.props.lxsList.pageNo,
+        })
         this.setState({
           auditFailedVisible: false,
         });
+        //  清空表单
+        this.props.form.resetFields()
       }
     });
   };
@@ -74,11 +106,10 @@ class Detail extends React.Component<interface_props, interface_state> {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    console.log(this.props)
     return (
       <div>
         <h2>
-          <b>推荐ID：8976xxxx</b>
+          <b>推荐ID：{this.props.lxsList.detailData && this.props.lxsList.detailData.id}</b>
         </h2>
         <Card bordered={false}>
           <div>
@@ -86,31 +117,32 @@ class Detail extends React.Component<interface_props, interface_state> {
               <b>推荐信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>推荐ID：3410xxxx</Col>
-              <Col span={8}>推荐产品：昆明5天3夜自由行包含机票住宿景点票</Col>
-              <Col span={8}>推荐人：张学友</Col>
-              <Col span={8}>推荐时间：2019-01-22 09:09:09</Col>
-              <Col span={8}>被推荐人：吴亦凡</Col>
-              <Col span={8}>推荐方式：微信</Col>
-              <Col span={8}>推荐人手机号：139000000000</Col>
-              <Col span={8}>推荐链接：http://foliday.id838943.dfdf</Col>
+              <Col span={8}>推荐ID：{this.props.lxsList.detailData && this.props.lxsList.detailData.id}</Col>
+              <Col span={8}>推荐产品：{this.props.lxsList.detailData && this.props.lxsList.detailData.productName}</Col>
+              <Col span={8}>推荐人：{this.props.lxsList.detailData && this.props.lxsList.detailData.recommender}</Col>
+              <Col span={8}>推荐时间：{this.props.lxsList.detailData && this.props.lxsList.detailData.recommendDate}</Col>
+              <Col span={8}>被推荐人：{this.props.lxsList.detailData && this.props.lxsList.detailData.recommended}</Col>
+              <Col span={8}>推荐人手机号：{this.props.lxsList.detailData && this.props.lxsList.detailData.recommender}</Col>
+              {/* <Col span={8}>推荐链接：</Col> */}
             </Row>
-            <Row gutter={20}>
-              <Col span={24} style={{ textAlign: 'right' }}>
-                <Popconfirm
-                  title="Are you sure？"
-                  onConfirm={this.auditPassConfirm}
-                  icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-                >
-                  <Button type="primary">
-                    审核通过
+            {(this.props.lxsList.detailData && !this.props.lxsList.detailData.prizeStatus) && (
+              <Row gutter={20}>
+                <Col span={24} style={{ textAlign: 'right' }}>
+                  <Popconfirm
+                    title="Are you sure？"
+                    onConfirm={this.auditPassConfirm}
+                    icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                  >
+                    <Button type="primary">
+                      审核通过
                     </Button>
-                </Popconfirm>
-                <Button type="primary" style={{ marginLeft: 10 }} onClick={this.auditFailed}>
-                  审核未通过
+                  </Popconfirm>
+                  <Button type="primary" style={{ marginLeft: 10 }} onClick={this.auditFailed}>
+                    审核未通过
               </Button>
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            )}
           </div>
           <Divider />
           <div>
@@ -118,21 +150,21 @@ class Detail extends React.Component<interface_props, interface_state> {
               <b>订单信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>订单号： 9208</Col>
-              <Col span={8}>总应收：１000.00（<span style={{ color: "red" }}>已收：1000.00</span>）</Col>
-              <Col span={8}>售卖币种：RMB(元)</Col>
-              <Col span={8}>下单时间：2019-01-22 19:09:09</Col>
-              <Col span={8}>产品名称：三亚5天4夜自由行套餐 (【春季特惠·畅玩双湾】三亚ClubMed一价全包2晚+三亚亚特兰蒂斯2晚海景双床房（无限次游玩水世界、水族馆）+亚特兰蒂斯入住期间制定餐厅晚餐85折—三亚奢华之旅)ID:2040 (自由行套餐|三亚——三亚) </Col>
-              <Col span={8}>产品类型：自由行</Col>
-              <Col span={8}>产品经理：admin</Col>
+              <Col span={8}>订单号： {this.props.lxsList.detailData && this.props.lxsList.detailData.orderId}</Col>
+              <Col span={8}>总应收：{this.props.lxsList.detailData && this.props.lxsList.detailData.paidPrice}（<span style={{ color: "red" }}>已收：{this.props.lxsList.detailData && this.props.lxsList.detailData.paidPrice}</span>）</Col>
+              <Col span={8}>售卖币种：{this.props.lxsList.detailData && this.props.lxsList.detailData.currency}</Col>
+              <Col span={8}>下单时间：{this.props.lxsList.detailData && this.props.lxsList.detailData.orderTime}</Col>
+              <Col span={8}>产品名称：{this.props.lxsList.detailData && this.props.lxsList.detailData.productSubTitle}</Col>
+              <Col span={8}>产品类型：{this.props.lxsList.detailData && this.props.lxsList.detailData.productType}</Col>
+              <Col span={8}>产品经理：{this.props.lxsList.detailData && this.props.lxsList.detailData.manager}</Col>
             </Row>
-            <Row gutter={20}>
+            {/* <Row gutter={20}>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary">
                   查看订单
               </Button>
               </Col>
-            </Row>
+            </Row> */}
           </div>
           <Divider />
           <div>
@@ -140,31 +172,40 @@ class Detail extends React.Component<interface_props, interface_state> {
               <b>奖励信息</b>
             </h3>
             <Row gutter={32}>
-              <Col span={8}>奖励金：100</Col>
-              <Col span={8}>奖励比例：10%（订单实付金额比例）</Col>
-              <Col span={8}>奖励状态：</Col>
+              <Col span={8}>奖励金：{this.props.lxsList.detailData && this.props.lxsList.detailData.prize}</Col>
+              {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeScale === "SCALE") && <Col span={8}>奖励比例：比例</Col>}
+              {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeScale === "NUMBER") && <Col span={8}>奖励状态：累计金额</Col>}
+              {(this.props.lxsList.detailData && !this.props.lxsList.detailData.prizeStatus) && <Col span={8}></Col>}
+              {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus === "SUCCESSFUL") && <Col span={8}>奖励状态：审核成功</Col>}
+              {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus === "FAILED") && <Col span={8}>奖励状态：审核失败</Col>}
             </Row>
-            <Row gutter={20}>
+            {/* <Row gutter={20}>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary">
                   修改
               </Button>
               </Col>
-            </Row>
+            </Row> */}
           </div>
           <Divider />
-          <div>
-            <h3>
-              <b>审核信息</b>
-            </h3>
-            <Row gutter={32}>
-              <Col span={8}>审核人：</Col>
-              <Col span={8}>审核时间：</Col>
-              <Col span={8}>审核状态：</Col>
-              <Col span={8}>备注：</Col>
-            </Row>
-          </div>
-          <Divider />
+          {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus) && (
+            <div>
+              <div>
+                <h3>
+                  <b>审核信息</b>
+                </h3>
+                <Row gutter={32}>
+                  <Col span={8}>审核人：{this.props.lxsList.detailData && this.props.lxsList.detailData.reviewer}</Col>
+                  <Col span={8}>审核时间：{this.props.lxsList.detailData && this.props.lxsList.detailData.reviewDate}</Col>
+                  {(this.props.lxsList.detailData && !this.props.lxsList.detailData.prizeStatus) && <Col span={8}></Col>}
+                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus === "SUCCESSFUL") && <Col span={8}>审核状态：审核成功</Col>}
+                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus === "FAILED") && <Col span={8}>审核状态：审核失败</Col>}
+                  <Col span={8}>备注：{this.props.lxsList.detailData && this.props.lxsList.detailData.reason}</Col>
+                </Row>
+              </div>
+              <Divider />
+            </div>
+          )}
         </Card>
 
         {/* 批量设置模态框 */}

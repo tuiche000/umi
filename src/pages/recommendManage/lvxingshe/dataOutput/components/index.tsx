@@ -1,5 +1,5 @@
 import React from 'react';
-import { DatePicker, Button } from 'antd';
+import { DatePicker, Button, message } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import router from "umi/router"
@@ -37,21 +37,33 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
 
   // 导出发放奖励数据
   ExportRewardData() {
-    window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/issue?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
+    if (!this.state.dateString[0]) {
+      message.error('请选择日期');
+    } else {
+      window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/issue?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
+    }
   }
 
   // 导出消费奖励数据
   ExportConsumptionData() {
-    window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/deduction?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
+    if (!this.state.dateString[0]) {
+      message.error('请选择日期');
+    } else {
+      window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/deduction?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
+    }
   }
 
   // 总数据导出
   ExportTotalData() {
-    window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/sum?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
+    if (!this.state.dateString[0]) {
+      message.error('请选择日期');
+    } else {
+      window.location.href = `http://unitest.fosunholiday.com/api/mms/spread/backend/accounts/export/prize/sum?startDate=${this.state.dateString[0]}&endDate=${this.state.dateString[1]}`
+    }
   }
   render() {
     // 获取当前时间给到日期控件
-    const dateFormat = 'YYYY/MM/DD';
+    const dateFormat = 'YYYY-MM-DD';
     const disabledDate = (current: any) => {
       // Can not select days after today
       return current && current > moment().endOf('day');

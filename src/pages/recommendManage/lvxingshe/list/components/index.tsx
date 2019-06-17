@@ -182,18 +182,18 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     // router.push("./list/detail?id=" + record.id)
     router.push(`./list/id?id=${record.id}`)
   }
-  confirm = (record: any) => {
-    // console.log(this.props.lxsList.pageNo, this.props.lxsList.seachData)
-    this.props.dispatch({
-      type: 'lxsList/examine',
-      payload: {
-        id: record.id,
-        status: "SUCCESSFUL",
-      },
-      fetchPayload: this.props.lxsList.seachData,
-      query: this.props.lxsList.pageNo,
-    })
-  }
+  // confirm = (record: any) => {
+  //   // console.log(this.props.lxsList.pageNo, this.props.lxsList.seachData)
+  //   this.props.dispatch({
+  //     type: 'lxsList/examine',
+  //     payload: {
+  //       id: record.id,
+  //       status: "SUCCESSFUL",
+  //     },
+  //     fetchPayload: this.props.lxsList.seachData,
+  //     query: this.props.lxsList.pageNo,
+  //   })
+  // }
 
   // 审核失败模态框显示
   auditFailed(record: any) {
