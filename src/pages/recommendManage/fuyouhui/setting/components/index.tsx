@@ -132,6 +132,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
+  // 启用（停用）气泡确认框确定回调
   confirm = (record: any) => {
     record.enabled = !record.enabled
     this.props.dispatch({
@@ -142,7 +143,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
     })
   }
 
-  // 新增跳转
+  // 跳转新增
   goNewlyAdded() {
     this.props.dispatch({
       type: 'fyhSetting/clear',

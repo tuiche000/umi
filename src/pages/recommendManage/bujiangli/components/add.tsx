@@ -18,41 +18,6 @@ const { Option } = Select;
 const { TextArea } = Input;
 const AutoCompleteOption = AutoComplete.Option;
 
-const residences = [
-  {
-    value: 'zhejiang',
-    label: 'Zhejiang',
-    children: [
-      {
-        value: 'hangzhou',
-        label: 'Hangzhou',
-        children: [
-          {
-            value: 'xihu',
-            label: 'West Lake',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'jiangsu',
-    label: 'Jiangsu',
-    children: [
-      {
-        value: 'nanjing',
-        label: 'Nanjing',
-        children: [
-          {
-            value: 'zhonghuamen',
-            label: 'Zhong Hua Men',
-          },
-        ],
-      },
-    ],
-  },
-];
-
 @connect(
   (props: {}, state: {}) => Object.assign({}, props, state)
 )
@@ -72,7 +37,6 @@ export default class RegistrationForm extends React.Component {
             delete values[key]
           }
         }
-        console.log(values)
         this.props.dispatch({
           type: 'bjlList/creat',
           payload: values

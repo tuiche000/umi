@@ -158,6 +158,8 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
       }
     })
   }
+
+  // 跳转详情页面
   goDetail(record: any) {
     // router.push("./list/detail?id=" + record.id)
     router.push(`./list/detail?id=${record.id}`)
@@ -223,7 +225,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
             pageSize: 10,
           }
         })
-        // 手动设置分页
+        // 手动设置分页页码
         this.setState({
           current: 1,
         })

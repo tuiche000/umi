@@ -163,14 +163,14 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
     })
   }
 
-  // 详情
+  // 跳转详情
   fnDetail(record: {
     id: string
   }) {
     router.push(`./bujiangli/detail?id=${record.id}`)
   }
 
-  // 新增
+  // 跳转新增
   fnAdd() {
     router.push('./bujiangli/add')
   }
@@ -190,11 +190,10 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
   //   });
   // }
 
-  // 搜索按钮
+  // 点击搜索按钮
   handleSearch = (e: any) => {
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
-      console.log(values);
       let obj = {
         mobile: values.mobile && values.mobile.trim(),
         beginDate: this.formatDate(values.reissueDate && values.reissueDate.length != 0 ? values.reissueDate[0]._d : undefined),
@@ -209,7 +208,6 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
           delete obj[key]
         }
       }
-      console.log(obj)
       // 将搜索条件数据给到全局
       this.props.dispatch({
         type: 'bjlList/save',
@@ -225,6 +223,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
         },
         payload: obj
       })
+      // 手动设置分页页码为1
       this.setState({
         current: 1
       })
@@ -239,7 +238,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
         pageNo: page
       }
     })
-    // 手动设置分页
+    // 手动设置分页页码
     this.setState({
       current: page,
     });

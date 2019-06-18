@@ -75,11 +75,18 @@ export default {
         router.goBack()
       }
     },
-    *review({ payload }, { call, put }: any) {
+    *review({ payload , id }, { call, put }: any) {
       const result = yield call(Service.review, payload);
       const { data } = result.data
       if (result.data.code === "0") {
         message.success('审核成功');
+        // 更新详情页面
+        yield put({
+          type: 'detail',
+          payload: {
+            id,
+          },
+        });
       }else {
         message.error(result.data.message);
       }

@@ -60,6 +60,16 @@ class Detail extends React.Component<interface_props, interface_state> {
       }
     })
   }
+  componentWillUnmount() {
+    // 组件销毁时清空数据
+    this.props.dispatch({
+      type: 'bjlList/save',
+      payload: {
+        detailData: {}
+      }
+    })
+  }
+
   // 审核通过确定回调函数
   auditPassConfirm() {
     this.props.dispatch({
@@ -67,7 +77,8 @@ class Detail extends React.Component<interface_props, interface_state> {
       payload: {
         id: this.props.routing.location.query.id,
         status: "SUCCESSFUL",
-      }
+      },
+      id: this.props.routing.location.query.id,
     })
   }
   // 审核未通过模态框显示
@@ -83,7 +94,6 @@ class Detail extends React.Component<interface_props, interface_state> {
     e.preventDefault();
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         let obj = {
           id: this.props.routing.location.query.id,
           status: "FAILED",
@@ -98,8 +108,10 @@ class Detail extends React.Component<interface_props, interface_state> {
         }
         this.props.dispatch({
           type: 'bjlList/review',
-          payload: obj
+          payload: obj,
+          id: this.props.routing.location.query.id,
         })
+        // 模态框消失
         this.setState({
           auditFailedVisible: false,
         });
@@ -115,7 +127,6 @@ class Detail extends React.Component<interface_props, interface_state> {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    console.log(this.props.bjlList.detailData)
     return (
       <div>
         <h2>

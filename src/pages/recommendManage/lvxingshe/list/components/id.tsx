@@ -45,6 +45,16 @@ class Detail extends React.Component<interface_props, interface_state> {
       }
     })
   }
+  componentWillUnmount() {
+    // 组件销毁时清空数据
+    this.props.dispatch({
+      type: 'lxsList/save',
+      payload: {
+        detailData: {}
+      }
+    })
+  }
+
   // 审核通过确定回调函数
   auditPassConfirm() {
     this.props.dispatch({
