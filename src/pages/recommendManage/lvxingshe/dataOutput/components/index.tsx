@@ -3,7 +3,9 @@ import { DatePicker, Button, message } from 'antd';
 import moment from 'moment';
 import { connect } from 'dva';
 import router from "umi/router"
-import locale from 'antd/lib/date-picker/locale/zh_CN';
+import 'antd/lib/locale-provider/zh_CN';
+
+moment.locale('zh-cn');
 
 const { RangePicker } = DatePicker;
 
@@ -63,6 +65,38 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     }
   }
   render() {
+    const locale ={
+      "lang": {
+        "placeholder": "Select date",
+        "rangePlaceholder": ["Start date", "End date"],
+        "today": "Today",
+        "now": "Now",
+        "backToToday": "Back to today",
+        "ok": "Ok",
+        "clear": "Clear",
+        "month": "Month",
+        "year": "Year",
+        "timeSelect": "Select time",
+        "dateSelect": "Select date",
+        "monthSelect": "Choose a month",
+        "yearSelect": "Choose a year",
+        "decadeSelect": "Choose a decade",
+        "yearFormat": "YYYY",
+        "dateFormat": "M/D/YYYY",
+        "dayFormat": "D",
+        "dateTimeFormat": "M/D/YYYY HH:mm:ss",
+        "monthFormat": "MMMM",
+        "monthBeforeYear": false,
+        "previousMonth": "Previous month (PageUp)",
+        "nextMonth": "Next month (PageDown)",
+        "previousYear": "Last year (Control + left)",
+        "nextYear": "Next year (Control + right)",
+        "previousDecade": "Last decade",
+        "nextDecade": "Next decade",
+        "previousCentury": "Last century",
+        "nextCentury": "Next century"
+      },
+    }
     // 获取当前时间给到日期控件
     const dateFormat = 'YYYY-MM-DD';
     const disabledDate = (current: any) => {

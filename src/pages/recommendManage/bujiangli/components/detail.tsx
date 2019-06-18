@@ -19,7 +19,24 @@ interface interface_props extends UserFormProps {
   },
   dispatch: Function,
   bjlList: {
-    detailData: {}
+    detailData: {
+      id: string,
+      channel: any,
+      mobile: string,
+      reissueDate: string,
+      reviewStatus: number,
+      outOrderId: string,
+      orderPrize: any,
+      currencyId: any,
+      orderTime: string,
+      productName: string,
+      prize: any,
+      prizeStatus: number,
+      reviewer: string,
+      reviewDate: string,
+      remark: string,
+      reason: string,
+    }
   },
 }
 

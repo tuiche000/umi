@@ -4,7 +4,9 @@ import { connect } from 'dva';
 import { FormComponentProps } from 'antd/lib/form';
 import router from "umi/router"
 import moment from 'moment';
+import 'antd/lib/locale-provider/zh_CN';
 
+moment.locale('zh-cn');
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const limitation = {
@@ -248,6 +250,38 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
   }
 
   render() {
+    const locale ={
+      "lang": {
+        "placeholder": "Select date",
+        "rangePlaceholder": ["Start date", "End date"],
+        "today": "Today",
+        "now": "Now",
+        "backToToday": "Back to today",
+        "ok": "Ok",
+        "clear": "Clear",
+        "month": "Month",
+        "year": "Year",
+        "timeSelect": "Select time",
+        "dateSelect": "Select date",
+        "monthSelect": "Choose a month",
+        "yearSelect": "Choose a year",
+        "decadeSelect": "Choose a decade",
+        "yearFormat": "YYYY",
+        "dateFormat": "M/D/YYYY",
+        "dayFormat": "D",
+        "dateTimeFormat": "M/D/YYYY HH:mm:ss",
+        "monthFormat": "MMMM",
+        "monthBeforeYear": false,
+        "previousMonth": "Previous month (PageUp)",
+        "nextMonth": "Next month (PageDown)",
+        "previousYear": "Last year (Control + left)",
+        "nextYear": "Next year (Control + right)",
+        "previousDecade": "Last decade",
+        "nextDecade": "Next decade",
+        "previousCentury": "Last century",
+        "nextCentury": "Next century"
+      },
+    }
     const formItemLayout = {
       labelCol: { span: 3 },
       wrapperCol: { span: 6 },
@@ -285,7 +319,7 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
               <Form.Item {...formItemLayout} label="活动时间">
                 {getFieldDecorator('activityDate', {
                   // rules: [{ type: 'object', required: true, message: '请选择活动时间' }],
-                })(<DatePicker disabledDate={disabledDate} />)}
+                })(<DatePicker disabledDate={disabledDate} locale={locale}/>)}
               </Form.Item>
             </Col>
           </Row>

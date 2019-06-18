@@ -247,6 +247,38 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   }
 
   render() {
+    const locale ={
+      "lang": {
+        "placeholder": "Select date",
+        "rangePlaceholder": ["Start date", "End date"],
+        "today": "Today",
+        "now": "Now",
+        "backToToday": "Back to today",
+        "ok": "Ok",
+        "clear": "Clear",
+        "month": "Month",
+        "year": "Year",
+        "timeSelect": "Select time",
+        "dateSelect": "Select date",
+        "monthSelect": "Choose a month",
+        "yearSelect": "Choose a year",
+        "decadeSelect": "Choose a decade",
+        "yearFormat": "YYYY",
+        "dateFormat": "M/D/YYYY",
+        "dayFormat": "D",
+        "dateTimeFormat": "M/D/YYYY HH:mm:ss",
+        "monthFormat": "MMMM",
+        "monthBeforeYear": false,
+        "previousMonth": "Previous month (PageUp)",
+        "nextMonth": "Next month (PageDown)",
+        "previousYear": "Last year (Control + left)",
+        "nextYear": "Next year (Control + right)",
+        "previousDecade": "Last decade",
+        "nextDecade": "Next decade",
+        "previousCentury": "Last century",
+        "nextCentury": "Next century"
+      },
+    }
     const formItemLayout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -291,7 +323,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                   //     message: '请选择推荐时间',
                   //   },
                   // ],
-                })(<RangePicker disabledDate={disabledDate} />)}
+                })(<RangePicker disabledDate={disabledDate} locale={locale}/>)}
               </Form.Item>
             </Col>
             {/* <Col span={8}>
