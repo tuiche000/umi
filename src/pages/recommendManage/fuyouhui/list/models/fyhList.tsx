@@ -58,6 +58,16 @@ export default {
     *detail({ payload }, { call, put }: any) {
       const result = yield call(Service.detail, payload);
       const { data } = result.data
+      // 给予阶段下的每个表格一个序号
+      if(data.memberRecommendPrize) {
+        data.memberRecommendPrize.forEach((item:any) => {
+         if(item.recommends) {
+          item.recommends.forEach( (ite:any,index:any) => {
+              ite.serial = index + 1
+          })
+         }
+        })
+      }
       if (result.data.code === "0") {
         yield put({
           type: 'save',

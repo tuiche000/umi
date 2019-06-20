@@ -28,7 +28,7 @@ interface ComponentProps {
     totalResults: number,
     tableData: {},
   },
-  loading:any,
+  loading: any,
 }
 interface BasicLayoutState {
   setUpVisible: boolean,
@@ -135,8 +135,9 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
           align: "center",
           render: (text: any, record: any) => {
             return (
-              <span>
+              <span style={{ position: "relative" }}>
                 <a href="javascript:;" onClick={this.fnDetail.bind(this, record)}>查看详情</a>
+                {record.prizeStatus === 0 && record.reviewStatus === 0 && <Icon type="exclamation-circle" style={{ color: "red", position: "absolute", left: "110%", top: "50%", transform: "translate(0, -50%)" }} />}
               </span>
             )
           },
@@ -200,7 +201,6 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
         endDate: this.formatDate(values.reissueDate && values.reissueDate.length != 0 ? values.reissueDate[1]._d : undefined),
         reviewStatus: values.reviewStatus,
         prizeStatus: values.prizeStatus,
-        channel: 1,
       }
       // 当对象key值无数据时删除该key
       for (let key in obj) {
@@ -221,7 +221,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
           pageNo: 1,
           pageSize: 10,
         },
-        payload: obj
+        payload: { ...obj, channel: 1 }
       })
       // 手动设置分页页码为1
       this.setState({
@@ -244,7 +244,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
     });
     this.props.dispatch({
       type: 'bjlList/fetch',
-      payload: this.props.bjlList.seachData,
+      payload: { ...this.props.bjlList.seachData, channel: 1 },
       query: {
         pageNo: page,
         pageSize: 10,
@@ -265,7 +265,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
     }
   }
   render() {
-    const locale ={
+    const locale = {
       "lang": {
         "placeholder": "Select date",
         "rangePlaceholder": ["Start date", "End date"],
@@ -329,7 +329,7 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
             <Col span={8}>
               <Form.Item {...formItemLayout} label="补发时间">
                 {getFieldDecorator('reissueDate', {
-                })(<RangePicker allowClear={true} disabledDate={disabledDate} locale={locale}/>)}
+                })(<RangePicker allowClear={true} disabledDate={disabledDate} locale={locale} />)}
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -338,9 +338,8 @@ export default class AdvancedSearchForm extends React.Component<ComponentProps, 
                   // initialValue: ['0'],
                 })(
                   <Select placeholder="请选择" allowClear={true}>
-                    <Option value={0}>已发放</Option>
-                    <Option value={1}>未发放</Option>
-                    <Option value={2}>审核中</Option>
+                    <Option value={0}>未发放</Option>
+                    <Option value={1}>已发放</Option>
                   </Select>,
                 )}
               </Form.Item>

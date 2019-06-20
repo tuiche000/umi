@@ -158,8 +158,9 @@ class AdvancedSearchForm extends React.Component<UserFormProps, BasicLayoutState
           key: 'action',
           align: "center",
           render: (text: any, record: any) => (
-            <span>
+            <span style={{position:"relative"}}>
               <a href="javascript:;" onClick={this.goDetail.bind(this, record)}>查看详情</a>
+              {record.prizeStatus === 0 && record.reviewStatus === 0 && <Icon type="exclamation-circle" style={{ color: "red", position:"absolute",left:"110%",top:"50%",transform:"translate(0, -50%)" }} />}
             </span>
           ),
         },

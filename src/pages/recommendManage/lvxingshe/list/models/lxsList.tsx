@@ -64,17 +64,16 @@ export default {
         },
       });
     },
-    *examine({ payload, query, fetchPayload }, { call, put }: any) {
+    *examine({ payload, id }, { call, put }: any) {
       const result = yield call(Service.examine, payload);
       if (result.data.code != "0") {
         message.error(result.data.message);
       } else if (result.data.code == "0") {
         yield put({
-          type: 'fetch',
-          query: {
-            pageNo: query,
+          type: 'detail',
+          payload: {
+            id,
           },
-          payload: fetchPayload,
         });
       }
     },

@@ -22,7 +22,7 @@ import {
   message
 } from 'antd';
 import { FormStage } from './stage'
-import  'antd/lib/locale-provider/zh_CN';
+import 'antd/lib/locale-provider/zh_CN';
 
 moment.locale('zh-cn');
 const { Option } = Select;
@@ -80,8 +80,8 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (!err) {
-        values.beginTime = values.validity[0]
-        values.endTime = values.validity[1]
+        values.beginDate = this.formatDate(values.validity && values.validity.length != 0 ? values.validity[0]._d : undefined)
+        values.endDate = this.formatDate(values.validity && values.validity.length != 0 ? values.validity[1]._d : undefined),
         values.stages = this.props.fyhSetting.stages
         if (this.state.type == 'add') {
           this.props.dispatch({
@@ -99,7 +99,19 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
       }
     });
   };
-
+ // 将获取到的标准时间转换格式
+ formatDate(date: any) {
+  if (date) {
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? '0' + m : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    return y + '-' + m + '-' + d;
+  } else {
+    return undefined
+  }
+}
   handleConfirmBlur = (e: any) => {
     const value = e.target.value;
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
@@ -194,7 +206,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
   }
 
   render() {
-    const locale ={
+    const locale = {
       "lang": {
         "placeholder": "Select date",
         "rangePlaceholder": ["Start date", "End date"],
@@ -263,7 +275,6 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
     const websiteOptions = autoCompleteResult.map(website => (
       <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
     ));
-
     return (
       <div>
         <h3>{this.state.type == 'add' ? '新增活动设置' : '编辑活动设置'}</h3>
@@ -312,7 +323,7 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                   message: '请选择推荐时间',
                 },
               ],
-              initialValue: (this.state.validity && this.state.validity[0]._i) && this.state.validity 
+              initialValue: (this.state.validity && this.state.validity[0]._i) && this.state.validity
             })(<RangePicker local={locale} />)}
           </Form.Item>
           <Form.Item {...formItemLayout} label="奖励类型">
@@ -329,6 +340,18 @@ export default class RegistrationForm extends React.Component<IntProp, any> {
                 <Radio value="SINGLE">单次奖励</Radio>
                 <Radio value="ACCUMULATIVE">累计奖励</Radio>
               </Radio.Group>,
+            )}
+          </Form.Item>
+          <Form.Item {...formItemLayout} label="账户类型" hasFeedback={true}>
+            {getFieldDecorator('accountType', {
+              // rules: [{ required: true, message: '请选择' }], 
+              initialValue:this.state.data.accountType,
+            })(
+              <Select placeholder="请选择" allowClear={true}>
+                <Option value="CASH">现金</Option>
+                <Option value="INTEGRAL">积分</Option>
+                <Option value="PRIZE">奖励金</Option>
+              </Select>,
             )}
           </Form.Item>
           <Form.Item {...formItemLayout} label="适用人群">

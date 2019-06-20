@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input, Table , Popover } from 'antd';
+import { Card, Divider, Row, Col, Button, Modal, Popconfirm, Icon, Form, Input, Table, Popover } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
 import router from "umi/router"
@@ -10,8 +10,13 @@ interface UserFormProps extends FormComponentProps {
   fyhList: {
     detailData: {
       memberRecommendPrize: any[],
+      id: string,
+      recommender: string,
+      recommendDate: string,
     }
   },
+  dispatch: Function,
+  loading: any,
 }
 interface interface_state {
   auditFailedVisible: boolean,
@@ -43,8 +48,8 @@ class Detail extends React.Component<interface_props, interface_state> {
       tableColumns: [
         {
           title: '序号',
-          dataIndex: 'Serial',
-          key: 'Serial',
+          dataIndex: 'serial',
+          key: 'serial',
           align: "center",
         },
         {
@@ -103,7 +108,7 @@ class Detail extends React.Component<interface_props, interface_state> {
         id: item.id,
         status: "SUCCESSFUL",
       },
-      id:this.props.routing.location.query.id
+      id: this.props.routing.location.query.id
     })
   }
   // 审核失败 模态框显示
@@ -130,7 +135,7 @@ class Detail extends React.Component<interface_props, interface_state> {
             status: "FAILED",
             reason: values.reason,
           },
-          id:this.props.routing.location.query.id
+          id: this.props.routing.location.query.id
         })
       }
     });
@@ -178,18 +183,18 @@ class Detail extends React.Component<interface_props, interface_state> {
           {
             this.props.fyhList.detailData.memberRecommendPrize && this.props.fyhList.detailData.memberRecommendPrize.map((item: any, index: any) => {
               return (
-                <div key={index} style={item.recommends ? { display: 'block' } : { display: "none" }}>
+                <div key={index} >
                   <Row gutter={32}>
                     <Col span={4}>阶段{item.stage + 1}</Col>
                     <Col span={4}>是否发放奖励：{item.status === "SUCCESSFUL" ? "是" : "否"}</Col>
-                    <Col span={4}>奖励金：{item.prize}元</Col>
-                    {item.recommendReviews && item.recommendReviews[0].status  ? null : <Col span={4}>是否成功审核: </Col>}
+                    <Col span={4}>积分：{item.prize}</Col>
+                    {item.recommendReviews && item.recommendReviews[0].status ? null : <Col span={4}>是否成功审核: </Col>}
                     {item.recommendReviews && item.recommendReviews[0].status === "SUCCESSFUL" ? <Col span={4}>是否成功审核：是 </Col> : null}
-                    {item.recommendReviews && item.recommendReviews[0].status === "FAILED" ? <Popover  content={<span>{item.recommendReviews[0].reason}</span>}><Col span={4}>是否成功审核：否 </Col></Popover> : null}
+                    {item.recommendReviews && item.recommendReviews[0].status === "FAILED" ? <Popover content={<span>{item.recommendReviews[0].reason}</span>}><Col span={4}>是否成功审核：否 </Col></Popover> : null}
                     <Col span={4}>审核人：{item.recommendReviews && item.recommendReviews[0].reviewer}</Col>
                     <Col span={4}>审核时间：{item.recommendReviews && item.recommendReviews[0].reviewDate}</Col>
                   </Row>
-                  <Row gutter={20} style={item.recommendReviews ? { display: "none" } : { display: "block" }}>
+                  <Row gutter={20} style={(item.recommendReviews || !item.recommends) ? { display: "none" } : { display: "block" }}>
                     <Col span={24} style={{ textAlign: 'right' }}>
                       <Popconfirm
                         title="Are you sure？"
@@ -205,7 +210,9 @@ class Detail extends React.Component<interface_props, interface_state> {
                       </Button>
                     </Col>
                   </Row>
-                  <Table rowSelection={rowSelection} rowKey={((item: object, index: number) => item.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={item.recommends && item.recommends} pagination={false} />
+                  <div style={item.recommends ? { display: 'block' } : { display: "none" }}>
+                    <Table rowSelection={rowSelection} rowKey={((item: { id: string }, index: number) => item.id)} columns={this.state.tableColumns} loading={this.props.loading.global} dataSource={item.recommends && item.recommends} pagination={false} />
+                  </div>
                   <Divider />
                 </div>
               )

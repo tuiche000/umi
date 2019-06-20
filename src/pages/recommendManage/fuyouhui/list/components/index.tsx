@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, Input, Button, Table, Modal, Select, DatePicker, Popover } from 'antd';
+import { Form, Row, Col, Input, Button, Table, Modal, Select, DatePicker, Icon } from 'antd';
 // import './index.css'
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
@@ -16,7 +16,7 @@ const reviewStatus = {
 interface UserFormProps extends FormComponentProps {
   record?: any,
   fyhList: {
-    tableData: object[]
+    tableData: object[],
     seachData: any,
     pageNo: number,
     totalResults: number,
@@ -137,8 +137,9 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           key: 'action',
           align: "center",
           render: (text: any, record: any) => (
-            <span>
+            <span style={{ position: "relative" }}>
               <a href="javascript:;" onClick={this.goDetail.bind(this, record)}>查看详情</a>
+              {/* {record.prizeStatus === 0 && record.reviewStatus === 0 && <Icon type="exclamation-circle" style={{ color: "red", position: "absolute", left: "110%", top: "50%", transform: "translate(0, -50%)" }} />} */}
             </span>
           ),
         },
@@ -161,7 +162,6 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
 
   // 跳转详情页面
   goDetail(record: any) {
-    // router.push("./list/detail?id=" + record.id)
     router.push(`./list/detail?id=${record.id}`)
   }
   // 批量停用模态框
@@ -197,6 +197,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        console.log(values)
         let obj = {
           activitytSubTitle: values.activitytSubTitle && values.activitytSubTitle.trim(),
           recommender: values.recommender && values.recommender.trim(),
@@ -249,7 +250,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
   }
 
   render() {
-    const locale ={
+    const locale = {
       "lang": {
         "placeholder": "Select date",
         "rangePlaceholder": ["Start date", "End date"],
@@ -325,7 +326,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
                   //     message: '请选择推荐时间',
                   //   },
                   // ],
-                })(<RangePicker disabledDate={disabledDate} locale={locale}/>)}
+                })(<RangePicker disabledDate={disabledDate} locale={locale} />)}
               </Form.Item>
             </Col>
             {/* <Col span={8}>
@@ -400,7 +401,7 @@ export default class AdvancedSearchForm extends React.Component<UserFormProps, B
           </Col>
         </Row> */}
 
-        <Table rowSelection={rowSelection} rowKey={((record: object, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize, current: this.state.current }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
+        <Table rowSelection={rowSelection} rowKey={((record: { id: string }, index: number) => record.id)} pagination={{ total: this.props.fyhList.totalResults, onChange: this.onChangePagesize, current: this.state.current }} columns={this.state.tableColumns} dataSource={this.props.fyhList.tableData} loading={this.props.loading.global} />
       </div>
     );
   }

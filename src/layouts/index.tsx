@@ -48,7 +48,7 @@ export default class BasicLayout extends React.Component<BasicLayoutProps, Basic
   }
 
   toggle(): void {
-    console.log(this.props)
+    // console.log(this.props)
     this.fnChangeCollapsed(!this.props.g.collapsed)
     // this.setState((state) => {
     //   return {

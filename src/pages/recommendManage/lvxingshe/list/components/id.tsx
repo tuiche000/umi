@@ -37,7 +37,6 @@ class Detail extends React.Component<interface_props, interface_state> {
     this.auditPassConfirm = this.auditPassConfirm.bind(this)
   };
   componentDidMount() {
-    console.log(this.props.routing.location.query.id)
     this.props.dispatch({
       type: 'lxsList/detail',
       payload: {
@@ -63,7 +62,7 @@ class Detail extends React.Component<interface_props, interface_state> {
         id: this.props.routing.location.query.id,
         status: "SUCCESSFUL",
       },
-      // fetchPayload: this.props.lxsList.seachData,
+      id: this.props.routing.location.query.id,
       // query: this.props.lxsList.pageNo,
     })
   }
@@ -95,8 +94,7 @@ class Detail extends React.Component<interface_props, interface_state> {
         this.props.dispatch({
           type: 'lxsList/examine',
           payload: obj,
-          // fetchPayload: this.props.lxsList.pageNo,
-          // query: this.props.lxsList.pageNo,
+          id: this.props.routing.location.query.id,
         })
         this.setState({
           auditFailedVisible: false,
@@ -135,7 +133,7 @@ class Detail extends React.Component<interface_props, interface_state> {
               <Col span={8}>推荐人手机号：{this.props.lxsList.detailData && this.props.lxsList.detailData.recommender}</Col>
               {/* <Col span={8}>推荐链接：</Col> */}
             </Row>
-            {(this.props.lxsList.detailData && !this.props.lxsList.detailData.prizeStatus) && (
+            {(this.props.lxsList.detailData && this.props.lxsList.detailData.reviewStatus === 0) && (
               <Row gutter={20}>
                 <Col span={24} style={{ textAlign: 'right' }}>
                   <Popconfirm
@@ -198,7 +196,7 @@ class Detail extends React.Component<interface_props, interface_state> {
             </Row> */}
           </div>
           <Divider />
-          {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus) && (
+          {(this.props.lxsList.detailData && this.props.lxsList.detailData.reviewStatus) ? (
             <div>
               <div>
                 <h3>
@@ -207,15 +205,15 @@ class Detail extends React.Component<interface_props, interface_state> {
                 <Row gutter={32}>
                   <Col span={8}>审核人：{this.props.lxsList.detailData && this.props.lxsList.detailData.reviewer}</Col>
                   <Col span={8}>审核时间：{this.props.lxsList.detailData && this.props.lxsList.detailData.reviewDate}</Col>
-                  {(this.props.lxsList.detailData && !this.props.lxsList.detailData.prizeStatus) && <Col span={8}></Col>}
-                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus === "SUCCESSFUL") && <Col span={8}>审核状态：审核成功</Col>}
-                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.prizeStatus === "FAILED") && <Col span={8}>审核状态：审核失败</Col>}
-                  <Col span={8}>备注：{this.props.lxsList.detailData && this.props.lxsList.detailData.reason}</Col>
+                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.reviewStatus === 1) && <Col span={8}>审核状态：审核成功</Col>}
+                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.reviewStatus === 2) && <Col span={8}>审核状态：审核未通过</Col>}
+                  {(this.props.lxsList.detailData && this.props.lxsList.detailData.reviewStatus === 2) &&  <Col span={8}>失败原因：{this.props.lxsList.detailData && this.props.lxsList.detailData.reason}</Col>}
+                  <Col span={8}>备注：{this.props.lxsList.detailData && this.props.lxsList.detailData.remark}</Col>
                 </Row>
               </div>
               <Divider />
             </div>
-          )}
+          ) : null}
         </Card>
 
         {/* 批量设置模态框 */}
