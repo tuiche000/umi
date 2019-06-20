@@ -234,7 +234,7 @@ class Detail extends React.Component<interface_props, interface_state> {
               )}
             </Form.Item>
             <Form.Item>
-              {getFieldDecorator('remarks', {
+              {getFieldDecorator('remark', {
                 // rules: [{ required: true, message: '请输入备注' }],
               })(
                 <Input
