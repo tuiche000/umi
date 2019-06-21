@@ -7,7 +7,7 @@ export function productlist(
   },
   query: {
     pageNo: 1,
-    pageSize: 10,
+    pageSize: 10, 
   }
 ) {
   return request.post(`http://unitest.fosunholiday.com/api/mms/spread/backend/product/productlist`, params, query);
